@@ -14,8 +14,27 @@ class isdlist<M> {
         head.right = nullptr;
     }
 
+    isdlist(const isdlist&) = delete;
+
+    isdlist& operator=(const isdlist&) = delete;
+
+    isdlist(isdlist&& other) noexcept {
+        move_from(std::move(other));
+    }
+
+    isdlist& operator=(isdlist&& other) noexcept {
+        if (this != &other) {
+            move_from(std::move(other));
+        }
+        return *this;
+    }
+
     bool empty() const noexcept {
         return head.right == nullptr;
+    }
+
+    void clear() noexcept {
+        head.right = nullptr;
     }
 
     T& front() const noexcept {
@@ -140,6 +159,18 @@ class isdlist<M> {
     }
 
    private:
+    void move_from(isdlist&& other) noexcept {
+        if (other.empty()) [[unlikely]] {
+            clear();
+        } else {
+            head = other.head;
+
+            (head.right->*M).left = mock_head();
+
+            other.clear();
+        }
+    }
+
     [[nodiscard]]
     T* mock_head() noexcept {
         // UB!!!

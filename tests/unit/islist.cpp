@@ -246,3 +246,175 @@ TEST(islist_test, algorithm) {
     EXPECT_EQ(result->weight, 501);
     EXPECT_EQ(result->sn, 1);
 }
+
+TEST(islist_test, copy_ctor) {
+    static_assert(std::is_copy_constructible<uit::islist<&apple::node>>::value, "");
+    {
+        uit::islist<&apple::node> list{};
+        uit::islist<&apple::node> list_other{list};
+
+        EXPECT_TRUE(list_other.empty());
+        EXPECT_TRUE(list.empty());
+    }
+    {
+        uit::islist<&apple::node> list{};
+        apple a0{500, 0};
+        apple a1{501, 1};
+        apple a2{502, 2};
+        apple a3{503, 3};
+
+        list.push_front(&a3);
+        list.push_front(&a2);
+        list.push_front(&a1);
+        list.push_front(&a0);
+
+        uit::islist<&apple::node> list_other{list};
+        EXPECT_FALSE(list_other.empty());
+        EXPECT_EQ(&list_other.front(), &a0);
+
+        uint32_t sn = 0;
+        for (const auto &i: list_other) {
+            EXPECT_EQ(i.weight, 500 + sn);
+            EXPECT_EQ(i.sn, sn);
+            sn++;
+        }
+    }
+}
+
+TEST(islist_test, copy_assign) {
+    static_assert(std::is_copy_assignable<uit::islist<&apple::node>>::value, "");
+    {
+        uit::islist<&apple::node> list{};
+        uit::islist<&apple::node> list_other{};
+
+        list_other = list;
+
+        EXPECT_TRUE(list_other.empty());
+        EXPECT_TRUE(list.empty());
+    }
+    {
+        uit::islist<&apple::node> list{};
+        apple a0{500, 0};
+        apple a1{501, 1};
+        apple a2{502, 2};
+        apple a3{503, 3};
+
+        list.push_front(&a3);
+        list.push_front(&a2);
+        list.push_front(&a1);
+        list.push_front(&a0);
+
+        uit::islist<&apple::node> list_other{};
+
+        // Copy self.
+        list = list;
+        EXPECT_EQ(&list.front(), &a0);
+
+        uint32_t sn = 0;
+        for (const auto &i: list) {
+            EXPECT_EQ(i.weight, 500 + sn);
+            EXPECT_EQ(i.sn, sn);
+            sn++;
+        }
+
+        // Copy other.
+        list_other = list;
+        EXPECT_FALSE(list_other.empty());
+        EXPECT_EQ(&list_other.front(), &a0);
+
+        sn = 0;
+        for (const auto &i: list_other) {
+            EXPECT_EQ(i.weight, 500 + sn);
+            EXPECT_EQ(i.sn, sn);
+            sn++;
+        }
+    }
+}
+
+TEST(islist_test, move_ctor) {
+    static_assert(std::is_move_constructible<uit::islist<&apple::node>>::value, "");
+
+    {
+        uit::islist<&apple::node> list{};
+        uit::islist<&apple::node> list_other{std::move(list)};
+        EXPECT_TRUE(list.empty());
+        EXPECT_TRUE(list_other.empty());
+    }
+    {
+        uit::islist<&apple::node> list{};
+        apple a0{500, 0};
+        apple a1{501, 1};
+        apple a2{502, 2};
+        apple a3{503, 3};
+
+        list.push_front(&a3);
+        list.push_front(&a2);
+        list.push_front(&a1);
+        list.push_front(&a0);
+
+        uit::islist<&apple::node> list_other{std::move(list)};
+
+        EXPECT_TRUE(list.empty());
+        EXPECT_FALSE(list_other.empty());
+        EXPECT_EQ(&list_other.front(), &a0);
+
+        uint32_t sn = 0;
+        for (const auto &i: list_other) {
+            EXPECT_EQ(i.weight, 500 + sn);
+            EXPECT_EQ(i.sn, sn);
+            sn++;
+        }
+    }
+}
+
+TEST(islist_test, move_assign) {
+    static_assert(std::is_move_assignable<uit::islist<&apple::node>>::value, "");
+    {
+        uit::islist<&apple::node> list{};
+        uit::islist<&apple::node> list_other{};
+
+        list_other = list;
+        EXPECT_TRUE(list.empty());
+        EXPECT_TRUE(list_other.empty());
+    }
+    {
+        uit::islist<&apple::node> list{};
+        uit::islist<&apple::node> list_other{};
+
+        apple a0{500, 0};
+        apple a1{501, 1};
+        apple a2{502, 2};
+        apple a3{503, 3};
+
+        list.push_front(&a3);
+        list.push_front(&a2);
+        list.push_front(&a1);
+        list.push_front(&a0);
+
+        // Move self.
+        list = std::move(list);
+
+        EXPECT_EQ(&list.front(), &a0);
+
+        uint32_t sn = 0;
+        for (const auto &i: list) {
+            EXPECT_EQ(i.weight, 500 + sn);
+            EXPECT_EQ(i.sn, sn);
+            sn++;
+        }
+
+        // Move other.
+        list_other = std::move(list);
+
+        EXPECT_TRUE(list.empty());
+        EXPECT_FALSE(list_other.empty());
+        EXPECT_EQ(&list_other.front(), &a0);
+
+        sn = 0;
+        for (const auto &i: list_other) {
+            EXPECT_EQ(i.weight, 500 + sn);
+            EXPECT_EQ(i.sn, sn);
+            sn++;
+        }
+    }
+}

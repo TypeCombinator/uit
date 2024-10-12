@@ -14,6 +14,21 @@ class idlist<M> {
         head.left = head.right = mock_head();
     }
 
+    idlist(const idlist &) = delete;
+
+    idlist &operator=(const idlist &) = delete;
+
+    idlist(idlist &&other) noexcept {
+        move_from(std::move(other));
+    }
+
+    idlist &operator=(idlist &&other) noexcept {
+        if (this != &other) [[likely]] {
+            move_from(std::move(other));
+        }
+        return *this;
+    }
+
     [[nodiscard]]
     bool empty() const noexcept {
         const T *mhead = const_mock_head();
@@ -217,6 +232,20 @@ class idlist<M> {
         return const_reverse_iterator{const_mock_head()};
     }
    private:
+    void move_from(idlist &&other) noexcept {
+        if (other.empty()) [[unlikely]] {
+            clear();
+        } else {
+            head = other.head;
+
+            T *mhead = mock_head();
+            (head.right->*M).left = mhead;
+            (head.left->*M).right = mhead;
+
+            other.clear();
+        }
+    }
+
     [[nodiscard]]
     inline T *mock_head() noexcept {
         // UB!!!

@@ -14,6 +14,23 @@ class islist<M> {
         head.right = nullptr;
     }
 
+    islist(const islist& other) noexcept = default;
+
+    islist& operator=(const islist& other) noexcept = default;
+
+    islist(islist&& other) noexcept {
+        head = other.head;
+        other.clear();
+    }
+
+    islist& operator=(islist&& other) noexcept {
+        if (this != &other) {
+            head = other.head;
+            other.clear();
+        }
+        return *this;
+    }
+
     [[nodiscard]]
     bool empty() const noexcept {
         return head.right == nullptr;
