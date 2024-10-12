@@ -27,9 +27,9 @@ The trick named **mock_head** brings the following advantages and disadvantages.
 
 ### notice
 
-This project is in the process of experimental exploration, for the **mock_head** is an UB, it is not recommended to use it in production projects. Of course, you can use  `-fno-strict-aliasing` to solve it, but this is not the way I like.
+This project is in the process of experimental exploration, for the **mock_head** is an UB, it is not recommended to use it in production projects.
 
-The project has been tested on GCC 11.4.0, and there were several failures on Clang 18.06.
+The project has been tested on GCC 11.4.0 and Clang 18.06, there were several failures.
 
 ## mock_head
 
