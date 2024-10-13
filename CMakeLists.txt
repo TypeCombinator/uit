@@ -25,7 +25,6 @@ add_subdirectory(examples)
 if(UIT_BUILD_TESTING)
   include(GoogleTest)
   add_subdirectory(tests/unit)
-  message("UIT_BUILD_TESTING: ${UIT_BUILD_TESTING}")
 
   # include(GoogleBenchmark)
   # add_subdirectory(tests/bench)
