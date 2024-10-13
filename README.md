@@ -101,6 +101,26 @@ As you can see, **mock_head** is just a alias of the `contianer_of`, it unifies 
 
 Of course, this is just an example. The implementation of container_of is slightly different in C++, please see the [header](include/uit/intrusive.hpp) in this library.
 
+### slist
+
+![slist](docs/images/slist.png)
+
+### sdlist
+
+![sdlist](docs/images/sdlist.png)
+
+### dslist
+
+![dslist_empty](docs/images/dslist_empty.png)
+
+![dslist](docs/images/dslist.png)
+
+### dlist
+
+![dlist_empty](docs/images/dlist_empty.png)
+
+![dlist](docs/images/dlist.png)
+
 ## Example
 
 ```c++
