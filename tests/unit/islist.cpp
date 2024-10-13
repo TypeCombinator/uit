@@ -7,18 +7,17 @@ TEST(islist_test, empty) {
     EXPECT_TRUE(list.empty());
 }
 
-TEST(islist_test, push_front999) {
-    // uit::islist<&apple1::node> list{};
+TEST(islist_test, push_front1) {
+    uit::islist<&sapple::node> list{};
 
-    // printf("list: %lX\n", reinterpret_cast<size_t>(&list));
     sapple a0{501, 0};
 
-    // list.push_front(&a0);
-    // EXPECT_EQ(&a0, &list.front());
-    // EXPECT_EQ(a0.node.right, nullptr);
-    // EXPECT_FALSE(list.empty());
+    list.push_front(&a0);
+    EXPECT_EQ(&a0, &list.front());
+    EXPECT_EQ(a0.node.right, nullptr);
+    EXPECT_FALSE(list.empty());
 }
-#if 1
+
 TEST(islist_test, push_front2) {
     uit::islist<&sapple::node> list{};
     sapple a0{500, 0};
@@ -408,4 +407,3 @@ TEST(islist_test, move_assign) {
         }
     }
 }
-#endif
