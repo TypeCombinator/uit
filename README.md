@@ -29,7 +29,12 @@ The trick named **mock_head** brings the following advantages and disadvantages.
 
 This project is in the process of experimental exploration, for the **mock_head** is an UB, it cannot be used for production projects.
 
-The project has been tested on GCC 11.4.0 and Clang 18.06, there were several failures.
+The project has been tested on GCC 11.4.0 and Clang 18.06, there were several failures, please see the table below.
+
+|            | Number of failures in debug | Number of failures in release(-O3) |
+| ---------- | --------------------------- | ---------------------------------- |
+| gcc11.4.0  | 0                           | 0                                  |
+| clang18.06 | 0                           | 1                                  |
 
 ## mock_head
 
