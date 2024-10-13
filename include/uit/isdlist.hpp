@@ -178,9 +178,9 @@ class isdlist<M> {
     }
 
     [[nodiscard]]
-    T* const_mock_head() const noexcept {
+    const T* const_mock_head() const noexcept {
         // UB!!!
-        return const_container_of(M, static_cast<idnode<T>*>((&head)));
+        return const_container_of(M, static_cast<const idnode<T>*>((&head)));
     }
 
     isnode<T> head;

@@ -207,9 +207,9 @@ class idslist<M> {
         return container_of(M, static_cast<isnode<T> *>(&head));
     }
 
-    const T *mock_head() const noexcept {
+    const T *const_mock_head() const noexcept {
         // UB!!!
-        return const_container_of(M, static_cast<isnode<T> *>(&head));
+        return const_container_of(M, static_cast<const isnode<T> *>(&head));
     }
 
     idnode<T> head;
