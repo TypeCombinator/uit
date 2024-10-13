@@ -49,7 +49,7 @@ class isdlist<M> {
         (node->*M).left = mock_head();
 
         head.right = node;
-        if (first != NULL) {
+        if (first != nullptr) {
             (first->*M).left = node;
         }
     }
