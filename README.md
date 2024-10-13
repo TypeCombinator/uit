@@ -23,11 +23,11 @@ The trick named **mock_head** brings the following advantages and disadvantages.
 
 ### disadvantages
 
-- **mock_head** is an undefined behavior in C++, I think it's a lack of C++ design, it will be discussed later in the document.
+- **mock_head** is an undefined behavior in C++, compiler may produce unexpected results.
 
 ### notice
 
-This project is in the process of experimental exploration, for the **mock_head** is an UB, it is not recommended to use it in production projects.
+This project is in the process of experimental exploration, for the **mock_head** is an UB, it cannot be used for production projects.
 
 The project has been tested on GCC 11.4.0 and Clang 18.06, there were several failures.
 
@@ -133,41 +133,6 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 ```
-
-## Problem
-
-**mock_head** is implemented based on `container_of`, which violates strict aliasing, the result of `container_of` is not the alias of the input pointer, it's an undefined behavior, I think this is a design flaw in C++. Please see the code below:
-
-```c++
-struct A { };
-
-struct B : public A { };
-
-struct C {
-    A a;
-};
-A *a;
-B *b;
-C *c;
-```
-
-For B inheriting A(Virtual inheritance is not within the scope of this discussion):
-
-- upcast: `a = static_cast<A *>(b);`
-- downcast: ` b = static_cast<B *>(a);`
-
-For C containing A:
-
-- upcast: `a = &c->a;`
-- **downcast**: ` c = container_of(&C::a, a);`
-
-Whether  `static_cast`, `operator ->` or `constainer_of`, they are essentially the same, it's a **pointer plus an offset**. Unfortunately, the `container_of` is UB. I think C++ compilers should implement a built-in function called `__builtin_container_of`, the result of the function should be the alias of the input. 
-
-Some people may be concerned about security issues, but the problems contained in `__builtin_container_of` and `static_cast` may also have the same problems, or we can allow such use `__builtin_container_of<&C::a>(a)` or `container_cast<&C::a>(a)`. 
-
-It should be noted that in this library, the result of `container_of` will not be used to access other members, except for members(input) used to maintain links, this is also a big difference from the intrusive linked list in Linux. Perhaps we need to implement some security restrictions on `container_of`.
-
-Finally, what I want to say is that in certain scenarios, composition is more powerful than inheritance, the `container_of` will greatly enhance this.
 
 ## TODO
 
