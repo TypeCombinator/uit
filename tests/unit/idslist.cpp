@@ -1,25 +1,15 @@
 #include "gtest/gtest.h"
+#include "common/apple.hpp"
 #include "uit/idslist.hpp"
 
-struct apple {
-    apple(uint64_t _weight, int _sn)
-        : weight(_weight)
-        , sn(_sn) {
-    }
-
-    uint64_t weight;
-    uit::isnode<apple> node;
-    int sn;
-};
-
 TEST(idslist_test, empty) {
-    uit::idslist<&apple::node> list{};
+    uit::idslist<&sapple::node> list{};
     EXPECT_TRUE(list.empty());
 }
 
 TEST(idslist_test, push_back1) {
-    uit::idslist<&apple::node> list{};
-    apple a0(500, 0);
+    uit::idslist<&sapple::node> list{};
+    sapple a0(500, 0);
 
     list.push_back(&a0);
     EXPECT_EQ(&a0, &list.front());
@@ -28,25 +18,25 @@ TEST(idslist_test, push_back1) {
 }
 
 TEST(idslist_test, push_back2) {
-    uit::idslist<&apple::node> list{};
-    apple a0(500, 0);
-    apple a1(501, 1);
+    uit::idslist<&sapple::node> list{};
+    sapple a0(500, 0);
+    sapple a1(501, 1);
 
     list.push_back(&a0);
     list.push_back(&a1);
 
-    const apple &first = list.front();
+    const sapple &first = list.front();
     EXPECT_EQ(&a0, &first);
 
-    const apple *second = first.node.right;
+    const sapple *second = first.node.right;
     EXPECT_EQ(&a1, second);
     EXPECT_EQ(&a1, &list.back());
     EXPECT_FALSE(list.empty());
 }
 
 TEST(idslist_test, push_front1) {
-    uit::idslist<&apple::node> list{};
-    apple a0(501, 0);
+    uit::idslist<&sapple::node> list{};
+    sapple a0(501, 0);
 
     list.push_front(&a0);
     EXPECT_EQ(&a0, &list.front());
@@ -55,28 +45,28 @@ TEST(idslist_test, push_front1) {
 }
 
 TEST(idslist_test, push_front2) {
-    uit::idslist<&apple::node> list{};
-    apple a0(500, 0);
-    apple a1(501, 1);
+    uit::idslist<&sapple::node> list{};
+    sapple a0(500, 0);
+    sapple a1(501, 1);
 
     list.push_front(&a0);
     list.push_front(&a1);
 
-    const apple &last = list.back();
+    const sapple &last = list.back();
     EXPECT_EQ(&a0, &last);
     EXPECT_EQ(a0.node.right, nullptr);
 
-    const apple &second_to_last = list.front();
+    const sapple &second_to_last = list.front();
     EXPECT_EQ(&a1, &second_to_last);
     EXPECT_EQ(a1.node.right, &a0);
     EXPECT_FALSE(list.empty());
 }
 
 TEST(idslist_test, remove) {
-    uit::idslist<&apple::node> list{};
-    apple a0{500, 0};
-    apple a1{501, 1};
-    apple a2{502, 2};
+    uit::idslist<&sapple::node> list{};
+    sapple a0{500, 0};
+    sapple a1{501, 1};
+    sapple a2{502, 2};
 
     list.push_back(&a0);
     list.push_back(&a1);
@@ -95,10 +85,10 @@ TEST(idslist_test, remove) {
 }
 
 TEST(idslist_test, remove1) {
-    uit::idslist<&apple::node> list{};
-    apple a0{500, 0};
-    apple a1{501, 1};
-    apple a2{502, 2};
+    uit::idslist<&sapple::node> list{};
+    sapple a0{500, 0};
+    sapple a1{501, 1};
+    sapple a2{502, 2};
 
     list.push_back(&a0);
     list.push_back(&a1);
@@ -123,11 +113,11 @@ TEST(idslist_test, remove1) {
 }
 
 TEST(idslist_test, iterator) {
-    uit::idslist<&apple::node> list{};
-    apple a0{500, 0};
-    apple a1{501, 1};
-    apple a2{502, 2};
-    apple a3{503, 3};
+    uit::idslist<&sapple::node> list{};
+    sapple a0{500, 0};
+    sapple a1{501, 1};
+    sapple a2{502, 2};
+    sapple a3{503, 3};
 
     list.push_front(&a3);
     list.push_front(&a2);
@@ -174,11 +164,11 @@ TEST(idslist_test, iterator) {
 }
 
 TEST(idslist_test, range_based_for) {
-    uit::idslist<&apple::node> list{};
-    apple a0{500, 0};
-    apple a1{501, 1};
-    apple a2{502, 2};
-    apple a3{503, 3};
+    uit::idslist<&sapple::node> list{};
+    sapple a0{500, 0};
+    sapple a1{501, 1};
+    sapple a2{502, 2};
+    sapple a3{503, 3};
 
     list.push_front(&a3);
     list.push_front(&a2);
@@ -205,11 +195,11 @@ TEST(idslist_test, range_based_for) {
 }
 
 TEST(idslist_test, algorithm) {
-    uit::idslist<&apple::node> list{};
-    apple a0{500, 0};
-    apple a1{501, 1};
-    apple a2{502, 2};
-    apple a3{503, 3};
+    uit::idslist<&sapple::node> list{};
+    sapple a0{500, 0};
+    sapple a1{501, 1};
+    sapple a2{502, 2};
+    sapple a3{503, 3};
 
     list.push_front(&a3);
     list.push_front(&a2);
@@ -217,13 +207,13 @@ TEST(idslist_test, algorithm) {
     list.push_front(&a0);
 
     uint32_t sn = 0;
-    std::for_each(list.cbegin(), list.cend(), [&sn](const apple &i) -> void {
+    std::for_each(list.cbegin(), list.cend(), [&sn](const sapple &i) -> void {
         EXPECT_EQ(i.weight, 500 + sn);
         EXPECT_EQ(i.sn, sn);
         sn++;
     });
 
-    auto result = std::find_if(list.cbegin(), list.cend(), [](const apple &i) -> bool {
+    auto result = std::find_if(list.cbegin(), list.cend(), [](const sapple &i) -> bool {
         return i.weight >= 501;
     });
     EXPECT_NE(result, list.cend());
@@ -232,27 +222,27 @@ TEST(idslist_test, algorithm) {
 }
 
 TEST(idslist_test, copy_ctor) {
-    static_assert(std::is_copy_constructible<uit::idslist<&apple::node>>::value, "");
+    static_assert(std::is_copy_constructible<uit::idslist<&sapple::node>>::value, "");
     {
-        uit::idslist<&apple::node> list{};
-        uit::idslist<&apple::node> list_other{list};
+        uit::idslist<&sapple::node> list{};
+        uit::idslist<&sapple::node> list_other{list};
 
         EXPECT_TRUE(list_other.empty());
         EXPECT_TRUE(list.empty());
     }
     {
-        uit::idslist<&apple::node> list{};
-        apple a0{500, 0};
-        apple a1{501, 1};
-        apple a2{502, 2};
-        apple a3{503, 3};
+        uit::idslist<&sapple::node> list{};
+        sapple a0{500, 0};
+        sapple a1{501, 1};
+        sapple a2{502, 2};
+        sapple a3{503, 3};
 
         list.push_front(&a3);
         list.push_front(&a2);
         list.push_front(&a1);
         list.push_front(&a0);
 
-        uit::idslist<&apple::node> list_other{list};
+        uit::idslist<&sapple::node> list_other{list};
         EXPECT_FALSE(list_other.empty());
         EXPECT_EQ(&list_other.front(), &a0);
         EXPECT_EQ(&list_other.back(), &a3);
@@ -267,10 +257,10 @@ TEST(idslist_test, copy_ctor) {
 }
 
 TEST(idslist_test, copy_assign) {
-    static_assert(std::is_copy_assignable<uit::idslist<&apple::node>>::value, "");
+    static_assert(std::is_copy_assignable<uit::idslist<&sapple::node>>::value, "");
     {
-        uit::idslist<&apple::node> list{};
-        uit::idslist<&apple::node> list_other{};
+        uit::idslist<&sapple::node> list{};
+        uit::idslist<&sapple::node> list_other{};
 
         list_other = list;
 
@@ -278,18 +268,18 @@ TEST(idslist_test, copy_assign) {
         EXPECT_TRUE(list.empty());
     }
     {
-        uit::idslist<&apple::node> list{};
-        apple a0{500, 0};
-        apple a1{501, 1};
-        apple a2{502, 2};
-        apple a3{503, 3};
+        uit::idslist<&sapple::node> list{};
+        sapple a0{500, 0};
+        sapple a1{501, 1};
+        sapple a2{502, 2};
+        sapple a3{503, 3};
 
         list.push_front(&a3);
         list.push_front(&a2);
         list.push_front(&a1);
         list.push_front(&a0);
 
-        uit::idslist<&apple::node> list_other{};
+        uit::idslist<&sapple::node> list_other{};
 
         // Copy self.
         list = list;
@@ -319,26 +309,26 @@ TEST(idslist_test, copy_assign) {
 }
 
 TEST(idslist_test, move_ctor) {
-    static_assert(std::is_move_constructible<uit::idslist<&apple::node>>::value, "");
+    static_assert(std::is_move_constructible<uit::idslist<&sapple::node>>::value, "");
     {
-        uit::idslist<&apple::node> list{};
-        uit::idslist<&apple::node> list_other{std::move(list)};
+        uit::idslist<&sapple::node> list{};
+        uit::idslist<&sapple::node> list_other{std::move(list)};
         EXPECT_TRUE(list.empty());
         EXPECT_TRUE(list_other.empty());
     }
     {
-        uit::idslist<&apple::node> list{};
-        apple a0{500, 0};
-        apple a1{501, 1};
-        apple a2{502, 2};
-        apple a3{503, 3};
+        uit::idslist<&sapple::node> list{};
+        sapple a0{500, 0};
+        sapple a1{501, 1};
+        sapple a2{502, 2};
+        sapple a3{503, 3};
 
         list.push_back(&a0);
         list.push_back(&a1);
         list.push_back(&a2);
         list.push_back(&a3);
 
-        uit::idslist<&apple::node> list_other{std::move(list)};
+        uit::idslist<&sapple::node> list_other{std::move(list)};
 
         EXPECT_TRUE(list.empty());
         EXPECT_FALSE(list_other.empty());
@@ -355,23 +345,23 @@ TEST(idslist_test, move_ctor) {
 }
 
 TEST(idslist_test, move_assign) {
-    static_assert(std::is_move_assignable<uit::idslist<&apple::node>>::value, "");
+    static_assert(std::is_move_assignable<uit::idslist<&sapple::node>>::value, "");
     {
-        uit::idslist<&apple::node> list{};
-        uit::idslist<&apple::node> list_other{};
+        uit::idslist<&sapple::node> list{};
+        uit::idslist<&sapple::node> list_other{};
 
         list_other = list;
         EXPECT_TRUE(list.empty());
         EXPECT_TRUE(list_other.empty());
     }
     {
-        uit::idslist<&apple::node> list{};
-        uit::idslist<&apple::node> list_other{};
+        uit::idslist<&sapple::node> list{};
+        uit::idslist<&sapple::node> list_other{};
 
-        apple a0{500, 0};
-        apple a1{501, 1};
-        apple a2{502, 2};
-        apple a3{503, 3};
+        sapple a0{500, 0};
+        sapple a1{501, 1};
+        sapple a2{502, 2};
+        sapple a3{503, 3};
 
         list.push_back(&a0);
         list.push_back(&a1);
