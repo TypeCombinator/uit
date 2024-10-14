@@ -103,9 +103,13 @@ Of course, this is just an example. The implementation of container_of is slight
 
 ### slist
 
+For an empty slist: `head.right = nullptr;`.
+
 ![slist](docs/images/slist.png)
 
 ### sdlist
+
+For an empty sdlist: `head.right = nullptr;`.
 
 ![sdlist](docs/images/sdlist.png)
 
