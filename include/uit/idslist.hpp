@@ -5,7 +5,8 @@
 namespace uit {
 
 template <typename T, stag N = "">
-struct idslist {
+class idslist {
+   public:
     using node_t = isnode<T, N>;
 
     idslist() noexcept {
