@@ -4,12 +4,11 @@
 
 namespace uit {
 
-template <auto M>
-class isdlist;
-
-template <typename T, idnode<T>(T::*M)>
-class isdlist<M> {
+template <typename T, stag N = "">
+class isdlist {
    public:
+    using node_t = idnode<T, N>;
+
     isdlist() noexcept {
         head.right = nullptr;
     }
@@ -45,23 +44,23 @@ class isdlist<M> {
         T* first;
         first = head.right;
 
-        (node->*M).right = first;
-        (node->*M).left = mock_head();
+        node->node_t::right = first;
+        node->node_t::left = mock_head();
 
         head.right = node;
         if (first != nullptr) {
-            (first->*M).left = node;
+            first->node_t::left = node;
         }
     }
 
     static void remove(T* node) noexcept {
-        T* right = (node->*M).right;
-        T* left = (node->*M).left;
+        T* right = node->node_t::right;
+        T* left = node->node_t::left;
 
         if (right != nullptr) {
-            (right->*M).left = left;
+            right->node_t::left = left;
         }
-        (left->*M).right = right;
+        left->node_t::right = right;
     }
 
     T* pop_front() noexcept {
@@ -110,13 +109,13 @@ class isdlist<M> {
         }
 
         iterator_t& operator++() noexcept {
-            current = (current->*M).right;
+            current = current->node_t::right;
             return *this;
         }
 
         iterator_t operator++(int) noexcept {
             pointer old = current;
-            current = (current->*M).right;
+            current = current->node_t::right;
             return iterator_t{old};
         }
 
@@ -165,7 +164,7 @@ class isdlist<M> {
         } else {
             head = other.head;
 
-            (head.right->*M).left = mock_head();
+            head.right->node_t::left = mock_head();
 
             other.clear();
         }
@@ -173,17 +172,15 @@ class isdlist<M> {
 
     [[nodiscard]]
     T* mock_head() noexcept {
-        // UB!!!
-        return container_of(M, static_cast<idnode<T>*>((&head)));
+        return static_cast<T*>(static_cast<node_t*>(&head));
     }
 
     [[nodiscard]]
     const T* const_mock_head() const noexcept {
-        // UB!!!
-        return const_container_of(M, static_cast<const idnode<T>*>((&head)));
+        return static_cast<const T*>(static_cast<const node_t*>(&head));
     }
 
-    isnode<T> head;
+    isnode<T, N> head;
 };
 
 } // namespace uit
