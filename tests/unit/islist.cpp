@@ -3,23 +3,23 @@
 #include "uit/islist.hpp"
 
 TEST(islist_test, empty) {
-    uit::islist<&sapple::node> list{};
+    uit::islist<sapple> list{};
     EXPECT_TRUE(list.empty());
 }
 
 TEST(islist_test, push_front1) {
-    uit::islist<&sapple::node> list{};
+    uit::islist<sapple> list{};
 
     sapple a0{501, 0};
 
     list.push_front(&a0);
     EXPECT_EQ(&a0, &list.front());
-    EXPECT_EQ(a0.node.right, nullptr);
+    EXPECT_EQ(a0.right, nullptr);
     EXPECT_FALSE(list.empty());
 }
 
 TEST(islist_test, push_front2) {
-    uit::islist<&sapple::node> list{};
+    uit::islist<sapple> list{};
     sapple a0{500, 0};
     sapple a1{501, 1};
 
@@ -27,19 +27,19 @@ TEST(islist_test, push_front2) {
     list.push_front(&a1);
     const sapple &second_to_last = list.front();
     EXPECT_EQ(&a1, &list.front());
-    EXPECT_EQ(&a0, list.front().node.right);
+    EXPECT_EQ(&a0, list.front().right);
     EXPECT_FALSE(list.empty());
-    EXPECT_EQ(a0.node.right, nullptr);
-    EXPECT_EQ(a1.node.right, &a0);
+    EXPECT_EQ(a0.right, nullptr);
+    EXPECT_EQ(a1.right, &a0);
 }
 
 TEST(islist_test, pop_front0) {
-    uit::islist<&sapple::node> list{};
+    uit::islist<sapple> list{};
     EXPECT_EQ(list.pop_front(), nullptr);
 }
 
 TEST(islist_test, pop_front1) {
-    uit::islist<&sapple::node> list{};
+    uit::islist<sapple> list{};
     sapple a0{500, 0};
     list.push_front(&a0);
 
@@ -50,7 +50,7 @@ TEST(islist_test, pop_front1) {
 }
 
 TEST(islist_test, pop_front2) {
-    uit::islist<&sapple::node> list{};
+    uit::islist<sapple> list{};
     sapple a0{500, 0};
     sapple a1{500, 1};
     list.push_front(&a0);
@@ -63,7 +63,7 @@ TEST(islist_test, pop_front2) {
 }
 
 TEST(islist_test, remove) {
-    uit::islist<&sapple::node> list{};
+    uit::islist<sapple> list{};
     sapple a0{500, 0};
     sapple a1{501, 1};
     sapple a2{502, 2};
@@ -75,47 +75,21 @@ TEST(islist_test, remove) {
     const sapple *result = list.remove(&a1);
     EXPECT_EQ(result, &a1);
     EXPECT_FALSE(list.empty());
-    EXPECT_EQ(a2.node.right, &a0);
-    EXPECT_EQ(a0.node.right, nullptr);
+    EXPECT_EQ(a2.right, &a0);
+    EXPECT_EQ(a0.right, nullptr);
 
     result = list.remove(&a0);
     EXPECT_EQ(result, &a0);
     EXPECT_FALSE(list.empty());
-    EXPECT_EQ(a2.node.right, nullptr);
+    EXPECT_EQ(a2.right, nullptr);
 
-    result = list.remove_without_ub(&a2);
-    EXPECT_EQ(result, &a2);
-    EXPECT_TRUE(list.empty());
-}
-
-TEST(islist_test, remove_without_ub) {
-    uit::islist<&sapple::node> list{};
-    sapple a0{500, 0};
-    sapple a1{501, 1};
-    sapple a2{502, 2};
-
-    list.push_front(&a0);
-    list.push_front(&a1);
-    list.push_front(&a2);
-
-    const sapple *result = list.remove_without_ub(&a1);
-    EXPECT_EQ(result, &a1);
-    EXPECT_FALSE(list.empty());
-    EXPECT_EQ(a2.node.right, &a0);
-    EXPECT_EQ(a0.node.right, nullptr);
-
-    result = list.remove_without_ub(&a0);
-    EXPECT_EQ(result, &a0);
-    EXPECT_FALSE(list.empty());
-    EXPECT_EQ(a2.node.right, nullptr);
-
-    result = list.remove_without_ub(&a2);
+    result = list.remove(&a2);
     EXPECT_EQ(result, &a2);
     EXPECT_TRUE(list.empty());
 }
 
 TEST(islist_test, clear) {
-    uit::islist<&sapple::node> list{};
+    uit::islist<sapple> list{};
     sapple a0{500, 0};
     sapple a1{501, 1};
 
@@ -128,7 +102,7 @@ TEST(islist_test, clear) {
 }
 
 TEST(islist_test, iterator) {
-    uit::islist<&sapple::node> list{};
+    uit::islist<sapple> list{};
     sapple a0{500, 0};
     sapple a1{501, 1};
     sapple a2{502, 2};
@@ -179,7 +153,7 @@ TEST(islist_test, iterator) {
 }
 
 TEST(islist_test, range_based_for) {
-    uit::islist<&sapple::node> list{};
+    uit::islist<sapple> list{};
     sapple a0{500, 0};
     sapple a1{501, 1};
     sapple a2{502, 2};
@@ -210,7 +184,7 @@ TEST(islist_test, range_based_for) {
 }
 
 TEST(islist_test, algorithm) {
-    uit::islist<&sapple::node> list{};
+    uit::islist<sapple> list{};
     sapple a0{500, 0};
     sapple a1{501, 1};
     sapple a2{502, 2};
@@ -237,16 +211,16 @@ TEST(islist_test, algorithm) {
 }
 
 TEST(islist_test, copy_ctor) {
-    static_assert(std::is_copy_constructible<uit::islist<&sapple::node>>::value, "");
+    static_assert(std::is_copy_constructible<uit::islist<sapple>>::value, "");
     {
-        uit::islist<&sapple::node> list{};
-        uit::islist<&sapple::node> list_other{list};
+        uit::islist<sapple> list{};
+        uit::islist<sapple> list_other{list};
 
         EXPECT_TRUE(list_other.empty());
         EXPECT_TRUE(list.empty());
     }
     {
-        uit::islist<&sapple::node> list{};
+        uit::islist<sapple> list{};
         sapple a0{500, 0};
         sapple a1{501, 1};
         sapple a2{502, 2};
@@ -257,7 +231,7 @@ TEST(islist_test, copy_ctor) {
         list.push_front(&a1);
         list.push_front(&a0);
 
-        uit::islist<&sapple::node> list_other{list};
+        uit::islist<sapple> list_other{list};
         EXPECT_FALSE(list_other.empty());
         EXPECT_EQ(&list_other.front(), &a0);
 
@@ -271,10 +245,10 @@ TEST(islist_test, copy_ctor) {
 }
 
 TEST(islist_test, copy_assign) {
-    static_assert(std::is_copy_assignable<uit::islist<&sapple::node>>::value, "");
+    static_assert(std::is_copy_assignable<uit::islist<sapple>>::value, "");
     {
-        uit::islist<&sapple::node> list{};
-        uit::islist<&sapple::node> list_other{};
+        uit::islist<sapple> list{};
+        uit::islist<sapple> list_other{};
 
         list_other = list;
 
@@ -282,7 +256,7 @@ TEST(islist_test, copy_assign) {
         EXPECT_TRUE(list.empty());
     }
     {
-        uit::islist<&sapple::node> list{};
+        uit::islist<sapple> list{};
         sapple a0{500, 0};
         sapple a1{501, 1};
         sapple a2{502, 2};
@@ -293,7 +267,7 @@ TEST(islist_test, copy_assign) {
         list.push_front(&a1);
         list.push_front(&a0);
 
-        uit::islist<&sapple::node> list_other{};
+        uit::islist<sapple> list_other{};
 
         // Copy self.
         list = list;
@@ -321,16 +295,16 @@ TEST(islist_test, copy_assign) {
 }
 
 TEST(islist_test, move_ctor) {
-    static_assert(std::is_move_constructible<uit::islist<&sapple::node>>::value, "");
+    static_assert(std::is_move_constructible<uit::islist<sapple>>::value, "");
 
     {
-        uit::islist<&sapple::node> list{};
-        uit::islist<&sapple::node> list_other{std::move(list)};
+        uit::islist<sapple> list{};
+        uit::islist<sapple> list_other{std::move(list)};
         EXPECT_TRUE(list.empty());
         EXPECT_TRUE(list_other.empty());
     }
     {
-        uit::islist<&sapple::node> list{};
+        uit::islist<sapple> list{};
         sapple a0{500, 0};
         sapple a1{501, 1};
         sapple a2{502, 2};
@@ -341,7 +315,7 @@ TEST(islist_test, move_ctor) {
         list.push_front(&a1);
         list.push_front(&a0);
 
-        uit::islist<&sapple::node> list_other{std::move(list)};
+        uit::islist<sapple> list_other{std::move(list)};
 
         EXPECT_TRUE(list.empty());
         EXPECT_FALSE(list_other.empty());
@@ -357,18 +331,18 @@ TEST(islist_test, move_ctor) {
 }
 
 TEST(islist_test, move_assign) {
-    static_assert(std::is_move_assignable<uit::islist<&sapple::node>>::value, "");
+    static_assert(std::is_move_assignable<uit::islist<sapple>>::value, "");
     {
-        uit::islist<&sapple::node> list{};
-        uit::islist<&sapple::node> list_other{};
+        uit::islist<sapple> list{};
+        uit::islist<sapple> list_other{};
 
         list_other = list;
         EXPECT_TRUE(list.empty());
         EXPECT_TRUE(list_other.empty());
     }
     {
-        uit::islist<&sapple::node> list{};
-        uit::islist<&sapple::node> list_other{};
+        uit::islist<sapple> list{};
+        uit::islist<sapple> list_other{};
 
         sapple a0{500, 0};
         sapple a1{501, 1};

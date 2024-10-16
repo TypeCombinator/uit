@@ -1,6 +1,6 @@
 add_executable(uit_tests
   idlist.cpp
-  # islist.cpp
+  islist.cpp
   isdlist.cpp
   idslist.cpp
 )

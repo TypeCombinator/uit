@@ -4,12 +4,11 @@
 
 namespace uit {
 
-template <auto M>
-class islist;
-
-template <typename T, isnode<T>(T::*M)>
-class islist<M> {
+template <typename T, stag N = "">
+class islist {
    public:
+    using node_t = isnode<T, N>;
+
     islist() noexcept {
         head.right = nullptr;
     }
@@ -46,7 +45,7 @@ class islist<M> {
     }
 
     void push_front(T* node) noexcept {
-        (node->*M).right = head.right;
+        node->node_t::right = head.right;
         head.right = node;
     }
 
@@ -55,7 +54,7 @@ class islist<M> {
         if (first == nullptr) [[unlikely]] {
             return nullptr;
         }
-        head.right = (first->*M).right;
+        head.right = first->node_t::right;
         return first;
     }
 
@@ -63,24 +62,11 @@ class islist<M> {
         T* left = mock_head();
         for (T* right = head.right; right != nullptr;) {
             if (right == node) {
-                (left->*M).right = (right->*M).right;
+                left->node_t::right = right->node_t::right;
                 return node;
             }
             left = right;
-            right = (right->*M).right;
-        }
-        return nullptr;
-    }
-
-    T* remove_without_ub(T* node) noexcept {
-        T** left = &head.right;
-        for (T* right = head.right; right != nullptr;) {
-            if (right == node) {
-                *left = (right->*M).right;
-                return node;
-            }
-            left = &(right->*M).right;
-            right = (right->*M).right; // Equivalent to "right = *left;"
+            right = right->node_t::right;
         }
         return nullptr;
     }
@@ -122,13 +108,13 @@ class islist<M> {
         }
 
         iterator_t& operator++() noexcept {
-            current = (current->*M).right;
+            current = current->node_t::right;
             return *this;
         }
 
         iterator_t operator++(int) noexcept {
             pointer old = current;
-            current = (current->*M).right;
+            current = current->node_t::right;
             return iterator_t{old};
         }
 
@@ -169,17 +155,15 @@ class islist<M> {
    private:
     [[nodiscard]]
     T* mock_head() noexcept {
-        // UB!!!
-        return container_of(M, &head);
+        return static_cast<T*>(&head);
     }
 
     [[nodiscard]]
     const T* const_mock_head() const noexcept {
-        // UB!!!
-        return const_container_of(M, &head);
+        return static_cast<const T*>(&head);
     }
 
-    isnode<T> head;
+    isnode<T, N> head;
 };
 
 } // namespace uit
