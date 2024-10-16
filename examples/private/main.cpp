@@ -1,25 +1,20 @@
 #include <iostream>
-#include <uit/islist.hpp>
+#include <uit/idslist.hpp>
 
-class apple {
+class apple : private uit::isnode<apple> {
    public:
     apple(uint64_t weight, int sn)
         : weight(weight)
         , sn(sn) {
     }
 
-   public:
+    friend uit::idslist<apple>;
     uint64_t weight;
-   private:
-    uit::isnode<apple> node;
-   public:
     int sn;
-
-    using node_list_t = uit::islist<&apple::node>;
 };
 
 int main(int argc, char *argv[]) {
-    apple::node_list_t list{};
+    uit::idslist<apple> list{};
 
     apple a0{500, 0};
     apple a1{501, 1};
