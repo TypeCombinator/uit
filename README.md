@@ -23,18 +23,20 @@ The trick named **mock_head** brings the following advantages and disadvantages.
 
 ### disadvantages
 
-- **mock_head** is an undefined behavior in C++, compiler may produce unexpected results.
+- **mock_head**(`container_of`) is an undefined behavior in C++, compiler may produce unexpected results. This will be fixed in the branch, Please see the notice below.
 
 ### notice
 
-This project is in the process of experimental exploration, for the **mock_head** is an UB, it cannot be used for production projects.
+This project is in the process of experimental exploration, for the **mock_head**(`container_of`) is an UB, it cannot be used for production projects.
 
-The project has been tested on GCC 11.4.0 and Clang 18.06, there were several failures, please see the table below.
+The project on the main branch has been tested on GCC 11.4.0 and Clang 18.06, there were several failures, please see the table below.
 
 |            | Number of failures in debug | Number of failures in release(-O3) |
 | ---------- | --------------------------- | ---------------------------------- |
 | gcc11.4.0  | 0                           | 0                                  |
 | clang18.06 | 0                           | 1                                  |
+
+Using inheritance will eliminate UB in ***mock_head*, it's under the development and will be push to the branch, maybe v2 or any other name, coming soon.
 
 ## mock_head
 
@@ -166,3 +168,4 @@ int main(int argc, char *argv[]) {
 ## TODO
 
 - Need more tests.
+- Create a branch which will eliminate the UB through the class inheritance, then replace the main branch.
