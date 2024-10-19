@@ -23,20 +23,15 @@ The trick named **mock_head** brings the following advantages and disadvantages.
 
 ### disadvantages
 
-- **mock_head**(`container_of`) is an undefined behavior in C++, compiler may produce unexpected results. This will be fixed in the branch, Please see the notice below.
+- There are some undefined behaviors in the implementation of the **mock_head**. The [main branch](https://github.com/TypeCombinator/uit) uses type composition and `container_of` to implement the **mock head**, which is completely **UB**, some test items cannot pass under high optimization level. The [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) uses type inheritance and `static_cast` to implement the **mock head**, unfortunately, this implementation still has some **UB**s, such as the **mock head** implementation of `idslist`, where the head and **mock head** have no inheritance relationship with each other, and violate strict aliasing.
 
-### notice
+## Notice
 
-This project is in the process of experimental exploration, for the **mock_head**(`container_of`) is an UB, it cannot be used for production projects.
+This project is used for experimental exploration, I will not bear any consequences caused by the practical application of this project.
 
-The project on the main branch has been tested on GCC 11.4.0 and Clang 18.06, there were several failures, please see the table below.
+It must be said that the [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) is a better implementation under the current C++ standard definition, as it can **currently** (not guaranteed in the future) work on clang and msvc with high-level optimizations (such as O3), but for GCC, you must add `-fno-strict-aliasing`.
 
-|            | Number of failures in debug | Number of failures in release(-O3) |
-| ---------- | --------------------------- | ---------------------------------- |
-| gcc11.4.0  | 0                           | 0                                  |
-| clang18.06 | 0                           | 1                                  |
-
-Using inheritance will eliminate UB in ***mock_head*, it's under the development and will be push to the branch, maybe v2 or any other name, coming soon.
+The [main branch](https://github.com/TypeCombinator/uit) is mainly used to help understand, due to `container_of` being UB and having many unresolved conflicts with the C++ standard, which does not conform to the future development direction of C++, I am pessimistic about the possibility of `container_of` becoming a standard definition, despite the significant demands in many scenarios.
 
 ## mock_head
 
@@ -129,6 +124,8 @@ For an empty sdlist: `head.right = nullptr;`.
 
 ## Example
 
+### For the main branch
+
 ```c++
 #include <iostream>
 #include <uit/islist.hpp>
@@ -165,7 +162,52 @@ int main(int argc, char *argv[]) {
 }
 ```
 
+### For the v2 branch
+
+```c++
+#include <iostream>
+#include <uit/islist.hpp>
+
+class apple : public uit::isnode<apple, "0"> {
+   public:
+    apple(uint64_t weight, int sn)
+        : weight(weight)
+        , sn(sn) {
+    }
+
+    uint64_t weight;
+    int sn;
+};
+
+int main(int argc, char *argv[]) {
+    uit::islist<apple, "0"> list{};
+
+    apple a0{500, 0};
+    apple a1{501, 1};
+    apple a2{502, 2};
+    apple a3{503, 3};
+
+    list.push_front(&a3);
+    list.push_front(&a2);
+    list.push_front(&a1);
+    list.push_front(&a0);
+
+    for (const auto &i: list) {
+        std::cout << "sn: " << i.sn << ", weight: " << i.weight << std::endl;
+    }
+    return 0;
+}
+```
+
+### More
+
+Please refer to the **examples** and **tests** folder.
+
 ## TODO
 
 - Need more tests.
-- Create a branch which will eliminate the UB through the class inheritance, then replace the main branch.
+
+## Acknowledgements
+
+[**ykiko**](https://github.com/16bit-ykiko) helped me answer the key questions I encountered in this project, and thank you all for your attention to this project.
+
