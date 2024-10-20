@@ -39,10 +39,12 @@ class idlist<M> {
         head.left = head.right = mock_head();
     }
 
+    [[nodiscard]]
     T &front() const noexcept {
         return *head.right;
     }
 
+    [[nodiscard]]
     T &back() const noexcept {
         return *head.left;
     }

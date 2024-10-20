@@ -47,10 +47,12 @@ class idslist<M> {
         head.left = mock_head();
     }
 
+    [[nodiscard]]
     T &front() const noexcept {
         return *head.right;
     }
 
+    [[nodiscard]]
     T &back() const noexcept {
         return *head.left;
     }
@@ -207,6 +209,7 @@ class idslist<M> {
         return container_of(M, static_cast<isnode<T> *>(&head));
     }
 
+    [[nodiscard]]
     const T *const_mock_head() const noexcept {
         // UB!!!
         return const_container_of(M, static_cast<const isnode<T> *>(&head));
