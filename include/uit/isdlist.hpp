@@ -36,6 +36,7 @@ class isdlist {
         head.right = nullptr;
     }
 
+    [[nodiscard]]
     T& front() const noexcept {
         return *head.right;
     }

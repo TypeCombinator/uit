@@ -46,10 +46,12 @@ class idslist {
         head.left = mock_head();
     }
 
+    [[nodiscard]]
     T &front() const noexcept {
         return *head.right;
     }
 
+    [[nodiscard]]
     T &back() const noexcept {
         return *head.left;
     }
@@ -206,6 +208,7 @@ class idslist {
         return static_cast<T *>(static_cast<node_t *>(&head));
     }
 
+    [[nodiscard]]
     const T *const_mock_head() const noexcept {
         return static_cast<const T *>(static_cast<const node_t *>(&head));
     }
