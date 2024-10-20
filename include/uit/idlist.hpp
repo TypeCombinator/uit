@@ -249,13 +249,13 @@ class idlist<M> {
     }
 
     [[nodiscard]]
-    inline T *mock_head() noexcept {
+    T *mock_head() noexcept {
         // UB!!!
         return container_of(M, &head);
     }
 
     [[nodiscard]]
-    inline const T *const_mock_head() const noexcept {
+    const T *const_mock_head() const noexcept {
         // UB!!!
         return const_container_of(M, &head);
     }
