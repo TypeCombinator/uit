@@ -248,12 +248,12 @@ class idlist {
     }
 
     [[nodiscard]]
-    inline T *mock_head() noexcept {
+    T *mock_head() noexcept {
         return static_cast<T *>(&head);
     }
 
     [[nodiscard]]
-    inline const T *const_mock_head() const noexcept {
+    const T *const_mock_head() const noexcept {
         return static_cast<const T *>(&head);
     }
 
