@@ -9,7 +9,7 @@ struct stag {
     consteval stag() = default;
 
     consteval stag(char const (&str)[SL]) {
-        for (size_t i = 0; i < SL; ++i) {
+        for (std::size_t i = 0; i < SL; ++i) {
             data[i] = str[i];
         }
     }
