@@ -28,6 +28,7 @@ class isdlist {
         return *this;
     }
 
+    [[nodiscard]]
     bool empty() const noexcept {
         return head.right == nullptr;
     }
