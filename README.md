@@ -23,7 +23,7 @@ The trick named **mock_head** brings the following advantages and disadvantages.
 
 ### disadvantages
 
-- There are some undefined behaviors in the implementation of the **mock_head**. The [main branch](https://github.com/TypeCombinator/uit) uses type composition and `container_of` to implement the **mock head**, which is completely **UB**, some test items cannot pass under high optimization level. The [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) uses type inheritance and `static_cast` to implement the **mock head**, unfortunately, this implementation still has some **UB**s, such as the **mock head** implementation of `idslist`, where the head and **mock head** have no inheritance relationship with each other, and violate strict aliasing.
+- There are some undefined behaviors in the implementation of the **mock_head**. The [main branch](https://github.com/TypeCombinator/uit) uses type composition and `container_of` to implement the **mock_head**, which is completely **UB**, some test items cannot pass under high optimization level. The [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) uses type inheritance and `static_cast` to implement the **mock_head**, unfortunately, this implementation still has some **UB**s, such as the **mock_head** implementation of `idslist`, where the head and **mock_head** have no inheritance relationship with each other, and violate strict aliasing.
 
 ## Notice
 
