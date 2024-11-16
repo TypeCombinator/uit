@@ -96,6 +96,34 @@ TEST(idlist_test, remove) {
     EXPECT_EQ(list.pop_front(), nullptr);
 }
 
+TEST(idlist_test, remove1) {
+    uit::idlist<&dapple::node> list{};
+    dapple a0{500, 0};
+    dapple a1{501, 1};
+    dapple a2{502, 2};
+
+    list.push_back(&a0);
+    list.push_back(&a1);
+    list.push_back(&a2);
+    EXPECT_FALSE(list.empty());
+
+
+    list.remove(&a1);
+    EXPECT_EQ(&list.front(), &a0);
+    EXPECT_EQ(&list.back(), &a2);
+
+    list.remove(&a0);
+    EXPECT_EQ(&list.front(), &a2);
+    EXPECT_EQ(&list.back(), &a2);
+
+    list.remove(&a2);
+    EXPECT_TRUE(list.empty());
+
+    list.push_back(&a0);
+    EXPECT_EQ(&list.front(), &a0);
+    EXPECT_EQ(&list.back(), &a0);
+}
+
 TEST(idlist_test, iterator) {
     uit::idlist<&dapple::node> list{};
     dapple a0{500, 0};

@@ -114,6 +114,31 @@ TEST(islist_test, remove_without_ub) {
     EXPECT_TRUE(list.empty());
 }
 
+TEST(islist_test, remove1) {
+    uit::islist<&sapple::node> list{};
+    sapple a0{500, 0};
+    sapple a1{501, 1};
+    sapple a2{502, 2};
+
+    list.push_front(&a2);
+    list.push_front(&a1);
+    list.push_front(&a0);
+    EXPECT_FALSE(list.empty());
+
+
+    list.remove(&a1);
+    EXPECT_EQ(&list.front(), &a0);
+
+    list.remove(&a0);
+    EXPECT_EQ(&list.front(), &a2);
+
+    list.remove(&a2);
+    EXPECT_TRUE(list.empty());
+
+    list.push_front(&a0);
+    EXPECT_EQ(&list.front(), &a0);
+}
+
 TEST(islist_test, clear) {
     uit::islist<&sapple::node> list{};
     sapple a0{500, 0};
