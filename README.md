@@ -17,7 +17,7 @@ The trick named **mock_head** brings the following advantages and disadvantages.
 
 - Simple and easy-to-understand code
 - Fewer branches and better performance, e.g. there's no branch in the `uit::idslist::push_back` method
-- Secondary pointers are no longer required, even the hlist(`uit::isdlist`) is no exception
+- Secondary pointers are no longer required, even the hlist (`uit::isdlist`) is no exception
 - Truly zero overhead
 - No macros
 
@@ -29,9 +29,13 @@ The trick named **mock_head** brings the following advantages and disadvantages.
 
 This project is used for experimental exploration, I will not bear any consequences caused by the practical application of this project.
 
-It must be said that the [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) is a better implementation under the current C++ standard definition, as it can **currently** (not guaranteed in the future) work on clang and msvc with high-level optimizations (such as O3), but for GCC, you must add `-fno-strict-aliasing`.
+It must be said that the [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) is a better implementation under the current C++ standard definition, as it can **currently** (not guaranteed in the future) work on Clang and MSVC with high-level optimizations (such as O3), but for GCC, you must add an extra option`-fno-strict-aliasing`.
 
 The [main branch](https://github.com/TypeCombinator/uit) is mainly used to help understand, due to `container_of` being UB and having many unresolved conflicts with the C++ standard, which does not conform to the future development direction of C++, I am pessimistic about the possibility of `container_of` becoming a standard definition, despite the significant demands in many scenarios.
+
+**Please don't take a free ride on this project** without giving me any feedback (issue, star, fork or others), otherwise you may miss out on some better ideas. There's a **closed source version** in my local repository, it still uses **mock_head**, but **works well on the Big Three (GCC, Clang and MSVC) without any extra options**, after this project receives enough feedback or attention, I will open-source the version.
+
+**Please comply with the license of this project**, as the BSD 3-Clause is really a very permissive license, **thank you very much**!
 
 ## mock_head
 
