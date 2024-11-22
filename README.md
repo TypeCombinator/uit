@@ -74,9 +74,9 @@ struct node *remove_with_secondary_pointer(struct node *n) {
 }
 ```
 
-Why do we need a secondary pointer? The core reason is that the shapes(type) of the head node and data node are different, and the secondary pointer unifies them. If we define the head as `static struct node head = {0, NULL};`, the secondary pointer will no longer be needed, but there is a problem of memory waste, the member `int sn;` is redundant in the example, we only need the member`struct node next;`.
+Why do we need a secondary pointer? The core reason is that the type of the head node and data node are different, and the secondary pointer unifies them. If we define the head as `static struct node head = {0, NULL};`, the secondary pointer will no longer be needed, but there is a problem of memory waste, the member `int sn;` is redundant in the example, we only need the member `struct node *next;`.
 
-The solution is to use `container_of` to simulate the data node with the head node, the code is as follows:
+The solution is to use head node to simulate data node through the  `container_of`, the code is as follows:
 
 ```c
 #define container_of(_field_, _type_, _member_)                                                    \
