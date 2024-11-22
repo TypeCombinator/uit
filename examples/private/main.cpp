@@ -3,12 +3,11 @@
 
 class apple {
    public:
-    apple(uint64_t weight, int sn)
+    apple(uint64_t weight, int sn) noexcept
         : weight(weight)
         , sn(sn) {
     }
 
-   public:
     uint64_t weight;
    private:
     uit::isnode<apple> node;
