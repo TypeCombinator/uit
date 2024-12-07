@@ -11,9 +11,9 @@
 | `uit::idslist` | double                        | single                       | LIFO or FIFO | It's mainly used to implement queues, node storage is more efficient than doubly linked lists. |
 | `uit::idlist`  | double                        | double                       | LIFO or FIFO | Doubly Linked List.                                          |
 
-The trick named **mock_head** brings the following advantages and disadvantages.
+The trick named **mock_head** brings the following pros and cons.
 
-### advantages
+### Pros
 
 - Simple and easy-to-understand code
 - Fewer branches and better performance, e.g. there's no branch in the `uit::idslist::push_back` method
@@ -21,7 +21,7 @@ The trick named **mock_head** brings the following advantages and disadvantages.
 - Truly zero overhead
 - No macros
 
-### disadvantages
+### Cons
 
 - There are some undefined behaviors in the implementation of the **mock_head**. The [main branch](https://github.com/TypeCombinator/uit) uses type composition and `container_of` to implement the **mock_head**, which is completely **UB**, some test items cannot pass under high optimization level. The [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) uses type inheritance and `static_cast` to implement the **mock_head**, unfortunately, this implementation still has some **UB**s, such as the **mock_head** implementation of `idslist`, where the head and **mock_head** have no inheritance relationship with each other, and violate strict aliasing.
 
