@@ -31,4 +31,12 @@ struct idnode : public isnode<T> {
     T *left;
 };
 
+template <typename T>
+struct isbt_node : public idnode<T> {
+    std::size_t size;
+};
+
+template <typename T>
+concept has_is_transparent = requires { typename T::is_transparent; };
+
 } // namespace uit
