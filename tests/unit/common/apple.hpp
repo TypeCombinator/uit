@@ -38,7 +38,7 @@ struct sbt_apple {
         return weight < other_weight;
     }
 
-    friend bool operator<(int other_weight, const sbt_apple &self) noexcept {
+    friend bool operator<(uint64_t other_weight, const sbt_apple &self) noexcept {
         return other_weight < self.weight;
     }
 
