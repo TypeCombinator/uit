@@ -2,6 +2,9 @@
 #include "intrusive.hpp"
 #include <functional>
 
+// References:
+// [0] Chen Qifeng. Size Balanced Tree. 2006.
+// [1] Yoichi Hirai and Kazuhiko Yamamoto. Balancing weight-balanced trees. 2011.
 namespace uit {
 
 template <typename T, stag N = "", typename CMP = std::less<>>
@@ -31,6 +34,10 @@ class isbt {
 
     np_t insert_unique(np_t node) noexcept {
         return insert_unique_impl(head, node);
+    }
+
+    np_t winsert_unique(np_t node) noexcept {
+        return winsert_unique_impl(head, node);
     }
 
     np_t remove_unique(const T &node) noexcept {
@@ -145,6 +152,29 @@ class isbt {
         maintain(root, false);
     }
 
+    template <auto DELTA = 3, auto GAMMA = 3>
+    static void wmaintain(np_t &root, bool right_leaning) noexcept {
+        if (right_leaning) {
+            if ((root->node_t::left->node_t::size * DELTA + 1)
+                < root->node_t::right->node_t::size) {
+                if (root->node_t::right->node_t::right->node_t::size * GAMMA
+                    < root->node_t::right->node_t::size) {
+                    right_rotate(root->node_t::right);
+                }
+                left_rotate(root);
+            }
+        } else {
+            if ((root->node_t::right->node_t::size * DELTA + 1)
+                < root->node_t::left->node_t::size) {
+                if (root->node_t::left->node_t::left->node_t::size * GAMMA
+                    < root->node_t::left->node_t::size) {
+                    left_rotate(root->node_t::left);
+                }
+                right_rotate(root);
+            }
+        }
+    }
+
     np_t insert_unique_impl(np_t &root, np_t node) noexcept {
         if (is_sentinel(root)) [[unlikely]] {
             node->node_t::right = mock_sentinel();
@@ -166,6 +196,35 @@ class isbt {
             if (node == nullptr) {
                 root->node_t::size++;
                 maintain(root, true);
+            }
+            return node;
+        } else {
+            return root;
+        }
+    }
+
+    // TODO: Use "if constexpr" to combine insert_unique_impl and winsert_unique_impl to one.
+    np_t winsert_unique_impl(np_t &root, np_t node) noexcept {
+        if (is_sentinel(root)) [[unlikely]] {
+            node->node_t::right = mock_sentinel();
+            node->node_t::left = mock_sentinel();
+            node->node_t::size = 1;
+
+            root = node;
+            return nullptr;
+        }
+        if (cmp(*node, *root)) {
+            node = winsert_unique_impl(root->node_t::left, node);
+            if (node == nullptr) {
+                root->node_t::size++;
+                wmaintain(root, false);
+            }
+            return node;
+        } else if (cmp(*root, *node)) {
+            node = winsert_unique_impl(root->node_t::right, node);
+            if (node == nullptr) {
+                root->node_t::size++;
+                wmaintain(root, true);
             }
             return node;
         } else {

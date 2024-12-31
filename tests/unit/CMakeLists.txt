@@ -4,6 +4,7 @@ add_executable(uit_tests
   isdlist.cpp
   idslist.cpp
   isbt.cpp
+  iwbt.cpp
 )
 target_link_libraries(uit_tests PRIVATE
   uit
