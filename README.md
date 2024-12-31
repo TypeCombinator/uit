@@ -2,7 +2,7 @@
 
 ## Introduction
 
-**UIT** is a Unified Intrusive Linked List library. This library brings together 4 different linked lists based on a unified abstraction, the core trick is **mock_head**.
+**UIT** is a Unified Intrusive Linked List library. This library brings together 4 different linked lists based on a unified abstraction, the core trick is **mock_head**. In addition, some balanced trees have been implemented, what makes it different is that they're simplified with **mock_sentinel**, which is similar to the **mock_head**.
 
 | types          | number of head  node pointers | number of data node pointers | order        | comments                                                     |
 | -------------- | ----------------------------- | ---------------------------- | ------------ | ------------------------------------------------------------ |
@@ -125,6 +125,10 @@ For an empty sdlist: `head.right = nullptr;`.
 ![dlist_empty](docs/images/dlist_empty.png)
 
 ![dlist](docs/images/dlist.png)
+
+## mock_sentinel
+
+![mock_sentinel](docs/images/mock_sentinel.png)
 
 ## Example
 
