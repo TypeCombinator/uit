@@ -69,6 +69,57 @@ TEST(iwbt_test, insert_unique) {
     // EXPECT_LE(tree.height(), max_height);
 }
 
+TEST(iwbt_test, insert_multi1) {
+    uit::isbt<sbt_apple> tree{};
+    sbt_apple a0{500, 0};
+
+    tree.winsert_multi(&a0);
+    EXPECT_FALSE(tree.empty());
+    EXPECT_EQ(tree.size(), 1);
+}
+
+TEST(iwbt_test, insert_multi2) {
+    uit::isbt<sbt_apple> tree{};
+    sbt_apple a0{500, 0};
+    sbt_apple a1{501, 1};
+
+    tree.winsert_multi(&a0);
+    tree.winsert_multi(&a1);
+    EXPECT_FALSE(tree.empty());
+    EXPECT_EQ(tree.size(), 2);
+}
+
+TEST(iwbt_test, insert_multi3) {
+    uit::isbt<sbt_apple> tree{};
+    sbt_apple a0{500, 0};
+    sbt_apple a1{501, 1};
+    sbt_apple a2{502, 2};
+    sbt_apple a3{501, 3};
+
+    tree.winsert_multi(&a0);
+    tree.winsert_multi(&a1);
+    tree.winsert_multi(&a2);
+    tree.winsert_multi(&a3);
+    EXPECT_EQ(tree.size(), 4);
+    EXPECT_EQ(tree.count_multi(501), 2);
+}
+
+TEST(iwbt_test, insert_multi) {
+    uit::isbt<sbt_apple> tree{};
+    std::vector<sbt_apple> vec;
+    const std::size_t vec_size = 100;
+
+    vec.reserve(vec_size);
+    for (std::size_t i = 0; i < vec_size; i++) {
+        vec.emplace_back(i, i);
+    }
+    for (auto &i: vec) {
+        tree.winsert_multi(&i);
+    }
+    EXPECT_FALSE(tree.empty());
+    EXPECT_EQ(tree.size(), vec_size);
+}
+
 TEST(iwbt_test, remove_unique) {
     uit::isbt<sbt_apple> tree{};
     sbt_apple a0{500, 0};

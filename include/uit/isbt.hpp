@@ -40,6 +40,14 @@ class isbt {
         return winsert_unique_impl(head, node);
     }
 
+    void insert_multi(np_t node) noexcept {
+        insert_multi_impl(head, node);
+    }
+
+    void winsert_multi(np_t node) noexcept {
+        winsert_multi_impl(head, node);
+    }
+
     np_t remove_unique(const T &node) noexcept {
         // Remove without balance!
         return remove_unique_impl(head, node);
@@ -97,6 +105,18 @@ class isbt {
     [[nodiscard]]
     std::size_t height() const noexcept {
         return height_impl(head);
+    }
+
+    [[nodiscard]]
+    std::size_t count_multi(const T &node) const noexcept {
+        return count_multi_impl(head, node);
+    }
+
+    template <typename K>
+        requires has_is_transparent<CMP>
+    [[nodiscard]]
+    std::size_t count_multi(const K &k) const noexcept {
+        return count_multi_impl(head, k);
     }
 
    private:
@@ -232,6 +252,44 @@ class isbt {
         }
     }
 
+    void insert_multi_impl(np_t &root, np_t node) noexcept {
+        if (is_sentinel(root)) [[unlikely]] {
+            node->node_t::right = mock_sentinel();
+            node->node_t::left = mock_sentinel();
+            node->node_t::size = 1;
+
+            root = node;
+            return;
+        }
+        root->node_t::size++;
+        if (cmp(*node, *root)) {
+            insert_multi_impl(root->node_t::left, node);
+            maintain(root, false);
+        } else {
+            insert_multi_impl(root->node_t::right, node);
+            maintain(root, true);
+        }
+    }
+
+    void winsert_multi_impl(np_t &root, np_t node) noexcept {
+        if (is_sentinel(root)) [[unlikely]] {
+            node->node_t::right = mock_sentinel();
+            node->node_t::left = mock_sentinel();
+            node->node_t::size = 1;
+
+            root = node;
+            return;
+        }
+        root->node_t::size++;
+        if (cmp(*node, *root)) {
+            winsert_multi_impl(root->node_t::left, node);
+            wmaintain(root, false);
+        } else {
+            winsert_multi_impl(root->node_t::right, node);
+            wmaintain(root, true);
+        }
+    }
+
     template <typename K>
     np_t remove_unique_impl(np_t &root, const K &node) noexcept {
         if (is_sentinel(root)) [[unlikely]] {
@@ -325,6 +383,21 @@ class isbt {
             }
         }
         return std::size_t(-1);
+    }
+
+    template <typename K>
+    std::size_t count_multi_impl(const T *root, const K &node) const noexcept {
+        if (is_sentinel(root)) {
+            return 0;
+        }
+        if (cmp(node, *root)) {
+            return count_multi_impl(root->node_t::left, node);
+        } else if (cmp(*root, node)) {
+            return count_multi_impl(root->node_t::right, node);
+        } else {
+            return 1 + count_multi_impl(root->node_t::right, node)
+                 + count_multi_impl(root->node_t::left, node);
+        }
     }
 
     static T *mock_sentinel() noexcept {
