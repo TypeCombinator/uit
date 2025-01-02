@@ -68,6 +68,59 @@ TEST(isbt_test, insert_unique) {
     EXPECT_LE(tree.height(), max_height);
 }
 
+TEST(isbt_test, insert_multi1) {
+    uit::isbt<&sbt_apple::node> tree{};
+    sbt_apple a0{500, 0};
+
+    tree.insert_multi(&a0);
+    EXPECT_FALSE(tree.empty());
+    EXPECT_EQ(tree.size(), 1);
+}
+
+TEST(isbt_test, insert_multi2) {
+    uit::isbt<&sbt_apple::node> tree{};
+    sbt_apple a0{500, 0};
+    sbt_apple a1{501, 1};
+
+    tree.insert_multi(&a0);
+    tree.insert_multi(&a1);
+    EXPECT_FALSE(tree.empty());
+    EXPECT_EQ(tree.size(), 2);
+}
+
+TEST(isbt_test, insert_multi3) {
+    uit::isbt<&sbt_apple::node> tree{};
+    sbt_apple a0{500, 0};
+    sbt_apple a1{501, 1};
+    sbt_apple a2{502, 2};
+    sbt_apple a3{501, 3};
+
+    tree.insert_multi(&a0);
+    tree.insert_multi(&a1);
+    tree.insert_multi(&a2);
+    tree.insert_multi(&a3);
+    EXPECT_EQ(tree.size(), 4);
+    EXPECT_EQ(tree.count_multi(501), 2);
+}
+
+TEST(isbt_test, insert_multi) {
+    uit::isbt<&sbt_apple::node> tree{};
+    std::vector<sbt_apple> vec;
+    const std::size_t vec_size = 100;
+    std::size_t max_height = std::ceil(1.44 * std::log2(vec_size + 1.5) - 1.33);
+
+    vec.reserve(vec_size);
+    for (std::size_t i = 0; i < vec_size; i++) {
+        vec.emplace_back(i, i);
+    }
+    for (auto &i: vec) {
+        tree.insert_multi(&i);
+    }
+    EXPECT_FALSE(tree.empty());
+    EXPECT_EQ(tree.size(), vec_size);
+    EXPECT_LE(tree.height(), max_height);
+}
+
 TEST(isbt_test, remove_unique) {
     uit::isbt<&sbt_apple::node> tree{};
     sbt_apple a0{500, 0};
