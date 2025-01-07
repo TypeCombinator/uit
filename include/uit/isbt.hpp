@@ -30,6 +30,10 @@ class isbt<M, CMP> {
         return is_sentinel(head);
     }
 
+    void clear() noexcept {
+        head = mock_sentinel();
+    }
+
     [[nodiscard]]
     std::size_t size() const noexcept {
         return (head->*M).size;
