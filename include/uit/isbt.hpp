@@ -352,13 +352,13 @@ class isbt<M, CMP> {
     }
 
     [[nodiscard]]
-    std::size_t height_impl(const T *node) const noexcept {
-        if (is_sentinel(node)) {
+    std::size_t height_impl(const T *root) const noexcept {
+        if (is_sentinel(root)) {
             return 0;
         }
-        std::size_t hl = height_impl((node->*M).left);
-        std::size_t hr = height_impl((node->*M).right);
-        return (hl > hr ? hl : hr) + 1;
+        std::size_t left_height = height_impl((root->*M).left);
+        std::size_t right_height = height_impl((root->*M).right);
+        return (left_height > right_height ? left_height : right_height) + 1;
     }
 
     template <typename K>
