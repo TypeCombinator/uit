@@ -37,6 +37,6 @@ if(UIT_BUILD_TESTS)
   include(GoogleTest)
   add_subdirectory(tests/unit)
 
-  # include(GoogleBenchmark)
-  # add_subdirectory(tests/bench)
+  include(GoogleBenchmark)
+  add_subdirectory(tests/bench)
 endif()
