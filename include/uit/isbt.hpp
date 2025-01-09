@@ -27,6 +27,10 @@ class isbt {
         return is_sentinel(head);
     }
 
+    void clear() noexcept {
+        head = mock_sentinel();
+    }
+
     [[nodiscard]]
     std::size_t size() const noexcept {
         return head->node_t::size;
