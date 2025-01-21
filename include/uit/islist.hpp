@@ -7,7 +7,8 @@ namespace uit {
 template <auto M>
 class islist;
 
-template <typename T, isnode<T>(T::*M)>
+template <typename T, typename MT, MT(T::*M)>
+    requires std::is_base_of_v<isnode<T>, MT>
 class islist<M> {
    public:
     islist() noexcept {
@@ -170,13 +171,13 @@ class islist<M> {
     [[nodiscard]]
     T* mock_head() noexcept {
         // UB!!!
-        return container_of(M, &head);
+        return container_of(M, static_cast<MT*>(&head));
     }
 
     [[nodiscard]]
     const T* const_mock_head() const noexcept {
         // UB!!!
-        return const_container_of(M, &head);
+        return const_container_of(M, static_cast<const MT*>(&head));
     }
 
     isnode<T> head;
