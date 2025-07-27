@@ -8,7 +8,7 @@
 | -------------- | ----------------------------- | ---------------------------- | ------------ | ------------------------------------------------------------ |
 | `uit::islist`  | single                        | single                       | LIFO         | Singly Linked List.                                          |
 | `uit::isdlist` | single                        | double                       | LIFO         | It's equivalent to the hlist in linux, and mainly used to implement hash tables. |
-| `uit::idslist` | double                        | single                       | LIFO or FIFO | It's mainly used to implement queues, node storage is more efficient than doubly linked lists. |
+| `uit::idslist` | double                        | single                       | LIFO or FIFO | Data nodes have a smaller footprint.                         |
 | `uit::idlist`  | double                        | double                       | LIFO or FIFO | Doubly Linked List.                                          |
 
 The trick named **mock_head** brings the following pros and cons.
@@ -24,6 +24,7 @@ The trick named **mock_head** brings the following pros and cons.
 ### Cons
 
 - There are some undefined behaviors in the implementation of the **mock_head**. The [main branch](https://github.com/TypeCombinator/uit) uses type composition and `container_of` to implement the **mock_head**, which is completely **UB**, some test items cannot pass under high optimization level. The [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) uses type inheritance and `static_cast` to implement the **mock_head**, unfortunately, this implementation still has some **UB**s, such as the **mock_head** implementation of `idslist`, where the head and **mock_head** have no inheritance relationship with each other, and violate strict aliasing.
+- Among these, `isdlist`, `idslist`, and `idlist` are self-referential types,  with `isdlist` and `idlist` being move-only.
 
 ## Notice
 
@@ -33,9 +34,7 @@ It must be said that the [v2 branch](https://github.com/TypeCombinator/uit/tree/
 
 The [main branch](https://github.com/TypeCombinator/uit) is mainly used to help understand, due to `container_of` being UB and having many unresolved conflicts with the C++ standard, which does not conform to the future development direction of C++, I am pessimistic about the possibility of `container_of` becoming a standard definition, despite the significant demands in many scenarios.
 
-**Please don't take a free ride on this project** without giving me any feedback (issue, star, fork or others), otherwise you may miss out on some better ideas. There's a **closed source version** in my local repository, it still uses **mock_head**, but **works well on the Big Three (GCC, Clang and MSVC) without any extra options**, after this project receives enough feedback or attention, I will open-source the version.
-
-**Please comply with the license of this project**, as the BSD 3-Clause is really a very permissive license, **thank you very much**!
+I have a private repository named [**uit_ng**](https://github.com/TypeCombinator/uit_ng) that still uses **mock_head**, it doesn't employ type inheritance, yet maintains zero-overhead abstraction. Despite this, it works correctly across **Big Three (GCC, Clang and MSVC)** at the highest optimization levels, and passes all test cases **without requiring additional compiler flags or special attributes in the source code**. So far, I haven’t been able to create a test case that it fails. If enough people express interest, I would consider making this repository public.
 
 ## mock_head
 
