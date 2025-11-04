@@ -17,13 +17,13 @@ The trick named **mock_head** brings the following pros and cons.
 
 - Simple and easy-to-understand code
 - Fewer branches and better performance, e.g. there's no branch in the `uit::idslist::push_back` method
-- Secondary pointers are no longer required, even the hlist (`uit::isdlist`) is no exception
+- Pointers to pointers are no longer required, even the hlist (`uit::isdlist`) is no exception
 - Truly zero overhead
 - No macros
 
 ### Cons
 
-- There are some undefined behaviors in the implementation of the **mock_head**. The [main branch](https://github.com/TypeCombinator/uit) uses type composition and `container_of` to implement the **mock_head**, which is completely **UB**, some test items cannot pass under high optimization level. The [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) uses type inheritance and `static_cast` to implement the **mock_head**, unfortunately, this implementation still has some **UB**s, such as the **mock_head** implementation of `idslist`, where the head and **mock_head** have no inheritance relationship with each other, and violate strict aliasing.
+- There are some undefined behaviors in the implementation of the **mock_head**. The [main branch](https://github.com/TypeCombinator/uit) uses type composition and `container_of` to implement the **mock_head**, which is completely **UB**, some test items cannot pass under high optimization level. The [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) uses type inheritance and `static_cast` to implement the **mock_head**, unfortunately, this implementation still has some **UB**s, such as the **mock_head** implementation of `idslist`, where the head and **mock_head** have no inheritance relationship with each other, and violate strict aliasing. Additionally, **mock_head** is not a complete object that actually exists, which violates lifetime rules and exceeds object boundaries. In summary, regardless of the approach, **mock_head** does not conform to the C++ standard.
 - Among these, `isdlist`, `idslist`, and `idlist` are self-referential types,  with `isdlist` and `idlist` being move-only.
 
 ## Notice
@@ -56,10 +56,10 @@ void push_front(struct node *n) {
 }
 ```
 
-Traditionally, when we want to remove a node from a singly linked list, we need the help of a secondary pointer.
+Traditionally, when we want to remove a node from a singly linked list, we need the help of a pointer to pointer.
 
 ```c
-struct node *remove_with_secondary_pointer(struct node *n) {
+struct node *remove_with_pointer_to_pointer(struct node *n) {
     struct node **prev = &head;
     for (struct node *cur = *prev; cur != NULL;) {
         if (cur == n) {
@@ -73,7 +73,7 @@ struct node *remove_with_secondary_pointer(struct node *n) {
 }
 ```
 
-Why do we need a secondary pointer? The core reason is that the type of the head node and data node are different, and the secondary pointer unifies them. If we define the head as `static struct node head = {0, NULL};`, the secondary pointer will no longer be needed, but there is a problem of memory waste, the member `int sn;` is redundant in the example, we only need the member `struct node *next;`.
+Why do we need a pointer to pointer? The core reason is that the type of the head node and data node are different, and the pointer to pointer unifies them. If we define the head as `static struct node head = {0, NULL};`, the pointer to pointer will no longer be needed, but there is a problem of memory waste, the member `int sn;` is redundant in the example, we only need the member `struct node *next;`.
 
 The solution is to use head node to simulate data node through the  `container_of`, the code is as follows:
 
@@ -97,7 +97,7 @@ struct node *remove_with_mock_head(struct node *n) {
 }
 ```
 
-As you can see, **mock_head** is just a alias of the `contianer_of`, it unifies head node and data node, just like secondary pointer. It should be noted that when accessing head node members, all members except for `struct node *next;` are undefined in the example.
+As you can see, **mock_head** is just a alias of the `contianer_of`, it unifies head node and data node, just like pointer to pointer. It should be noted that when accessing head node members, all members except for `struct node *next;` are undefined in the example.
 
 Of course, this is just an example. The implementation of container_of is slightly different in C++, please see the [header](include/uit/intrusive.hpp) in this library.
 
