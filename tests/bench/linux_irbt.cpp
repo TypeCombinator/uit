@@ -1,10 +1,14 @@
+// SPDX-FileCopyrightText: 2025 TypeCombinator <typecombinator@foxmail.com>
+//
+// SPDX-License-Identifier: BSD 3-Clause
+
 #include <benchmark/benchmark.h>
 #include <vector>
 #include <random>
 #include "common/linux_irbt.h"
 
 #define container_of(_ptr_, _type_, _member_)                                                      \
-    ((_type_ *) ((unsigned char *) (_ptr_) -offsetof(_type_, _member_)))
+    ((_type_ *) ((unsigned char *) (_ptr_) - offsetof(_type_, _member_)))
 
 struct linux_rbt_apple {
     explicit linux_rbt_apple(uint64_t weight, int sn) noexcept

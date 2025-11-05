@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 TypeCombinator <typecombinator@foxmail.com>
+//
+// SPDX-License-Identifier: BSD 3-Clause
+
 #pragma once
 #include <iterator>
 #include "intrusive.hpp"
@@ -108,26 +112,22 @@ class idlist {
         }
 
         [[nodiscard]]
-        reference
-            operator*() const noexcept {
+        reference operator*() const noexcept {
             return *current;
         }
 
         [[nodiscard]]
-        reference
-            operator*() noexcept {
+        reference operator*() noexcept {
             return *current;
         }
 
         [[nodiscard]]
-        pointer
-            operator->() const noexcept {
+        pointer operator->() const noexcept {
             return current;
         }
 
         [[nodiscard]]
-        pointer
-            operator->() noexcept {
+        pointer operator->() noexcept {
             return current;
         }
 
