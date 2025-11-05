@@ -28,7 +28,7 @@ struct idnode : public isnode<T, S> {
 };
 
 template <typename T, stag S = "">
-struct isbt_node : public idnode<T, S> {
+struct irsbt_node : public idnode<T, S> {
     std::size_t size;
 };
 

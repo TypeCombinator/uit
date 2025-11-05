@@ -1,5 +1,5 @@
 #pragma once
-#include "intrusive.hpp"
+#include <uit/intrusive.hpp>
 #include <functional>
 
 // References:
@@ -8,12 +8,12 @@
 namespace uit {
 
 template <typename T, stag N = "", typename CMP = std::less<>>
-class isbt {
+class irsbt {
    public:
-    using node_t = isbt_node<T, N>;
+    using node_t = irsbt_node<T, N>;
     using np_t = T *;
 
-    isbt() noexcept {
+    irsbt() noexcept {
         head = mock_sentinel();
     }
 
@@ -409,13 +409,14 @@ class isbt {
     }
 
     static inline const node_t sentinel{
-        {{static_cast<T *>(const_cast<node_t *>(&isbt::sentinel))},
-         static_cast<T *>(const_cast<node_t *>(&isbt::sentinel))},
+        {{static_cast<T *>(const_cast<node_t *>(&irsbt::sentinel))},
+         static_cast<T *>(const_cast<node_t *>(&irsbt::sentinel))},
         0
     };
 
     // TODO: need a macro for the msvc.
-    [[no_unique_address]] CMP cmp;
+    [[no_unique_address]]
+    CMP cmp;
     T *head;
 };
 
