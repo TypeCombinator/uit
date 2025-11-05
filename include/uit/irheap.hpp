@@ -111,6 +111,10 @@ class irheap<Right, Left, CMP> {
     auto size() const noexcept {
         return m_size;
     }
+
+    void clear() noexcept {
+        *this = {};
+    }
    private:
     static inline void swap_with_right_child(np_t cur, np_t child) noexcept {
         cur->*Right = child->*Right;
