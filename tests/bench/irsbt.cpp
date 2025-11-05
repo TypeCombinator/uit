@@ -1,13 +1,13 @@
 #include <benchmark/benchmark.h>
 #include <vector>
 #include <random>
-#include "common/apple.hpp"
-#include "uit/isbt.hpp"
+#include <common/apple.hpp>
+#include <uit/irsbt.hpp>
 
 // TODO: need a generic generator.
-static std::vector<sbt_apple>
+static std::vector<rsbt_apple>
     generate_random_vector(uint32_t seed, uint32_t size, uint32_t dis_a, uint32_t dis_b) {
-    std::vector<sbt_apple> v;
+    std::vector<rsbt_apple> v;
     std::mt19937 gen(seed);
     std::uniform_int_distribution<uint32_t> dis(dis_a, dis_b);
     v.reserve(size);
@@ -20,7 +20,7 @@ static std::vector<sbt_apple>
 static void isbt_insert_multi_random(benchmark::State& state) {
     std::size_t size = state.range(0);
     auto&& data = generate_random_vector(23, size, 0, size * 8);
-    uit::isbt<&sbt_apple::node> tree{};
+    uit::isbt<&rsbt_apple::node> tree{};
 
     for (auto _: state) {
         for (auto& e: data) {

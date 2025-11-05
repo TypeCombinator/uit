@@ -1,5 +1,5 @@
 #pragma once
-#include "intrusive.hpp"
+#include <uit/intrusive.hpp>
 #include <functional>
 
 // References:
@@ -11,7 +11,7 @@ namespace uit {
 template <auto M, typename CMP = std::less<>>
 class isbt;
 
-template <typename T, isbt_node<T> T::*M, typename CMP>
+template <typename T, irsbt_node<T> T::*M, typename CMP>
 class isbt<M, CMP> {
    public:
     using np_t = T *;
@@ -399,17 +399,18 @@ class isbt<M, CMP> {
 
     // Unlike the mock_head, although this is also UB, it will not lead to unexpected behavoir.
     static T *mock_sentinel() noexcept {
-        return uit::container_of(M, const_cast<uit::isbt_node<T> *>(&sentinel));
+        return uit::container_of(M, const_cast<uit::irsbt_node<T> *>(&sentinel));
     }
 
-    static inline const isbt_node<T> sentinel{
-        {{uit::container_of(M, const_cast<uit::isbt_node<T> *>(&isbt::sentinel))},
-         uit::container_of(M, const_cast<uit::isbt_node<T> *>(&isbt::sentinel))},
+    static inline const irsbt_node<T> sentinel{
+        {{uit::container_of(M, const_cast<uit::irsbt_node<T> *>(&isbt::sentinel))},
+         uit::container_of(M, const_cast<uit::irsbt_node<T> *>(&isbt::sentinel))},
         0
     };
 
     // TODO: need a macro for the msvc.
-    [[no_unique_address]] CMP cmp;
+    [[no_unique_address]]
+    CMP cmp;
     T *head;
 };
 
