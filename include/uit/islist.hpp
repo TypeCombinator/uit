@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 TypeCombinator <typecombinator@foxmail.com>
+//
+// SPDX-License-Identifier: BSD 3-Clause
+
 #pragma once
 #include <iterator>
 #include "intrusive.hpp"
@@ -7,7 +11,7 @@ namespace uit {
 template <auto M>
 class islist;
 
-template <typename T, typename MT, MT(T::*M)>
+template <typename T, typename MT, MT(T::* M)>
     requires std::is_base_of_v<isnode<T>, MT>
 class islist<M> {
    public:
@@ -99,26 +103,22 @@ class islist<M> {
         }
 
         [[nodiscard]]
-        reference
-            operator*() noexcept {
+        reference operator*() noexcept {
             return *current;
         }
 
         [[nodiscard]]
-        reference
-            operator*() const noexcept {
+        reference operator*() const noexcept {
             return *current;
         }
 
         [[nodiscard]]
-        pointer
-            operator->() noexcept {
+        pointer operator->() noexcept {
             return current;
         }
 
         [[nodiscard]]
-        pointer
-            operator->() const noexcept {
+        pointer operator->() const noexcept {
             return current;
         }
 
