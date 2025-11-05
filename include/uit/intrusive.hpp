@@ -32,7 +32,7 @@ struct idnode : public isnode<T> {
 };
 
 template <typename T>
-struct isbt_node : public idnode<T> {
+struct irsbt_node : public idnode<T> {
     std::size_t size;
 };
 
