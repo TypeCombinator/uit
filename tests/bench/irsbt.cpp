@@ -24,7 +24,7 @@ static std::vector<rsbt_apple>
 static void isbt_insert_multi_random(benchmark::State& state) {
     std::size_t size = state.range(0);
     auto&& data = generate_random_vector(23, size, 0, size * 8);
-    uit::isbt<&rsbt_apple::node> tree{};
+    uit::irsbt<&rsbt_apple::node> tree{};
 
     for (auto _: state) {
         for (auto& e: data) {

@@ -13,14 +13,14 @@ namespace uit {
 
 // It's simpler and better to use std::less<> as the default comparator.
 template <auto M, typename CMP = std::less<>>
-class isbt;
+class irsbt;
 
 template <typename T, irsbt_node<T> T::*M, typename CMP>
-class isbt<M, CMP> {
+class irsbt<M, CMP> {
    public:
     using np_t = T *;
 
-    isbt() noexcept {
+    irsbt() noexcept {
         head = mock_sentinel();
     }
 
@@ -407,8 +407,8 @@ class isbt<M, CMP> {
     }
 
     static inline const irsbt_node<T> sentinel{
-        {{uit::container_of(M, const_cast<uit::irsbt_node<T> *>(&isbt::sentinel))},
-         uit::container_of(M, const_cast<uit::irsbt_node<T> *>(&isbt::sentinel))},
+        {{uit::container_of(M, const_cast<uit::irsbt_node<T> *>(&irsbt::sentinel))},
+         uit::container_of(M, const_cast<uit::irsbt_node<T> *>(&irsbt::sentinel))},
         0
     };
 
