@@ -8,14 +8,16 @@
 #include <gtest/gtest.h>
 #include <common/apple.hpp>
 
+using irwbt_apple_t = uit::irsbt<&rsbt_apple::right, &rsbt_apple::left, &rsbt_apple::size>;
+
 TEST(iwbt_test, empty) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     EXPECT_TRUE(tree.empty());
     EXPECT_EQ(tree.size(), 0);
 }
 
 TEST(iwbt_test, insert_unique1) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     rsbt_apple a0{500, 0};
 
     tree.winsert_unique(&a0);
@@ -24,7 +26,7 @@ TEST(iwbt_test, insert_unique1) {
 }
 
 TEST(iwbt_test, insert_unique2) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     rsbt_apple a0{500, 0};
     rsbt_apple a1{501, 1};
 
@@ -35,7 +37,8 @@ TEST(iwbt_test, insert_unique2) {
 }
 
 TEST(iwbt_test, insert_unique3) {
-    uit::irsbt<&rsbt_apple::node, std::less<rsbt_apple>> tree{};
+    uit::irsbt<&rsbt_apple::right, &rsbt_apple::left, &rsbt_apple::size, std::less<rsbt_apple>>
+        tree{};
     rsbt_apple a0{500, 0};
     rsbt_apple a1{501, 1};
     rsbt_apple a2{502, 2};
@@ -55,7 +58,7 @@ TEST(iwbt_test, insert_unique3) {
 }
 
 TEST(iwbt_test, insert_unique) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     std::vector<rsbt_apple> vec;
     const std::size_t vec_size = 100;
     // std::size_t max_height = std::ceil(1.44 * std::log2(vec_size + 1.5) - 1.33);
@@ -74,7 +77,7 @@ TEST(iwbt_test, insert_unique) {
 }
 
 TEST(iwbt_test, insert_multi1) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     rsbt_apple a0{500, 0};
 
     tree.winsert_multi(&a0);
@@ -83,7 +86,7 @@ TEST(iwbt_test, insert_multi1) {
 }
 
 TEST(iwbt_test, insert_multi2) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     rsbt_apple a0{500, 0};
     rsbt_apple a1{501, 1};
 
@@ -94,7 +97,7 @@ TEST(iwbt_test, insert_multi2) {
 }
 
 TEST(iwbt_test, insert_multi3) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     rsbt_apple a0{500, 0};
     rsbt_apple a1{501, 1};
     rsbt_apple a2{502, 2};
@@ -109,7 +112,7 @@ TEST(iwbt_test, insert_multi3) {
 }
 
 TEST(iwbt_test, insert_multi) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     std::vector<rsbt_apple> vec;
     const std::size_t vec_size = 100;
 
@@ -125,7 +128,7 @@ TEST(iwbt_test, insert_multi) {
 }
 
 TEST(iwbt_test, remove_unique) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     rsbt_apple a0{500, 0};
     rsbt_apple a1{501, 1};
     rsbt_apple a2{502, 2};
@@ -161,7 +164,7 @@ TEST(iwbt_test, remove_unique) {
 }
 
 TEST(iwbt_test, find) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     rsbt_apple a0{500, 0};
     rsbt_apple a1{501, 1};
     rsbt_apple a2{502, 2};
@@ -188,7 +191,7 @@ TEST(iwbt_test, find) {
 }
 
 TEST(iwbt_test, at) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     rsbt_apple a0{500, 0};
     rsbt_apple a1{501, 1};
     rsbt_apple a2{502, 2};
@@ -208,7 +211,7 @@ TEST(iwbt_test, at) {
 }
 
 TEST(iwbt_test, position) {
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irwbt_apple_t tree{};
     rsbt_apple a0{500, 0};
     rsbt_apple a1{501, 1};
     rsbt_apple a2{502, 2};

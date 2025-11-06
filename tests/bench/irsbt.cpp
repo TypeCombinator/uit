@@ -8,6 +8,8 @@
 #include <common/apple.hpp>
 #include <uit/irsbt.hpp>
 
+using irsbt_apple_t = uit::irsbt<&rsbt_apple::right, &rsbt_apple::left, &rsbt_apple::size>;
+
 // TODO: need a generic generator.
 static std::vector<rsbt_apple>
     generate_random_vector(uint32_t seed, uint32_t size, uint32_t dis_a, uint32_t dis_b) {
@@ -24,7 +26,7 @@ static std::vector<rsbt_apple>
 static void isbt_insert_multi_random(benchmark::State& state) {
     std::size_t size = state.range(0);
     auto&& data = generate_random_vector(23, size, 0, size * 8);
-    uit::irsbt<&rsbt_apple::node> tree{};
+    irsbt_apple_t tree{};
 
     for (auto _: state) {
         for (auto& e: data) {

@@ -36,11 +36,6 @@ struct idnode : public isnode<T> {
 };
 
 template <typename T>
-struct irsbt_node : public idnode<T> {
-    std::size_t size;
-};
-
-template <typename T>
 concept has_is_transparent = requires { typename T::is_transparent; };
 
 } // namespace uit

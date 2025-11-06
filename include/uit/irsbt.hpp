@@ -2,21 +2,25 @@
 //
 // SPDX-License-Identifier: BSD 3-Clause
 
-#pragma once
+#ifndef UIT_IRSBT_863421E6_3490_4C93_AD0F_0645A51AA38F
+#define UIT_IRSBT_863421E6_3490_4C93_AD0F_0645A51AA38F
 #include <uit/intrusive.hpp>
 #include <functional>
 
 // References:
 // [0] Chen Qifeng. Size Balanced Tree. 2006.
 // [1] Yoichi Hirai and Kazuhiko Yamamoto. Balancing weight-balanced trees. 2011.
+// Notices:
+// [0] The acronym irsbt stands for intrusive recursive size-balanced tree.
+// [1] The mock sentinel will involve UB, but the code works correctly.
+// [2] Nodes in the tree don‘t have parent pointers, so some operations can only be implemented
+// recursively.
 namespace uit {
+template <auto Right, auto Left, auto Size, typename CMP = std::less<>>
+struct irsbt;
 
-// It's simpler and better to use std::less<> as the default comparator.
-template <auto M, typename CMP = std::less<>>
-class irsbt;
-
-template <typename T, irsbt_node<T> T::*M, typename CMP>
-class irsbt<M, CMP> {
+template <typename T, typename MT, MT T::*Right, MT T::*Left, auto Size, typename CMP>
+struct irsbt<Right, Left, Size, CMP> {
    public:
     using np_t = T *;
 
@@ -26,7 +30,7 @@ class irsbt<M, CMP> {
 
     [[nodiscard]]
     static bool is_sentinel(const T *node) noexcept {
-        return node == uit::const_container_of(M, &sentinel);
+        return node == const_mock_sentinel();
     }
 
     [[nodiscard]]
@@ -40,7 +44,7 @@ class irsbt<M, CMP> {
 
     [[nodiscard]]
     std::size_t size() const noexcept {
-        return (head->*M).size;
+        return head->*Size;
     }
 
     np_t insert_unique(np_t node) noexcept {
@@ -87,14 +91,14 @@ class irsbt<M, CMP> {
         np_t root = head;
 
         while (!is_sentinel(root)) {
-            std::size_t lsize = ((root->*M).left->*M).size;
+            std::size_t lsize = root->*Left->*Size;
             if (lsize == pos) {
                 return root;
             } else if (lsize > pos) {
-                root = (root->*M).left;
+                root = root->*Left;
             } else {
                 pos -= (lsize + 1);
-                root = (root->*M).right;
+                root = root->*Right;
             }
         }
         return nullptr;
@@ -132,47 +136,47 @@ class irsbt<M, CMP> {
 
    private:
     static void left_rotate(np_t &n) noexcept {
-        np_t s = (n->*M).right;
+        np_t s = n->*Right;
 
-        (n->*M).right = (s->*M).left;
-        (s->*M).left = n;
-        (s->*M).size = (n->*M).size;
-        (n->*M).size = ((n->*M).right->*M).size + ((n->*M).left->*M).size + 1;
+        n->*Right = s->*Left;
+        s->*Left = n;
+        s->*Size = n->*Size;
+        n->*Size = n->*Right->*Size + n->*Left->*Size + 1;
         n = s;
     }
 
     static void right_rotate(np_t &n) noexcept {
-        np_t s = (n->*M).left;
+        np_t s = n->*Left;
 
-        (n->*M).left = (s->*M).right;
-        (s->*M).right = n;
-        (s->*M).size = (n->*M).size;
-        (n->*M).size = ((n->*M).right->*M).size + ((n->*M).left->*M).size + 1;
+        n->*Left = s->*Right;
+        s->*Right = n;
+        s->*Size = n->*Size;
+        n->*Size = n->*Right->*Size + n->*Left->*Size + 1;
         n = s;
     }
 
     static void maintain(np_t &root, bool right_leaning) noexcept {
         if (right_leaning) {
-            if ((((root->*M).right->*M).left->*M).size > ((root->*M).left->*M).size) {
-                right_rotate((root->*M).right);
+            if (root->*Right->*Left->*Size > root->*Left->*Size) {
+                right_rotate(root->*Right);
                 left_rotate(root);
-            } else if ((((root->*M).right->*M).right->*M).size > ((root->*M).left->*M).size) {
+            } else if (root->*Right->*Right->*Size > root->*Left->*Size) {
                 left_rotate(root);
             } else {
                 return;
             }
         } else {
-            if ((((root->*M).left->*M).right->*M).size > ((root->*M).right->*M).size) {
-                left_rotate((root->*M).left);
+            if (root->*Left->*Right->*Size > root->*Right->*Size) {
+                left_rotate(root->*Left);
                 right_rotate(root);
-            } else if ((((root->*M).left->*M).left->*M).size > ((root->*M).right->*M).size) {
+            } else if (root->*Left->*Left->*Size > root->*Right->*Size) {
                 right_rotate(root);
             } else {
                 return;
             }
         }
-        maintain((root->*M).left, false);
-        maintain((root->*M).right, true);
+        maintain(root->*Left, false);
+        maintain(root->*Right, true);
         maintain(root, true);
         maintain(root, false);
     }
@@ -180,16 +184,16 @@ class irsbt<M, CMP> {
     template <auto DELTA = 3, auto GAMMA = 3>
     static void wmaintain(np_t &root, bool right_leaning) noexcept {
         if (right_leaning) {
-            if ((((root->*M).left->*M).size * DELTA + 1) < ((root->*M).right->*M).size) {
-                if ((((root->*M).right->*M).right->*M).size * GAMMA < ((root->*M).right->*M).size) {
-                    right_rotate((root->*M).right);
+            if ((root->*Left->*Size * DELTA + 1) < (root->*Right->*Size)) {
+                if (root->*Right->*Right->*Size * GAMMA < root->*Right->*Size) {
+                    right_rotate(root->*Right);
                 }
                 left_rotate(root);
             }
         } else {
-            if ((((root->*M).right->*M).size * DELTA + 1) < ((root->*M).left->*M).size) {
-                if ((((root->*M).left->*M).left->*M).size * GAMMA < ((root->*M).left->*M).size) {
-                    left_rotate((root->*M).left);
+            if ((root->*Right->*Size * DELTA + 1) < root->*Left->*Size) {
+                if (root->*Left->*Left->*Size * GAMMA < root->*Left->*Size) {
+                    left_rotate(root->*Left);
                 }
                 right_rotate(root);
             }
@@ -198,24 +202,24 @@ class irsbt<M, CMP> {
 
     np_t insert_unique_impl(np_t &root, np_t node) noexcept {
         if (is_sentinel(root)) [[unlikely]] {
-            (node->*M).right = mock_sentinel();
-            (node->*M).left = mock_sentinel();
-            (node->*M).size = 1;
+            node->*Right = mock_sentinel();
+            node->*Left = mock_sentinel();
+            node->*Size = 1;
 
             root = node;
             return nullptr;
         }
         if (cmp(*node, *root)) {
-            node = insert_unique_impl((root->*M).left, node);
+            node = insert_unique_impl(root->*Left, node);
             if (node == nullptr) {
-                (root->*M).size++;
+                (root->*Size)++;
                 maintain(root, false);
             }
             return node;
         } else if (cmp(*root, *node)) {
-            node = insert_unique_impl((root->*M).right, node);
+            node = insert_unique_impl(root->*Right, node);
             if (node == nullptr) {
-                (root->*M).size++;
+                (root->*Size)++;
                 maintain(root, true);
             }
             return node;
@@ -227,24 +231,24 @@ class irsbt<M, CMP> {
     // TODO: Use "if constexpr" to combine insert_unique_impl and winsert_unique_impl to one.
     np_t winsert_unique_impl(np_t &root, np_t node) noexcept {
         if (is_sentinel(root)) [[unlikely]] {
-            (node->*M).right = mock_sentinel();
-            (node->*M).left = mock_sentinel();
-            (node->*M).size = 1;
+            node->*Right = mock_sentinel();
+            node->*Left = mock_sentinel();
+            node->*Size = 1;
 
             root = node;
             return nullptr;
         }
         if (cmp(*node, *root)) {
-            node = winsert_unique_impl((root->*M).left, node);
+            node = winsert_unique_impl(root->*Left, node);
             if (node == nullptr) {
-                (root->*M).size++;
+                (root->*Size)++;
                 wmaintain(root, false);
             }
             return node;
         } else if (cmp(*root, *node)) {
-            node = winsert_unique_impl((root->*M).right, node);
+            node = winsert_unique_impl(root->*Right, node);
             if (node == nullptr) {
-                (root->*M).size++;
+                (root->*Size)++;
                 wmaintain(root, true);
             }
             return node;
@@ -255,38 +259,38 @@ class irsbt<M, CMP> {
 
     void insert_multi_impl(np_t &root, np_t node) noexcept {
         if (is_sentinel(root)) [[unlikely]] {
-            (node->*M).right = mock_sentinel();
-            (node->*M).left = mock_sentinel();
-            (node->*M).size = 1;
+            node->*Right = mock_sentinel();
+            node->*Left = mock_sentinel();
+            node->*Size = 1;
 
             root = node;
             return;
         }
-        (root->*M).size++;
+        (root->*Size)++;
         if (cmp(*node, *root)) {
-            insert_multi_impl((root->*M).left, node);
+            insert_multi_impl(root->*Left, node);
             maintain(root, false);
         } else {
-            insert_multi_impl((root->*M).right, node);
+            insert_multi_impl(root->*Right, node);
             maintain(root, true);
         }
     }
 
     void winsert_multi_impl(np_t &root, np_t node) noexcept {
         if (is_sentinel(root)) [[unlikely]] {
-            (node->*M).right = mock_sentinel();
-            (node->*M).left = mock_sentinel();
-            (node->*M).size = 1;
+            node->*Right = mock_sentinel();
+            node->*Left = mock_sentinel();
+            node->*Size = 1;
 
             root = node;
             return;
         }
-        (root->*M).size++;
+        (root->*Size)++;
         if (cmp(*node, *root)) {
-            winsert_multi_impl((root->*M).left, node);
+            winsert_multi_impl(root->*Left, node);
             wmaintain(root, false);
         } else {
-            winsert_multi_impl((root->*M).right, node);
+            winsert_multi_impl(root->*Right, node);
             wmaintain(root, true);
         }
     }
@@ -298,44 +302,44 @@ class irsbt<M, CMP> {
         }
         np_t result;
         if (cmp(node, *root)) {
-            result = remove_unique_impl((root->*M).left, node);
+            result = remove_unique_impl(root->*Left, node);
             if (result != nullptr) {
-                (root->*M).size--;
+                (root->*Size)--;
             }
             return result;
         } else if (cmp(*root, node)) {
-            result = remove_unique_impl((root->*M).right, node);
+            result = remove_unique_impl(root->*Right, node);
             if (result != nullptr) {
-                (root->*M).size--;
+                (root->*Size)--;
             }
             return result;
         } else {
             result = root;
-            if (is_sentinel((root->*M).right)) {
-                root = (root->*M).left;
-            } else if (is_sentinel((root->*M).left)) { // Unnecessary branch!
-                root = (root->*M).right;
+            if (is_sentinel(root->*Right)) {
+                root = root->*Left;
+            } else if (is_sentinel(root->*Left)) { // Unnecessary branch!
+                root = root->*Right;
             } else {
-                np_t r = (root->*M).right;
-                if (is_sentinel((r->*M).left)) {
-                    (r->*M).left = (root->*M).left;
-                    (r->*M).size = (root->*M).size - 1;
+                np_t r = root->*Right;
+                if (is_sentinel(r->*Left)) {
+                    r->*Left = root->*Left;
+                    r->*Size = root->*Size - 1;
                     root = r;
                 } else {
                     np_t sp = r;
-                    np_t s = (sp->*M).left;
+                    np_t s = sp->*Left;
 
-                    (sp->*M).size--;
-                    while (!is_sentinel((s->*M).left)) {
+                    (sp->*Size)--;
+                    while (!is_sentinel(s->*Left)) {
                         sp = s;
-                        (sp->*M).size--;
-                        s = (s->*M).left;
+                        (sp->*Size)--;
+                        s = s->*Left;
                     }
-                    (sp->*M).left = (s->*M).right;
+                    sp->*Left = s->*Right;
 
-                    (s->*M).right = r;
-                    (s->*M).left = (root->*M).left;
-                    (s->*M).size = (root->*M).size - 1;
+                    s->*Right = r;
+                    s->*Left = root->*Left;
+                    s->*Size = root->*Size - 1;
 
                     root = s;
                 }
@@ -349,9 +353,9 @@ class irsbt<M, CMP> {
     np_t find_impl(const T *root, const K &node) const noexcept {
         while (!is_sentinel(root)) {
             if (cmp(node, *root)) {
-                root = (root->*M).left;
+                root = root->*Left;
             } else if (cmp(*root, node)) {
-                root = (root->*M).right;
+                root = root->*Right;
             } else {
                 return const_cast<np_t>(root);
             }
@@ -364,8 +368,8 @@ class irsbt<M, CMP> {
         if (is_sentinel(root)) {
             return 0;
         }
-        std::size_t left_height = height_impl((root->*M).left);
-        std::size_t right_height = height_impl((root->*M).right);
+        std::size_t left_height = height_impl(root->*Left);
+        std::size_t right_height = height_impl(root->*Right);
         return (left_height > right_height ? left_height : right_height) + 1;
     }
 
@@ -374,13 +378,13 @@ class irsbt<M, CMP> {
         std::size_t pos = 0;
         while (!is_sentinel(root)) {
             if (cmp(node, *root)) {
-                root = (root->*M).left;
+                root = root->*Left;
             } else {
-                pos += (((root->*M).left->*M).size + 1);
+                pos += (root->*Left->*Size + 1);
                 if (!cmp(*root, node)) {
                     return pos - 1;
                 }
-                root = (root->*M).right;
+                root = root->*Right;
             }
         }
         return std::size_t(-1);
@@ -392,25 +396,35 @@ class irsbt<M, CMP> {
             return 0;
         }
         if (cmp(node, *root)) {
-            return count_multi_impl((root->*M).left, node);
+            return count_multi_impl(root->*Left, node);
         } else if (cmp(*root, node)) {
-            return count_multi_impl((root->*M).right, node);
+            return count_multi_impl(root->*Right, node);
         } else {
-            return 1 + count_multi_impl((root->*M).right, node)
-                 + count_multi_impl((root->*M).left, node);
+            return 1 + count_multi_impl(root->*Right, node) + count_multi_impl(root->*Left, node);
         }
     }
 
-    // Unlike the mock_head, although this is also UB, it will not lead to unexpected behavoir.
+    union sentinel_t {
+        constexpr sentinel_t() noexcept {
+            // UB!!! The lifetime of storage has not yet started.
+            storage.*Right = &storage;
+            storage.*Left = &storage;
+            storage.*Size = 0;
+        }
+
+        T storage;
+        unsigned char buffer[sizeof(T)];
+    };
+
+    static inline const sentinel_t sentinel{};
+
     static T *mock_sentinel() noexcept {
-        return uit::container_of(M, const_cast<uit::irsbt_node<T> *>(&sentinel));
+        return const_cast<T *>(&sentinel.storage);
     }
 
-    static inline const irsbt_node<T> sentinel{
-        {{uit::container_of(M, const_cast<uit::irsbt_node<T> *>(&irsbt::sentinel))},
-         uit::container_of(M, const_cast<uit::irsbt_node<T> *>(&irsbt::sentinel))},
-        0
-    };
+    static const T *const_mock_sentinel() noexcept {
+        return &sentinel.storage;
+    }
 
     // TODO: need a macro for the msvc.
     [[no_unique_address]]
@@ -419,3 +433,4 @@ class irsbt<M, CMP> {
 };
 
 } // namespace uit
+#endif

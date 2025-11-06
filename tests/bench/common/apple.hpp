@@ -25,6 +25,8 @@ struct rsbt_apple {
     }
 
     uint64_t weight;
-    uit::irsbt_node<rsbt_apple> node;
+    rsbt_apple *right;
+    rsbt_apple *left;
+    size_t size;
     int sn;
 };
