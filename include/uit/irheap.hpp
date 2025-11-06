@@ -63,6 +63,7 @@ class irheap<Right, Left, CMP> {
                     path <<= 1;
                 } while (path != path_bit_mask);
 
+                // The following code is redundant, we can use break here to directly exit the loop.
                 *cur_ptr = node;
                 node->*Right = nullptr;
                 node->*Left = nullptr;
