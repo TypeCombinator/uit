@@ -4,6 +4,8 @@
 
 **UIT** is a Unified Intrusive Linked List library. This library brings together 4 different linked lists based on a unified abstraction, the core trick is **mock_head**. In addition, some balanced trees have been implemented, what makes it different is that they're simplified with **mock_sentinel**, which is similar to the **mock_head**.
 
+### Linear Linked List
+
 | types          | number of head  node pointers | number of data node pointers | order        | comments                                                     |
 | -------------- | ----------------------------- | ---------------------------- | ------------ | ------------------------------------------------------------ |
 | `uit::islist`  | single                        | single                       | LIFO         | Singly Linked List.                                          |
@@ -11,7 +13,16 @@
 | `uit::idslist` | double                        | single                       | LIFO or FIFO | Data nodes have a smaller footprint.                         |
 | `uit::idlist`  | double                        | double                       | LIFO or FIFO | Doubly Linked List.                                          |
 
-The trick named **mock_head** brings the following pros and cons.
+### Tree-Type Linked List
+
+| types         | was mock_sentinel used?            | comments                                                     |
+| ------------- | ---------------------------------- | ------------------------------------------------------------ |
+| `uit::irsbt`  | Yes (but the code works correctly) | Intrusive Recursive Size-Balanced Tree                       |
+| `uit::irwbt`  | Yes (but the code works correctly) | Intrusive Recursive Weight-Balanced Tree                     |
+| `uit::irheap` | **No**                             | Intrusive Recursive Heap<br />Actually, recursion is not used, it's fully implemented with iteration. |
+| `uit::iheap`  | **No**                             | Intrusive Heap                                               |
+
+## Pros and Cons of mock_head
 
 ### Pros
 
