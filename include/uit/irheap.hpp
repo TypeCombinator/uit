@@ -63,9 +63,9 @@ class irheap<Right, Left, CMP> {
                     path <<= 1;
                 } while (path != path_bit_mask);
 
-                // The following code is redundant, we can use break here to directly exit the loop.
                 *cur_ptr = node;
-                node->*Right = nullptr;
+                // The right child of the last node on the path is always null.
+                // node->*Right = nullptr;
                 node->*Left = nullptr;
                 return;
             }
@@ -101,14 +101,17 @@ class irheap<Right, Left, CMP> {
         return top;
     }
 
+    [[nodiscard]]
     np_t front() const noexcept {
         return m_head;
     }
 
+    [[nodiscard]]
     bool empty() const noexcept {
         return m_head == nullptr;
     }
 
+    [[nodiscard]]
     auto size() const noexcept {
         return m_size;
     }
