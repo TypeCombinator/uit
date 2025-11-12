@@ -31,9 +31,9 @@ int main(int argc, char *argv[]) {
     priority_q.push(&a2);
     priority_q.push(&a3);
 
-    const apple *node;
-    while ((node = priority_q.pop()) != nullptr) {
-        std::cout << "sn: " << node->sn << ", weight: " << node->weight << std::endl;
+    for (; !priority_q.empty(); priority_q.pop()) {
+        const apple &node = priority_q.top();
+        std::cout << "sn: " << node.sn << ", weight: " << node.weight << std::endl;
     }
     return 0;
 }

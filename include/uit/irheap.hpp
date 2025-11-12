@@ -84,27 +84,25 @@ class irheap<Right, Left, CMP> {
         node->*Left = nullptr;
     }
 
-    np_t pop() noexcept {
-        np_t top = m_head;
+    void pop() noexcept {
         if (m_size <= 1u) [[unlikely]] {
             m_head = nullptr;
             m_size = 0;
-            return top;
+            return;
         }
         np_t cur = remove_last_leaf(&m_head, m_size);
         // Replace the top.
-        cur->*Right = top->*Right;
-        cur->*Left = top->*Left;
+        cur->*Right = m_head->*Right;
+        cur->*Left = m_head->*Left;
         m_head = cur;
 
         m_size--;
         sift_down(m_head, &m_head);
-        return top;
     }
 
     [[nodiscard]]
-    np_t front() const noexcept {
-        return m_head;
+    T &top() const noexcept {
+        return *m_head;
     }
 
     [[nodiscard]]
