@@ -46,7 +46,6 @@ T *container_of(M T::*field, M *m) noexcept {
     return reinterpret_cast<T *>(reinterpret_cast<unsigned char *>(m) - offset_of(field));
 }
 
-// Reduce overloading.
 template <typename M, typename T>
 const T *const_container_of(M T::*field, const M *m) noexcept {
     return reinterpret_cast<const T *>(
