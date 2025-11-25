@@ -16,7 +16,7 @@ template <typename T, typename MT, MT T::* Right>
 class islist<Right> {
    public:
     islist() noexcept {
-        head.right = nullptr;
+        m_head = nullptr;
     }
 
     islist(const islist& other) noexcept = default;
@@ -24,13 +24,13 @@ class islist<Right> {
     islist& operator=(const islist& other) noexcept = default;
 
     islist(islist&& other) noexcept {
-        head = other.head;
+        m_head = other.m_head;
         other.clear();
     }
 
     islist& operator=(islist&& other) noexcept {
         if (this != &other) {
-            head = other.head;
+            m_head = other.m_head;
             other.clear();
         }
         return *this;
@@ -38,35 +38,35 @@ class islist<Right> {
 
     [[nodiscard]]
     bool empty() const noexcept {
-        return head.right == nullptr;
+        return m_head == nullptr;
     }
 
     void clear() noexcept {
-        head.right = nullptr;
+        m_head = nullptr;
     }
 
     [[nodiscard]]
     T& front() const noexcept {
-        return *head.right;
+        return *m_head;
     }
 
     void push_front(T* node) noexcept {
-        node->*Right = head.right;
-        head.right = node;
+        node->*Right = m_head;
+        m_head = node;
     }
 
     T* pop_front() noexcept {
-        T* first = head.right;
+        T* first = m_head;
         if (first == nullptr) [[unlikely]] {
             return nullptr;
         }
-        head.right = first->*Right;
+        m_head = first->*Right;
         return first;
     }
 
     T* remove(T* node) noexcept {
-        T** left = &head.right;
-        for (T* right = head.right; right != nullptr;) {
+        T** left = &m_head;
+        for (T* right = m_head; right != nullptr;) {
             if (right == node) {
                 *left = right->*Right;
                 return node;
@@ -132,11 +132,11 @@ class islist<Right> {
     using const_iterator = iterator_t<const T>;
 
     const_iterator begin() const {
-        return const_iterator{head.right};
+        return const_iterator{m_head};
     }
 
     iterator begin() {
-        return iterator{head.right};
+        return iterator{m_head};
     }
 
     const_iterator end() const {
@@ -148,14 +148,14 @@ class islist<Right> {
     }
 
     const_iterator cbegin() const {
-        return const_iterator{head.right};
+        return const_iterator{m_head};
     }
 
     const_iterator cend() const {
         return const_iterator{nullptr};
     }
    private:
-    isnode<T> head;
+    T* m_head;
 };
 
 } // namespace uit
