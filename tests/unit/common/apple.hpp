@@ -29,6 +29,17 @@ struct sapple {
     int sn;
 };
 
+struct sapple1 {
+    sapple1(uint64_t weight, int sn) noexcept
+        : weight(weight)
+        , sn(sn) {
+    }
+
+    uint64_t weight;
+    sapple1 *right;
+    int sn;
+};
+
 struct rsbt_apple {
     explicit rsbt_apple(uint64_t weight, int sn) noexcept
         : weight(weight)
