@@ -22,6 +22,12 @@
 | `uit::irheap` | **No**                             | Intrusive Recursive Heap<br />Actually, recursion is not used, it's fully implemented with iteration. |
 | `uit::iheap`  | **No**                             | Intrusive Heap<br />The code isn't in this repository, see the [PR](https://github.com/NVIDIA/stdexec/pull/1674) to stdexec. |
 
+### Others
+
+| types          | comments                                                     |
+| -------------- | ------------------------------------------------------------ |
+| `uit::iiqheap` | Intrusive Indexed Quad Heap<br />Simpler code and better performance, but not suitable for scenarios where the upper limit of timer count is undetermined and delay-sensitive, as the internal pointer array may need resizing. |
+
 ## Pros and Cons of mock_head
 
 ### Pros
