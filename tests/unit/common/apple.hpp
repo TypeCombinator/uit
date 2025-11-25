@@ -7,7 +7,6 @@
 #include "uit/intrusive.hpp"
 
 struct dapple {
-
     dapple(uint64_t weight, int sn) noexcept
         : weight(weight)
         , sn(sn) {
@@ -26,6 +25,18 @@ struct sapple {
 
     uint64_t weight;
     uit::isnode<sapple> node;
+    int sn;
+};
+
+struct dapple1 {
+    dapple1(uint64_t weight, int sn) noexcept
+        : weight(weight)
+        , sn(sn) {
+    }
+
+    uint64_t weight;
+    dapple1 *right;
+    dapple1 *left;
     int sn;
 };
 
