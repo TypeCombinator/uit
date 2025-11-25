@@ -7,14 +7,17 @@
 #include "common/apple.hpp"
 #include "uit/idlist.hpp"
 
+using list_t = uit::idlist<&dapple1::right, &dapple1::left>;
+using node_t = dapple1;
+
 TEST(idlist_test, empty) {
-    uit::idlist<&dapple::node> list{};
+    list_t list{};
     EXPECT_TRUE(list.empty());
 }
 
 TEST(idlist_test, push_back1) {
-    uit::idlist<&dapple::node> list{};
-    dapple a0(500, 0);
+    list_t list{};
+    node_t a0(500, 0);
 
     list.push_back(&a0);
     EXPECT_EQ(&a0, &list.front());
@@ -23,25 +26,25 @@ TEST(idlist_test, push_back1) {
 }
 
 TEST(idlist_test, push_back2) {
-    uit::idlist<&dapple::node> list{};
-    dapple a0(500, 0);
-    dapple a1(501, 1);
+    list_t list{};
+    node_t a0(500, 0);
+    node_t a1(501, 1);
 
     list.push_back(&a0);
     list.push_back(&a1);
 
-    const dapple &first = list.front();
+    const node_t &first = list.front();
     EXPECT_EQ(&a0, &first);
 
-    const dapple *second = first.node.right;
+    const node_t *second = first.right;
     EXPECT_EQ(&a1, second);
     EXPECT_EQ(&a1, &list.back());
     EXPECT_FALSE(list.empty());
 }
 
 TEST(idlist_test, push_front1) {
-    uit::idlist<&dapple::node> list{};
-    dapple a0(501, 0);
+    list_t list{};
+    node_t a0(501, 0);
 
     list.push_front(&a0);
     EXPECT_EQ(&a0, &list.front());
@@ -50,26 +53,26 @@ TEST(idlist_test, push_front1) {
 }
 
 TEST(idlist_test, push_front2) {
-    uit::idlist<&dapple::node> list{};
-    dapple a0(500, 0);
-    dapple a1(501, 1);
+    list_t list{};
+    node_t a0(500, 0);
+    node_t a1(501, 1);
 
     list.push_front(&a0);
     list.push_front(&a1);
 
-    const dapple &last = list.back();
+    const node_t &last = list.back();
     EXPECT_EQ(&a0, &last);
 
-    const dapple *second_to_last = last.node.left;
+    const node_t *second_to_last = last.left;
     EXPECT_EQ(&a1, second_to_last);
     EXPECT_EQ(&a1, &list.front());
     EXPECT_FALSE(list.empty());
 }
 
 TEST(idlist_test, clear) {
-    uit::idlist<&dapple::node> list{};
-    dapple a0{500, 0};
-    dapple a1{501, 1};
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
 
     list.push_front(&a0);
     list.push_front(&a1);
@@ -80,10 +83,10 @@ TEST(idlist_test, clear) {
 }
 
 TEST(idlist_test, remove) {
-    uit::idlist<&dapple::node> list{};
-    dapple a0{500, 0};
-    dapple a1{501, 1};
-    dapple a2{502, 2};
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
+    node_t a2{502, 2};
 
     list.push_back(&a0);
     list.push_back(&a1);
@@ -102,10 +105,10 @@ TEST(idlist_test, remove) {
 }
 
 TEST(idlist_test, remove1) {
-    uit::idlist<&dapple::node> list{};
-    dapple a0{500, 0};
-    dapple a1{501, 1};
-    dapple a2{502, 2};
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
+    node_t a2{502, 2};
 
     list.push_back(&a0);
     list.push_back(&a1);
@@ -130,11 +133,11 @@ TEST(idlist_test, remove1) {
 }
 
 TEST(idlist_test, iterator) {
-    uit::idlist<&dapple::node> list{};
-    dapple a0{500, 0};
-    dapple a1{501, 1};
-    dapple a2{502, 2};
-    dapple a3{503, 3};
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
+    node_t a2{502, 2};
+    node_t a3{503, 3};
 
     list.push_back(&a2);
     list.push_back(&a3);
@@ -182,11 +185,11 @@ TEST(idlist_test, iterator) {
 }
 
 TEST(idlist_test, reverse_iterator) {
-    uit::idlist<&dapple::node> list{};
-    dapple a0{500, 0};
-    dapple a1{501, 1};
-    dapple a2{502, 2};
-    dapple a3{503, 3};
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
+    node_t a2{502, 2};
+    node_t a3{503, 3};
 
     list.push_front(&a0);
     list.push_front(&a1);
@@ -234,11 +237,11 @@ TEST(idlist_test, reverse_iterator) {
 }
 
 TEST(idlist_test, algorithm) {
-    uit::idlist<&dapple::node> list{};
-    dapple a0{500, 0};
-    dapple a1{501, 1};
-    dapple a2{502, 2};
-    dapple a3{503, 3};
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
+    node_t a2{502, 2};
+    node_t a3{503, 3};
 
     list.push_back(&a0);
     list.push_back(&a1);
@@ -246,13 +249,13 @@ TEST(idlist_test, algorithm) {
     list.push_back(&a3);
 
     uint32_t sn = 0;
-    std::for_each(list.cbegin(), list.cend(), [&sn](const dapple &i) -> void {
+    std::for_each(list.cbegin(), list.cend(), [&sn](const node_t &i) -> void {
         EXPECT_EQ(i.weight, 500 + sn);
         EXPECT_EQ(i.sn, sn);
         sn++;
     });
 
-    auto result = std::find_if(list.cbegin(), list.cend(), [](const dapple &i) -> bool {
+    auto result = std::find_if(list.cbegin(), list.cend(), [](const node_t &i) -> bool {
         return i.weight >= 501;
     });
     EXPECT_NE(result, list.cend());
@@ -261,38 +264,38 @@ TEST(idlist_test, algorithm) {
 }
 
 TEST(idlist_test, copy) {
-    static_assert(!std::is_copy_constructible<uit::idlist<&dapple::node>>::value, "");
-    static_assert(!std::is_copy_assignable<uit::idlist<&dapple::node>>::value, "");
+    static_assert(!std::is_copy_constructible<list_t>::value, "");
+    static_assert(!std::is_copy_assignable<list_t>::value, "");
 }
 
 TEST(idlist_test, move_ctor) {
-    static_assert(std::is_move_constructible<uit::idlist<&dapple::node>>::value, "");
+    static_assert(std::is_move_constructible<list_t>::value, "");
     {
-        uit::idlist<&dapple::node> list{};
-        uit::idlist<&dapple::node> list_other{std::move(list)};
+        list_t list{};
+        list_t list_other{std::move(list)};
 
         EXPECT_TRUE(list.empty());
         EXPECT_TRUE(list_other.empty());
     }
     {
-        uit::idlist<&dapple::node> list{};
-        dapple a0{500, 0};
-        dapple a1{501, 1};
-        dapple a2{502, 2};
-        dapple a3{503, 3};
+        list_t list{};
+        node_t a0{500, 0};
+        node_t a1{501, 1};
+        node_t a2{502, 2};
+        node_t a3{503, 3};
 
         list.push_front(&a3);
         list.push_front(&a2);
         list.push_front(&a1);
         list.push_front(&a0);
 
-        uit::idlist<&dapple::node> list_other{std::move(list)};
+        list_t list_other{std::move(list)};
 
         EXPECT_TRUE(list.empty());
         EXPECT_FALSE(list_other.empty());
         EXPECT_EQ(&list_other.front(), &a0);
         EXPECT_EQ(&list_other.back(), &a3);
-        EXPECT_EQ(a0.node.left, a3.node.right);
+        EXPECT_EQ(a0.left, a3.right);
 
         uint32_t sn = 0;
         for (const auto &i: list_other) {
@@ -304,23 +307,23 @@ TEST(idlist_test, move_ctor) {
 }
 
 TEST(idlist_test, move_assign) {
-    static_assert(std::is_move_assignable<uit::idlist<&dapple::node>>::value, "");
+    static_assert(std::is_move_assignable<list_t>::value, "");
     {
-        uit::idlist<&dapple::node> list{};
-        uit::idlist<&dapple::node> list_other{};
+        list_t list{};
+        list_t list_other{};
 
         list_other = std::move(list);
         EXPECT_TRUE(list.empty());
         EXPECT_TRUE(list_other.empty());
     }
     {
-        uit::idlist<&dapple::node> list{};
-        uit::idlist<&dapple::node> list_other{};
+        list_t list{};
+        list_t list_other{};
 
-        dapple a0{500, 0};
-        dapple a1{501, 1};
-        dapple a2{502, 2};
-        dapple a3{503, 3};
+        node_t a0{500, 0};
+        node_t a1{501, 1};
+        node_t a2{502, 2};
+        node_t a3{503, 3};
 
         list.push_front(&a3);
         list.push_front(&a2);
@@ -330,7 +333,7 @@ TEST(idlist_test, move_assign) {
         // Move self.
         list = std::move(list);
         EXPECT_FALSE(list.empty());
-        EXPECT_EQ(a0.node.left, a3.node.right);
+        EXPECT_EQ(a0.left, a3.right);
 
         uint32_t sn = 0;
         for (const auto &i: list) {
@@ -345,7 +348,7 @@ TEST(idlist_test, move_assign) {
         EXPECT_FALSE(list_other.empty());
         EXPECT_EQ(&list_other.front(), &a0);
         EXPECT_EQ(&list_other.back(), &a3);
-        EXPECT_EQ(a0.node.left, a3.node.right);
+        EXPECT_EQ(a0.left, a3.right);
 
         sn = 0;
         for (const auto &i: list) {
