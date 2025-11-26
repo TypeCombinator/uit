@@ -52,17 +52,6 @@ const T *const_container_of(M T::*field, const M *m) noexcept {
         reinterpret_cast<const unsigned char *>(m) - offset_of(field));
 }
 
-// TODO: Make it deprecated and use split member pointers instead.
-template <typename T>
-struct isnode {
-    T *right;
-};
-
-template <typename T>
-struct idnode : public isnode<T> {
-    T *left;
-};
-
 template <typename T>
 concept has_is_transparent = requires { typename T::is_transparent; };
 
