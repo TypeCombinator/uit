@@ -7,8 +7,8 @@
 #include "common/apple.hpp"
 #include "uit/isdlist.hpp"
 
-using list_t = uit::isdlist<&dapple1::right, &dapple1::left>;
-using node_t = dapple1;
+using list_t = uit::isdlist<&dapple::right, &dapple::left>;
+using node_t = dapple;
 
 TEST(isdlist_test, empty) {
     list_t list{};

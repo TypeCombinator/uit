@@ -7,8 +7,8 @@
 #include "common/apple.hpp"
 #include "uit/idslist.hpp"
 
-using list_t = uit::idslist<&sapple1::right>;
-using node_t = sapple1;
+using list_t = uit::idslist<&sapple::right>;
+using node_t = sapple;
 
 TEST(idslist_test, empty) {
     list_t list{};

@@ -156,18 +156,18 @@ For an empty sdlist: `head.right = nullptr;`.
 
 class apple {
    public:
-    apple(uint64_t weight, int sn)
+    apple(uint64_t weight, int sn) noexcept
         : weight(weight)
         , sn(sn) {
     }
 
     uint64_t weight;
-    uit::isnode<apple> node;
+    apple *right;
     int sn;
 };
 
 int main(int argc, char *argv[]) {
-    uit::islist<&apple::node> list{};
+    uit::islist<&apple::right> list{};
 
     apple a0{500, 0};
     apple a1{501, 1};
@@ -194,7 +194,7 @@ int main(int argc, char *argv[]) {
 
 class apple : public uit::isnode<apple, "0"> {
    public:
-    apple(uint64_t weight, int sn)
+    apple(uint64_t weight, int sn) noexcept
         : weight(weight)
         , sn(sn) {
     }

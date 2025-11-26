@@ -9,7 +9,7 @@
 
 namespace uit {
 
-template <auto M>
+template <auto Right>
 class idslist;
 
 template <typename T, typename MT, MT T::*Right>

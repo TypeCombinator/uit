@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: BSD 3-Clause
 
-#pragma once
+#ifndef UIT_ISDLIST_B3985B15_3941_4675_AD44_F646349A7870
+#define UIT_ISDLIST_B3985B15_3941_4675_AD44_F646349A7870
 #include <iterator>
 #include <uit/intrusive.hpp>
 
@@ -189,3 +190,4 @@ class isdlist<Right, Left> {
 };
 
 } // namespace uit
+#endif // isdlist.hpp

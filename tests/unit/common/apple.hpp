@@ -2,9 +2,10 @@
 //
 // SPDX-License-Identifier: BSD 3-Clause
 
-#pragma once
+#ifndef UNIT_COMMON_APPLE_4D7E9564_ED2C_460C_A0EC_2F4E25AB186A
+#define UNIT_COMMON_APPLE_4D7E9564_ED2C_460C_A0EC_2F4E25AB186A
 #include <cstdint>
-#include "uit/intrusive.hpp"
+#include <uit/intrusive.hpp>
 
 struct dapple {
     dapple(uint64_t weight, int sn) noexcept
@@ -13,7 +14,8 @@ struct dapple {
     }
 
     uint64_t weight;
-    uit::idnode<dapple> node;
+    dapple *right;
+    dapple *left;
     int sn;
 };
 
@@ -24,30 +26,7 @@ struct sapple {
     }
 
     uint64_t weight;
-    uit::isnode<sapple> node;
-    int sn;
-};
-
-struct dapple1 {
-    dapple1(uint64_t weight, int sn) noexcept
-        : weight(weight)
-        , sn(sn) {
-    }
-
-    uint64_t weight;
-    dapple1 *right;
-    dapple1 *left;
-    int sn;
-};
-
-struct sapple1 {
-    sapple1(uint64_t weight, int sn) noexcept
-        : weight(weight)
-        , sn(sn) {
-    }
-
-    uint64_t weight;
-    sapple1 *right;
+    sapple *right;
     int sn;
 };
 
@@ -75,3 +54,4 @@ struct rsbt_apple {
     size_t size;
     int sn;
 };
+#endif // apple.hpp
