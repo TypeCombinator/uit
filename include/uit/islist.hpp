@@ -2,21 +2,21 @@
 //
 // SPDX-License-Identifier: BSD 3-Clause
 
-#pragma once
+#ifndef UIT_ISLIST_1838F0F2_B823_46A0_B1F1_2796453C214C
+#define UIT_ISLIST_1838F0F2_B823_46A0_B1F1_2796453C214C
 #include <iterator>
-#include "intrusive.hpp"
+#include <uit/intrusive.hpp>
 
 namespace uit {
 
-template <auto M>
+template <auto Right>
 class islist;
 
-template <typename T, typename MT, MT(T::* M)>
-    requires std::is_base_of_v<isnode<T>, MT>
-class islist<M> {
+template <typename T, typename MT, MT T::* Right>
+class islist<Right> {
    public:
     islist() noexcept {
-        head.right = nullptr;
+        m_right = nullptr;
     }
 
     islist(const islist& other) noexcept = default;
@@ -24,13 +24,13 @@ class islist<M> {
     islist& operator=(const islist& other) noexcept = default;
 
     islist(islist&& other) noexcept {
-        head = other.head;
+        m_right = other.m_right;
         other.clear();
     }
 
     islist& operator=(islist&& other) noexcept {
         if (this != &other) {
-            head = other.head;
+            m_right = other.m_right;
             other.clear();
         }
         return *this;
@@ -38,54 +38,41 @@ class islist<M> {
 
     [[nodiscard]]
     bool empty() const noexcept {
-        return head.right == nullptr;
+        return m_right == nullptr;
     }
 
     void clear() noexcept {
-        head.right = nullptr;
+        m_right = nullptr;
     }
 
     [[nodiscard]]
     T& front() const noexcept {
-        return *head.right;
+        return *m_right;
     }
 
     void push_front(T* node) noexcept {
-        (node->*M).right = head.right;
-        head.right = node;
+        node->*Right = m_right;
+        m_right = node;
     }
 
     T* pop_front() noexcept {
-        T* first = head.right;
+        T* first = m_right;
         if (first == nullptr) [[unlikely]] {
             return nullptr;
         }
-        head.right = (first->*M).right;
+        m_right = first->*Right;
         return first;
     }
 
     T* remove(T* node) noexcept {
-        T* left = mock_head();
-        for (T* right = head.right; right != nullptr;) {
+        T** left = &m_right;
+        for (T* right = m_right; right != nullptr;) {
             if (right == node) {
-                (left->*M).right = (right->*M).right;
+                *left = right->*Right;
                 return node;
             }
-            left = right;
-            right = (right->*M).right;
-        }
-        return nullptr;
-    }
-
-    T* remove_without_ub(T* node) noexcept {
-        T** left = &head.right;
-        for (T* right = head.right; right != nullptr;) {
-            if (right == node) {
-                *left = (right->*M).right;
-                return node;
-            }
-            left = &(right->*M).right;
-            right = (right->*M).right; // Equivalent to "right = *left;"
+            left = &(right->*Right);
+            right = right->*Right; // Equivalent to "right = *left;"
         }
         return nullptr;
     }
@@ -123,13 +110,13 @@ class islist<M> {
         }
 
         iterator_t& operator++() noexcept {
-            current = (current->*M).right;
+            current = current->*Right;
             return *this;
         }
 
         iterator_t operator++(int) noexcept {
             pointer old = current;
-            current = (current->*M).right;
+            current = current->*Right;
             return iterator_t{old};
         }
 
@@ -145,11 +132,11 @@ class islist<M> {
     using const_iterator = iterator_t<const T>;
 
     const_iterator begin() const {
-        return const_iterator{head.right};
+        return const_iterator{m_right};
     }
 
     iterator begin() {
-        return iterator{head.right};
+        return iterator{m_right};
     }
 
     const_iterator end() const {
@@ -161,26 +148,15 @@ class islist<M> {
     }
 
     const_iterator cbegin() const {
-        return const_iterator{head.right};
+        return const_iterator{m_right};
     }
 
     const_iterator cend() const {
         return const_iterator{nullptr};
     }
    private:
-    [[nodiscard]]
-    T* mock_head() noexcept {
-        // UB!!!
-        return container_of(M, static_cast<MT*>(&head));
-    }
-
-    [[nodiscard]]
-    const T* const_mock_head() const noexcept {
-        // UB!!!
-        return const_container_of(M, static_cast<const MT*>(&head));
-    }
-
-    isnode<T> head;
+    T* m_right;
 };
 
 } // namespace uit
+#endif // islist.hpp

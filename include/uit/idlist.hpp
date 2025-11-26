@@ -2,21 +2,21 @@
 //
 // SPDX-License-Identifier: BSD 3-Clause
 
-#pragma once
+#ifndef UIT_IDLIST_217E7022_9D7F_4924_BF85_F58D26EC0395
+#define UIT_IDLIST_217E7022_9D7F_4924_BF85_F58D26EC0395
 #include <iterator>
-#include "intrusive.hpp"
+#include <uit/intrusive.hpp>
 
 namespace uit {
 
-template <auto M>
+template <auto Right, auto Left>
 class idlist;
 
-template <typename T, typename MT, MT(T::*M)>
-    requires std::is_base_of_v<idnode<T>, MT>
-class idlist<M> {
+template <typename T, typename MT, MT T::*Right, MT T::*Left>
+class idlist<Right, Left> {
    public:
     idlist() noexcept {
-        head.left = head.right = mock_head();
+        m_left = m_right = mock_head();
     }
 
     idlist(const idlist &) = delete;
@@ -37,67 +37,67 @@ class idlist<M> {
     [[nodiscard]]
     bool empty() const noexcept {
         const T *mhead = const_mock_head();
-        return mhead == (mhead->*M).right;
+        return mhead == mhead->*Right;
     }
 
     void clear() noexcept {
-        head.left = head.right = mock_head();
+        m_left = m_right = mock_head();
     }
 
     [[nodiscard]]
     T &front() const noexcept {
-        return *head.right;
+        return *m_right;
     }
 
     [[nodiscard]]
     T &back() const noexcept {
-        return *head.left;
+        return *m_left;
     }
 
     static void insert(T *node, T *left, T *right) noexcept {
-        (node->*M).right = right;
-        (node->*M).left = left;
+        node->*Right = right;
+        node->*Left = left;
 
-        (left->*M).right = node;
-        (right->*M).left = node;
+        left->*Right = node;
+        right->*Left = node;
     }
 
     static void remove(T *left, T *right) noexcept {
-        (left->*M).right = right;
-        (right->*M).left = left;
+        left->*Right = right;
+        right->*Left = left;
     }
 
     static void remove(T *node) noexcept {
-        remove((node->*M).left, (node->*M).right);
+        remove(node->*Left, node->*Right);
     }
 
     void push_front(T *node) noexcept {
         T *mhead = mock_head();
-        insert(node, mhead, (mhead->*M).right);
+        insert(node, mhead, mhead->*Right);
     }
 
     void push_back(T *node) noexcept {
         T *mhead = mock_head();
-        insert(node, (mhead->*M).left, mhead);
+        insert(node, mhead->*Left, mhead);
     }
 
     T *pop_front() noexcept {
         T *mhead = mock_head();
-        T *right = (mhead->*M).right;
+        T *right = mhead->*Right;
         if (right == mhead) [[unlikely]] {
             return nullptr;
         }
-        remove(mhead, (right->*M).right);
+        remove(mhead, right->*Right);
         return right;
     }
 
     T *pop_back() noexcept {
         T *mhead = mock_head();
-        T *left = (mhead->*M).left;
+        T *left = mhead->*Left;
         if (left == mhead) [[unlikely]] {
             return nullptr;
         }
-        remove((left->*M).left, mhead);
+        remove(left->*Left, mhead);
         return left;
     }
 
@@ -135,9 +135,9 @@ class idlist<M> {
 
         iterator_t &operator++() noexcept {
             if constexpr (!is_reverse) {
-                current = (current->*M).right;
+                current = current->*Right;
             } else {
-                current = (current->*M).left;
+                current = current->*Left;
             }
             return *this;
         }
@@ -145,18 +145,18 @@ class idlist<M> {
         iterator_t operator++(int) noexcept {
             pointer old = current;
             if constexpr (!is_reverse) {
-                current = (current->*M).right;
+                current = current->*Right;
             } else {
-                current = (current->*M).left;
+                current = current->*Left;
             }
             return iterator_t{old};
         }
 
         iterator_t &operator--() noexcept {
             if constexpr (!is_reverse) {
-                current = (current->*M).left;
+                current = current->*Left;
             } else {
-                current = (current->*M).right;
+                current = current->*Right;
             }
             return *this;
         }
@@ -164,9 +164,9 @@ class idlist<M> {
         iterator_t operator--(int) noexcept {
             pointer old = current;
             if constexpr (!is_reverse) {
-                current = (current->*M).left;
+                current = current->*Left;
             } else {
-                current = (current->*M).right;
+                current = current->*Right;
             }
             return iterator_t{old};
         }
@@ -188,11 +188,11 @@ class idlist<M> {
     using const_reverse_iterator = iterator_t<const T, true>;
 
     const_iterator begin() const noexcept {
-        return const_iterator{(const_mock_head()->*M).right};
+        return const_iterator{const_mock_head()->*Right};
     }
 
     iterator begin() noexcept {
-        return iterator{(mock_head()->*M).right};
+        return iterator{mock_head()->*Right};
     }
 
     const_iterator end() const noexcept {
@@ -204,7 +204,7 @@ class idlist<M> {
     }
 
     const_iterator cbegin() const noexcept {
-        return const_iterator{(const_mock_head()->*M).right};
+        return const_iterator{const_mock_head()->*Right};
     }
 
     const_iterator cend() const noexcept {
@@ -212,11 +212,11 @@ class idlist<M> {
     }
 
     const_reverse_iterator rbegin() const noexcept {
-        return const_reverse_iterator{(const_mock_head()->*M).left};
+        return const_reverse_iterator{const_mock_head()->*Left};
     }
 
     reverse_iterator rbegin() noexcept {
-        return reverse_iterator{(mock_head()->*M).left};
+        return reverse_iterator{mock_head()->*Left};
     }
 
     const_reverse_iterator rend() const noexcept {
@@ -228,7 +228,7 @@ class idlist<M> {
     }
 
     const_reverse_iterator crbegin() const noexcept {
-        return const_reverse_iterator{(const_mock_head()->*M).left};
+        return const_reverse_iterator{const_mock_head()->*Left};
     }
 
     const_reverse_iterator crend() const noexcept {
@@ -239,11 +239,12 @@ class idlist<M> {
         if (other.empty()) [[unlikely]] {
             clear();
         } else {
-            head = other.head;
+            m_right = other.m_right;
+            m_left = other.m_left;
 
             T *mhead = mock_head();
-            (head.right->*M).left = mhead;
-            (head.left->*M).right = mhead;
+            m_right->*Left = mhead;
+            m_left->*Right = mhead;
 
             other.clear();
         }
@@ -252,16 +253,18 @@ class idlist<M> {
     [[nodiscard]]
     T *mock_head() noexcept {
         // UB!!!
-        return container_of(M, static_cast<MT *>(&head));
+        return container_of(Right, &m_right);
     }
 
     [[nodiscard]]
     const T *const_mock_head() const noexcept {
         // UB!!!
-        return const_container_of(M, static_cast<const MT *>(&head));
+        return const_container_of(Right, &m_right);
     }
 
-    idnode<T> head;
+    T *m_right;
+    T *m_left;
 };
 
 } // namespace uit
+#endif // idlist.hpp

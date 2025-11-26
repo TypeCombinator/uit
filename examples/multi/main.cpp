@@ -9,18 +9,14 @@ class apple {
     }
 
     uint64_t weight;
-    uit::isnode<apple> node;
-   private:
-    uit::isnode<apple> node1;
-   public:
+    apple *right;
+    apple *right1;
     int sn;
-
-    using node_list_t = uit::islist<&apple::node1>;
 };
 
 int main(int argc, char *argv[]) {
-    uit::islist<&apple::node> list{};
-    apple::node_list_t list1{};
+    uit::islist<&apple::right> list{};
+    uit::islist<&apple::right1> list1{};
 
     apple a0{500, 0};
     apple a1{501, 1};

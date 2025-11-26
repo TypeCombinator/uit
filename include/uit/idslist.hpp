@@ -2,22 +2,22 @@
 //
 // SPDX-License-Identifier: BSD 3-Clause
 
-#pragma once
+#ifndef UIT_IDSLIST_16F6335A_28C5_45A0_8DF3_66A706C1714A
+#define UIT_IDSLIST_16F6335A_28C5_45A0_8DF3_66A706C1714A
 #include <iterator>
-#include "intrusive.hpp"
+#include <uit/intrusive.hpp>
 
 namespace uit {
 
-template <auto M>
+template <auto Right>
 class idslist;
 
-template <typename T, typename MT, MT(T::*M)>
-    requires std::is_base_of_v<isnode<T>, MT>
-class idslist<M> {
+template <typename T, typename MT, MT T::*Right>
+class idslist<Right> {
    public:
     idslist() noexcept {
-        head.right = nullptr;
-        head.left = mock_head();
+        m_right = nullptr;
+        m_left = mock_head();
     }
 
     idslist(const idslist &other) noexcept {
@@ -44,66 +44,66 @@ class idslist<M> {
 
     [[nodiscard]]
     bool empty() const noexcept {
-        return head.right == nullptr;
+        return m_right == nullptr;
     }
 
     void clear() noexcept {
-        head.right = nullptr;
-        head.left = mock_head();
+        m_right = nullptr;
+        m_left = mock_head();
     }
 
     [[nodiscard]]
     T &front() const noexcept {
-        return *head.right;
+        return *m_right;
     }
 
     [[nodiscard]]
     T &back() const noexcept {
-        return *head.left;
+        return *m_left;
     }
 
     void push_front(T *node) noexcept {
-        if (head.right == nullptr) {
-            head.left = node;
+        if (m_right == nullptr) {
+            m_left = node;
         }
-        (node->*M).right = head.right;
-        head.right = node;
+        node->*Right = m_right;
+        m_right = node;
     }
 
     void push_back(T *node) noexcept {
-        (node->*M).right = nullptr;
-        (head.left->*M).right = node;
-        head.left = node;
+        node->*Right = nullptr;
+        m_left->*Right = node;
+        m_left = node;
     }
 
     T *pop_front() noexcept {
-        T *first = head.right;
+        T *first = m_right;
         if (first == nullptr) [[unlikely]] {
             return nullptr;
         }
-        T *first_right = (first->*M).right;
+        T *first_right = first->*Right;
         // Tail?
         if (first_right == nullptr) [[unlikely]] {
-            head.left = mock_head();
+            m_left = mock_head();
         }
-        head.right = first_right;
+        m_right = first_right;
         return first;
     }
 
     T *remove(T *node) noexcept {
         T *left = mock_head();
-        for (T *right = (left->*M).right; right != nullptr;) {
+        for (T *right = left->*Right; right != nullptr;) {
             if (right == node) {
-                right = (right->*M).right;
-                (left->*M).right = right;
+                right = right->*Right;
+                left->*Right = right;
                 // Tail?
                 if (right == nullptr) [[unlikely]] {
-                    head.left = left;
+                    m_left = left;
                 }
                 return node;
             }
             left = right;
-            right = (left->*M).right;
+            right = left->*Right;
         }
         return nullptr;
     }
@@ -141,13 +141,13 @@ class idslist<M> {
         }
 
         iterator_t &operator++() noexcept {
-            current = (current->*M).right;
+            current = current->*Right;
             return *this;
         }
 
         iterator_t operator++(int) noexcept {
             pointer old = current;
-            current = (current->*M).right;
+            current = current->*Right;
             return iterator_t{old};
         }
 
@@ -163,11 +163,11 @@ class idslist<M> {
     using const_iterator = iterator_t<const T>;
 
     iterator begin() const noexcept {
-        return iterator{head.right};
+        return iterator{m_right};
     }
 
     iterator begin() noexcept {
-        return iterator{head.right};
+        return iterator{m_right};
     }
 
     iterator end() const noexcept {
@@ -179,7 +179,7 @@ class idslist<M> {
     }
 
     const_iterator cbegin() const noexcept {
-        return const_iterator{head.right};
+        return const_iterator{m_right};
     }
 
     const_iterator cend() const noexcept {
@@ -191,7 +191,8 @@ class idslist<M> {
         if (other.empty()) [[unlikely]] {
             clear();
         } else {
-            head = other.head;
+            m_right = other.m_right;
+            m_left = other.m_left;
         }
     }
 
@@ -199,7 +200,8 @@ class idslist<M> {
         if (other.empty()) [[unlikely]] {
             clear();
         } else {
-            head = other.head;
+            m_right = other.m_right;
+            m_left = other.m_left;
             other.clear();
         }
     }
@@ -207,16 +209,18 @@ class idslist<M> {
     [[nodiscard]]
     T *mock_head() noexcept {
         // UB!!!
-        return container_of(M, static_cast<MT *>(static_cast<isnode<T> *>(&head)));
+        return container_of(Right, &m_right);
     }
 
     [[nodiscard]]
     const T *const_mock_head() const noexcept {
         // UB!!!
-        return const_container_of(M, static_cast<const MT *>(static_cast<const isnode<T> *>(&head)));
+        return const_container_of(Right, &m_right);
     }
 
-    idnode<T> head;
+    T *m_right;
+    T *m_left;
 };
 
 } // namespace uit
+#endif // idslist.hpp

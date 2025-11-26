@@ -7,42 +7,45 @@
 #include "common/apple.hpp"
 #include "uit/isdlist.hpp"
 
+using list_t = uit::isdlist<&dapple::right, &dapple::left>;
+using node_t = dapple;
+
 TEST(isdlist_test, empty) {
-    uit::isdlist<&dapple::node> list{};
+    list_t list{};
     EXPECT_TRUE(list.empty());
 }
 
 TEST(isdlist_test, push_front1) {
-    uit::isdlist<&dapple::node> list{};
-    dapple a0(501, 0);
+    list_t list{};
+    node_t a0(501, 0);
 
     list.push_front(&a0);
     EXPECT_EQ(&a0, &list.front());
     EXPECT_FALSE(list.empty());
-    EXPECT_EQ(a0.node.right, nullptr);
+    EXPECT_EQ(a0.right, nullptr);
 }
 
 TEST(isdlist_test, push_front2) {
-    uit::isdlist<&dapple::node> list{};
-    dapple a0(500, 0);
-    dapple a1(501, 1);
+    list_t list{};
+    node_t a0(500, 0);
+    node_t a1(501, 1);
 
     list.push_front(&a0);
     list.push_front(&a1);
 
     EXPECT_FALSE(list.empty());
-    const dapple &second_to_last = list.front();
+    const node_t &second_to_last = list.front();
     EXPECT_EQ(&a1, &list.front());
-    EXPECT_EQ(&a0, list.front().node.right);
-    EXPECT_EQ(a0.node.left, &a1);
-    EXPECT_EQ(a0.node.right, nullptr);
+    EXPECT_EQ(&a0, list.front().right);
+    EXPECT_EQ(a0.left, &a1);
+    EXPECT_EQ(a0.right, nullptr);
 }
 
 TEST(isdlist_test, remove) {
-    uit::isdlist<&dapple::node> list{};
-    dapple a0{500, 0};
-    dapple a1{501, 1};
-    dapple a2{502, 2};
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
+    node_t a2{502, 2};
 
     list.push_front(&a2);
     list.push_front(&a1);
@@ -61,41 +64,41 @@ TEST(isdlist_test, remove) {
 }
 
 TEST(isdlist_test, remove1) {
-    uit::isdlist<&dapple::node> list{};
-    dapple a0{500, 0};
-    dapple a1{501, 1};
-    dapple a2{502, 2};
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
+    node_t a2{502, 2};
 
     list.push_front(&a0);
     list.push_front(&a1);
     list.push_front(&a2);
     EXPECT_FALSE(list.empty());
 
-    const dapple *moc_head = a2.node.left;
+    const node_t *moc_head = a2.left;
 
     list.remove(&a1);
     EXPECT_EQ(&list.front(), &a2);
-    EXPECT_EQ(a2.node.right, &a0);
-    EXPECT_EQ(a0.node.left, &a2);
+    EXPECT_EQ(a2.right, &a0);
+    EXPECT_EQ(a0.left, &a2);
 
     list.remove(&a2);
     EXPECT_EQ(&list.front(), &a0);
-    EXPECT_EQ(a0.node.left, moc_head);
+    EXPECT_EQ(a0.left, moc_head);
 
     list.remove(&a0);
     EXPECT_TRUE(list.empty());
 
     list.push_front(&a2);
     EXPECT_EQ(&list.front(), &a2);
-    EXPECT_EQ(a2.node.left, moc_head);
+    EXPECT_EQ(a2.left, moc_head);
 }
 
 TEST(isdlist_test, iterator) {
-    uit::isdlist<&dapple::node> list{};
-    dapple a0{500, 0};
-    dapple a1{501, 1};
-    dapple a2{502, 2};
-    dapple a3{503, 3};
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
+    node_t a2{502, 2};
+    node_t a3{503, 3};
 
     list.push_front(&a3);
     list.push_front(&a2);
@@ -142,11 +145,11 @@ TEST(isdlist_test, iterator) {
 }
 
 TEST(isdlist_test, range_based_for) {
-    uit::isdlist<&dapple::node> list{};
-    dapple a0{500, 0};
-    dapple a1{501, 1};
-    dapple a2{502, 2};
-    dapple a3{503, 3};
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
+    node_t a2{502, 2};
+    node_t a3{503, 3};
 
     list.push_front(&a3);
     list.push_front(&a2);
@@ -173,11 +176,11 @@ TEST(isdlist_test, range_based_for) {
 }
 
 TEST(isdlist_test, algorithm) {
-    uit::isdlist<&dapple::node> list{};
-    dapple a0{500, 0};
-    dapple a1{501, 1};
-    dapple a2{502, 2};
-    dapple a3{503, 3};
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
+    node_t a2{502, 2};
+    node_t a3{503, 3};
 
     list.push_front(&a3);
     list.push_front(&a2);
@@ -185,13 +188,13 @@ TEST(isdlist_test, algorithm) {
     list.push_front(&a0);
 
     uint32_t sn = 0;
-    std::for_each(list.cbegin(), list.cend(), [&sn](const dapple &i) -> void {
+    std::for_each(list.cbegin(), list.cend(), [&sn](const node_t &i) -> void {
         EXPECT_EQ(i.weight, 500 + sn);
         EXPECT_EQ(i.sn, sn);
         sn++;
     });
 
-    auto result = std::find_if(list.cbegin(), list.cend(), [](const dapple &i) -> bool {
+    auto result = std::find_if(list.cbegin(), list.cend(), [](const node_t &i) -> bool {
         return i.weight >= 501;
     });
     EXPECT_NE(result, list.cend());
@@ -200,32 +203,32 @@ TEST(isdlist_test, algorithm) {
 }
 
 TEST(isdlist_test, copy) {
-    static_assert(!std::is_copy_constructible<uit::isdlist<&dapple::node>>::value, "");
-    static_assert(!std::is_copy_assignable<uit::isdlist<&dapple::node>>::value, "");
+    static_assert(!std::is_copy_constructible<list_t>::value, "");
+    static_assert(!std::is_copy_assignable<list_t>::value, "");
 }
 
 TEST(isdlist_test, move_ctor) {
-    static_assert(std::is_move_constructible<uit::isdlist<&dapple::node>>::value, "");
+    static_assert(std::is_move_constructible<list_t>::value, "");
     {
-        uit::isdlist<&dapple::node> list{};
-        uit::isdlist<&dapple::node> list_other{std::move(list)};
+        list_t list{};
+        list_t list_other{std::move(list)};
 
         EXPECT_TRUE(list.empty());
         EXPECT_TRUE(list_other.empty());
     }
     {
-        uit::isdlist<&dapple::node> list{};
-        dapple a0{500, 0};
-        dapple a1{501, 1};
-        dapple a2{502, 2};
-        dapple a3{503, 3};
+        list_t list{};
+        node_t a0{500, 0};
+        node_t a1{501, 1};
+        node_t a2{502, 2};
+        node_t a3{503, 3};
 
         list.push_front(&a3);
         list.push_front(&a2);
         list.push_front(&a1);
         list.push_front(&a0);
 
-        uit::isdlist<&dapple::node> list_other{std::move(list)};
+        list_t list_other{std::move(list)};
 
         EXPECT_TRUE(list.empty());
         EXPECT_FALSE(list_other.empty());
@@ -241,23 +244,23 @@ TEST(isdlist_test, move_ctor) {
 }
 
 TEST(isdlist_test, move_assign) {
-    static_assert(std::is_move_assignable<uit::isdlist<&dapple::node>>::value, "");
+    static_assert(std::is_move_assignable<list_t>::value, "");
     {
-        uit::isdlist<&dapple::node> list{};
-        uit::isdlist<&dapple::node> list_other{};
+        list_t list{};
+        list_t list_other{};
 
         list_other = std::move(list);
         EXPECT_TRUE(list.empty());
         EXPECT_TRUE(list_other.empty());
     }
     {
-        uit::isdlist<&dapple::node> list{};
-        uit::isdlist<&dapple::node> list_other{};
+        list_t list{};
+        list_t list_other{};
 
-        dapple a0{500, 0};
-        dapple a1{501, 1};
-        dapple a2{502, 2};
-        dapple a3{503, 3};
+        node_t a0{500, 0};
+        node_t a1{501, 1};
+        node_t a2{502, 2};
+        node_t a3{503, 3};
 
         list.push_front(&a3);
         list.push_front(&a2);

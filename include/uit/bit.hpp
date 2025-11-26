@@ -6,6 +6,7 @@
 #define UIT_BIT_3DCA1F74_7932_477A_ABD1_274DBDD21126
 
 namespace uit {
+// TODO: Support msvc and others
 template <typename T, bool enable_ub = false>
 constexpr int countl_zero(T x) noexcept {
     if constexpr (!enable_ub) {

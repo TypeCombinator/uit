@@ -10,11 +10,11 @@ class apple {
 
     uint64_t weight;
    private:
-    uit::isnode<apple> node;
+    apple *right;
    public:
     int sn;
 
-    using node_list_t = uit::islist<&apple::node>;
+    using node_list_t = uit::islist<&apple::right>;
 };
 
 int main(int argc, char *argv[]) {
