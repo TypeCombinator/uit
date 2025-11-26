@@ -23,18 +23,16 @@ The trick named **mock_head** brings the following pros and cons.
 
 ### Cons
 
-- There are some undefined behaviors in the implementation of the **mock_head**. The [main branch](https://github.com/TypeCombinator/uit) uses type composition and `container_of` to implement the **mock_head**, which is completely **UB**, some test items cannot pass under high optimization level. The [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) uses type inheritance and `static_cast` to implement the **mock_head**, unfortunately, this implementation still has some **UB**s, such as the **mock_head** implementation of `idslist`, where the head and **mock_head** have no inheritance relationship with each other, and violate strict aliasing. Additionally, **mock_head** is not a complete object that actually exists, which violates lifetime rules and exceeds object boundaries. In summary, regardless of the approach, **mock_head** does not conform to the C++ standard.
+- There are some undefined behaviors in the implementation of the **mock_head**. Regardless of the approach taken, the **mock_head** is not a complete object that actually exists, which violates lifetime rules, exceeds object boundaries, and may violate strict aliasing, among other violations not listed here.
 - Among these, `isdlist`, `idslist`, and `idlist` are self-referential types,  with `isdlist` and `idlist` being move-only.
 
 ## Notice
 
 This project is used for experimental exploration, I will not bear any consequences caused by the practical application of this project.
 
-It must be said that the [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) is a better implementation under the current C++ standard definition, as it can **currently** (not guaranteed in the future) work on Clang and MSVC with high-level optimizations (such as O3), but for GCC, you must add an extra option`-fno-strict-aliasing`.
+The [main branch](https://github.com/TypeCombinator/uit) contains the prototype implementation, which is straightforward to understand. It must be said that the [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) is a better implementation under the current C++ standard definition, which utilizes class inheritance, it can **currently** (not guaranteed in the future) work on Clang and MSVC with high-level optimizations (such as O3), but for GCC, you must add an extra option `-fno-strict-aliasing`.
 
-The [main branch](https://github.com/TypeCombinator/uit) is mainly used to help understand, due to `container_of` being UB and having many unresolved conflicts with the C++ standard, which does not conform to the future development direction of C++, I am pessimistic about the possibility of `container_of` becoming a standard definition, despite the significant demands in many scenarios.
-
-I have a private repository named [**uit_ng**](https://github.com/TypeCombinator/uit_ng) that still uses **mock_head**, it doesn't employ type inheritance, yet maintains zero-overhead abstraction. Despite this, it works correctly across **Big Three (GCC, Clang and MSVC)** at the highest optimization levels, and passes all test cases **without requiring additional compiler flags or special attributes in the source code**. So far, I haven’t been able to create a test case that it fails. If enough people express interest, I would consider making this repository public.
+I have a private repository named [**uit_ng**](https://github.com/TypeCombinator/uit_ng) that still uses **mock_head**, it utilizes composition instead of class inheritance, yet maintains zero-overhead abstraction. Despite this, it works correctly across **Big Three (GCC, Clang and MSVC)** at the highest optimization levels, and passes all test cases **without requiring additional compiler flags or special attributes in the source code**. So far, I haven’t been able to create a test case that it fails. If enough people express interest, I would consider making this repository public.
 
 ## mock_head
 
