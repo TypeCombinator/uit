@@ -51,6 +51,28 @@ The [main branch](https://github.com/TypeCombinator/uit) contains the prototype 
 
 I have a private repository named [**uit_ng**](https://github.com/TypeCombinator/uit_ng) that still uses **mock_head**, it utilizes composition instead of class inheritance, yet maintains zero-overhead abstraction. Despite this, it works correctly across **Big Three (GCC, Clang and MSVC)** at the highest optimization levels, and passes all test cases **without requiring additional compiler flags or special attributes in the source code**. So far, I haven’t been able to create a test case that it fails. If enough people express interest, I would consider making this repository public.
 
+#### Does it support arbitrarily nested member pointers?
+
+```c++
+struct nested_node {
+    int m_sn;
+    struct inner {
+        nested_node *right; // The pointer used for linking is a member of the subobject.
+    };
+    uint64_t m_weight;
+};
+```
+
+Not currently, but I've attempted this before, and it can even support more complex situations than nested member pointers. It's not complicated and only requires a few template tricks to implement. If someone has a genuine need for this feature with solid justification, I'll implement it. However, it should be noted that this would make the code less elegant, and impose higher requirements on the compiler version.
+
+#### Is the **mock_sentinel** necessary for a balance tree?
+
+No, the UB introduced by the **mock_sentinel** does not affect the correctness, so there is no immediate plan to change it to a user-passed sentinel approach, as such an interface would not be concise enough for users.
+
+#### Is the performance of SBT or WBT worse than that of Red-Black Tree? 
+
+No, it depends on the implementation, and the slowness is due to parrot code. Red-Black Tree does not have any advantages over SBT or WBT in terms of functionality, performance, or complexity. However, I have no plans to make these optimized implementations public, including the non-recursive implementation with parent pointers.
+
 ## mock_head
 
 For simplicity, I will use a singly linked list as an example in C language. Firstly, we define a singly linked list node type `struct node`, and implement the `push_front`, the code is as follows:
@@ -227,7 +249,7 @@ Please refer to the **examples** and **tests** folder.
 
 ## TODO
 
-- Need more tests.
+- Move the implementation with **mock_head** into the `uit::exp` namespace and implement a practical linear linked list without UB.
 
 ## Acknowledgements
 
