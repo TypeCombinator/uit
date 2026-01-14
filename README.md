@@ -35,6 +35,7 @@
 - Simple and easy-to-understand code
 - Fewer branches and better performance, e.g. there's no branch in the `uit::idslist::push_back` method
 - Pointers to pointers are no longer required, even the hlist (`uit::isdlist`) is no exception
+- For `uit::dlist` and `uit::sdlist`, nodes can be directly removed without holding the original linked list
 - Truly zero overhead
 - No macros
 
@@ -50,6 +51,24 @@ This project is used for experimental exploration, I will not bear any consequen
 The [main branch](https://github.com/TypeCombinator/uit) contains the prototype implementation, which is straightforward to understand. It must be said that the [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) is a better implementation under the current C++ standard definition, which utilizes class inheritance, it can **currently** (not guaranteed in the future) work on Clang and MSVC with high-level optimizations (such as O3), but for GCC, you must add an extra option `-fno-strict-aliasing`.
 
 I have a private repository named [**uit_ng**](https://github.com/TypeCombinator/uit_ng) that still uses **mock_head**, it utilizes composition instead of class inheritance, yet maintains zero-overhead abstraction. Despite this, it works correctly across **Big Three (GCC, Clang and MSVC)** at the highest optimization levels, and passes all test cases **without requiring additional compiler flags or special attributes in the source code**. So far, I haven’t been able to create a test case that it fails. If enough people express interest, I would consider making this repository public.
+
+#### Does it support arbitrarily nested member pointers?
+
+```c++
+struct nested_node {
+    int m_sn;
+    struct inner {
+        nested_node *right; // The pointer used for linking is a member of the subobject.
+    };
+    uint64_t m_weight;
+};
+```
+
+Not currently, but I've attempted this before, and it can even support more complex situations than nested member pointers. It's not complicated and only requires a few template tricks to implement. If someone has a genuine need for this feature with solid justification, I'll implement it. However, it should be noted that this would make the code less elegant, and impose higher requirements on the compiler version.
+
+#### Is the **mock_sentinel** necessary for a balance tree?
+
+No, the UB introduced by the **mock_sentinel** does not affect the correctness, so there is no immediate plan to change it to a user-passed sentinel approach, as such an interface would not be concise enough for users.
 
 ## mock_head
 
