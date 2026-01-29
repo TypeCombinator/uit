@@ -110,7 +110,7 @@ struct irwbt<Right, Left, Size, CMP> {
                         } else {         // single-rotate
                             if (is_ll) { // ll
                                 np_t ll = left->*Left;
-                                if (!is_sentinel(ll)) [[likely]] { // look-ahead-1
+                                if (!is_sentinel(ll)) [[likely]] { // look-ahead-2
                                     (ll->*Size)++;
                                     cur_ptr = &(left->*Left);
                                 } else {
@@ -119,7 +119,7 @@ struct irwbt<Right, Left, Size, CMP> {
                                 }
                             } else { // lr
                                 np_t lr = left->*Right;
-                                if (!is_sentinel(lr)) [[likely]] { // look-ahead-1
+                                if (!is_sentinel(lr)) [[likely]] { // look-ahead-2
                                     (lr->*Size)++;
                                     cur_ptr = &(cur->*Left);
                                 } else {
@@ -191,7 +191,7 @@ struct irwbt<Right, Left, Size, CMP> {
                         } else {         // single-rotate
                             if (is_rr) { // rr
                                 np_t rr = right->*Right;
-                                if (!is_sentinel(rr)) [[likely]] { // look-ahead-1
+                                if (!is_sentinel(rr)) [[likely]] { // look-ahead-2
                                     (rr->*Size)++;
                                     cur_ptr = &(right->*Right);
                                 } else {
@@ -200,7 +200,7 @@ struct irwbt<Right, Left, Size, CMP> {
                                 }
                             } else { // rl
                                 np_t rl = right->*Left;
-                                if (!is_sentinel(rl)) [[likely]] { // look-ahead-1
+                                if (!is_sentinel(rl)) [[likely]] { // look-ahead-2
                                     (rl->*Size)++;
                                     cur_ptr = &(cur->*Right);
                                 } else {
