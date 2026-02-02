@@ -13,10 +13,9 @@
 // [0] Yoichi Hirai and Kazuhiko Yamamoto. Balancing weight-balanced trees. 2011.
 // [1] Lukas Barth and Dorothea Wagner. Engineering Top-Down Weight-Balanced Trees.
 // Notices:
-// [0] The acronym irsbt stands for intrusive recursive size-balanced tree.
+// [0] The acronym irwbt stands for intrusive recursive weight-balanced tree.
 // [1] The mock sentinel will involve UB, but the code works correctly.
-// [2] Nodes in the tree don‘t have parent pointers, so some operations can only be implemented
-// recursively.
+// [2] This is a top-down implementation that avoids the need for some recursive approaches.
 namespace uit {
 template <auto Right, auto Left, auto Size, typename CMP = std::less<>>
 struct irwbt;
@@ -275,7 +274,7 @@ struct irwbt<Right, Left, Size, CMP> {
         insert_leaf(*cur_ptr, node);
         stack_ptr--;
         if (path > 1) [[likely]] {
-            // The parent node of the new leaf node is balanced.
+            // The parent node of the new leaf node is always balanced.
             ((**stack_ptr)->*Size)++;
             path >>= 1;
             stack_ptr--;
@@ -349,7 +348,7 @@ struct irwbt<Right, Left, Size, CMP> {
                         right->*Size = cur->*Size;
                         *cur_ptr = right;
                     } else {
-                        np_t leftmost = top_down_wremove_leftmost_for_remove(&(cur->*Right));
+                        np_t leftmost = top_down_remove_leftmost_for_remove(&(cur->*Right));
                         leftmost->*Right = cur->*Right;
                         leftmost->*Left = cur->*Left;
                         leftmost->*Size = cur->*Size;
@@ -437,7 +436,7 @@ struct irwbt<Right, Left, Size, CMP> {
     }
 
     // It's UB when the left child is null.
-    static np_t top_down_wremove_leftmost_for_remove(np_t *cur_ptr) noexcept {
+    static np_t top_down_remove_leftmost_for_remove(np_t *cur_ptr) noexcept {
         np_t cur = *cur_ptr;
         (cur->*Size)--;
         do {
@@ -471,7 +470,7 @@ struct irwbt<Right, Left, Size, CMP> {
     }
 
     static void maintain_right_leaning(np_t &root) noexcept {
-        if ((root->*Left->*Size * 3 + 1) < (root->*Right->*Size)) {
+        if ((root->*Left->*Size * 3 + 1) < root->*Right->*Size) {
             if (root->*Right->*Right->*Size * 2 < (root->*Right->*Left->*Size + 1)) {
                 right_rotate(root->*Right);
             }
@@ -507,6 +506,7 @@ struct irwbt<Right, Left, Size, CMP> {
         unsigned char buffer[sizeof(T)];
     };
 
+    // It's a fixed point!
     static inline const sentinel_t sentinel{};
 
     static T *mock_sentinel() noexcept {

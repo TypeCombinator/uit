@@ -15,7 +15,10 @@
 // [1] The mock sentinel will involve UB, but the code works correctly.
 // [2] Nodes in the tree don‘t have parent pointers, so some operations can only be implemented
 // recursively.
+// [3] This is an implementation I plan to deprecate. Please refer to the alternative implementation
+// in irwbt.hpp.
 namespace uit {
+// struct [[deprecated]] irsbt;
 template <auto Right, auto Left, auto Size, typename CMP = std::less<>>
 struct irsbt;
 

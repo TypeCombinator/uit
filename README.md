@@ -18,7 +18,7 @@
 | types         | was mock_sentinel used?            | comments                                                     |
 | ------------- | ---------------------------------- | ------------------------------------------------------------ |
 | `uit::irsbt`  | Yes (but the code works correctly) | Intrusive Recursive Size-Balanced Tree                       |
-| `uit::irwbt`  | Yes (but the code works correctly) | Intrusive Recursive Weight-Balanced Tree                     |
+| `uit::irwbt`  | Yes (but the code works correctly) | Intrusive Recursive Weight-Balanced Tree<br />It's is a top-down implementation that avoids recursion. |
 | `uit::irheap` | **No**                             | Intrusive Recursive Heap<br />Actually, recursion is not used, it's fully implemented with iteration. |
 | `uit::iheap`  | **No**                             | Intrusive Heap<br />The code isn't in this repository, see the [PR](https://github.com/NVIDIA/stdexec/pull/1674) to stdexec. |
 
