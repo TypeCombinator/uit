@@ -470,7 +470,7 @@ struct irwbt<Right, Left, Size, CMP> {
     }
 
     static void maintain_right_leaning(np_t &root) noexcept {
-        if ((root->*Left->*Size * 3 + 1) < root->*Right->*Size) {
+        if ((root->*Left->*Size * 3 + 1) < root->*Right->*Size) [[unlikely]] {
             if (root->*Right->*Right->*Size * 2 < (root->*Right->*Left->*Size + 1)) {
                 right_rotate(root->*Right);
             }
@@ -479,7 +479,7 @@ struct irwbt<Right, Left, Size, CMP> {
     }
 
     static void maintain_left_leaning(np_t &root) noexcept {
-        if ((root->*Right->*Size * 3 + 1) < root->*Left->*Size) {
+        if ((root->*Right->*Size * 3 + 1) < root->*Left->*Size) [[unlikely]] {
             if (root->*Left->*Left->*Size * 2 < (root->*Left->*Right->*Size + 1)) {
                 left_rotate(root->*Left);
             }
