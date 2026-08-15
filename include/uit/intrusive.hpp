@@ -5,6 +5,7 @@
 #ifndef UIT_INTRUSIVE_F553190D_A9E1_4D56_9310_9CE4208E5ADD
 #define UIT_INTRUSIVE_F553190D_A9E1_4D56_9310_9CE4208E5ADD
 #include <cstddef>
+#include <memory>
 
 namespace uit {
 
@@ -37,8 +38,37 @@ template <auto M>
 using member_t = detail::member_access<M>::member_type;
 
 template <typename M, typename T>
-constexpr size_t offset_of(M T::*field) noexcept {
+constexpr size_t fast_offset_of(M T::*field) noexcept {
     return reinterpret_cast<size_t>(&(static_cast<T *>(nullptr)->*field));
+}
+
+template <typename T, typename M>
+constexpr std::size_t offset_of(M T::*field) noexcept {
+    union U {
+        unsigned char buffer[sizeof(T)];
+        T t;
+
+        constexpr U() noexcept {
+        }
+
+        constexpr ~U() noexcept {
+        }
+    } u{};
+
+    std::size_t start = 0;
+    std::size_t end = sizeof(T);
+    while (start < end) {
+        std::size_t m = (start + end) >> 1;
+        if (u.buffer + m == static_cast<void *>(std::addressof(u.t.*field))) {
+            return m;
+        }
+        if (u.buffer + m < static_cast<void *>(std::addressof(u.t.*field))) {
+            start = m + 1;
+        } else {
+            end = m;
+        }
+    }
+    return 0;
 }
 
 template <typename M, typename T>
