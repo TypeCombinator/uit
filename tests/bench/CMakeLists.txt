@@ -1,5 +1,4 @@
 add_executable(bench
-  irsbt.cpp
   linux_irbt.cpp
   freebsd_irbt.cpp
 )

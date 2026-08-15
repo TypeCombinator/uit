@@ -18,9 +18,9 @@
 // [3] This is an implementation I plan to deprecate. Please refer to the alternative implementation
 // in irwbt.hpp.
 namespace uit {
-// struct [[deprecated]] irsbt;
 template <auto Right, auto Left, auto Size, typename CMP = std::less<>>
-struct irsbt;
+struct [[deprecated]]
+irsbt;
 
 template <typename T, typename MT, MT T::*Right, MT T::*Left, auto Size, typename CMP>
 struct irsbt<Right, Left, Size, CMP> {
