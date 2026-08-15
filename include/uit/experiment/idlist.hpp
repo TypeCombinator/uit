@@ -8,7 +8,8 @@
 #include <uit/intrusive.hpp>
 
 namespace uit {
-
+//
+namespace experiment {
 template <auto Right, auto Left>
 class idlist;
 
@@ -265,6 +266,6 @@ class idlist<Right, Left> {
     T *m_right;
     T *m_left;
 };
-
+} // namespace experiment
 } // namespace uit
 #endif // idlist.hpp

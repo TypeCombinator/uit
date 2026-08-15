@@ -4,28 +4,55 @@
 
 #include <algorithm>
 #include "gtest/gtest.h"
-#include "common/apple.hpp"
-#include "uit/isdlist.hpp"
+#include <../common/apple.hpp>
+#include <uit/experiment/idlist.hpp>
 
-using list_t = uit::isdlist<&dapple::right, &dapple::left>;
+using list_t = uit::experiment::idlist<&dapple::right, &dapple::left>;
 using node_t = dapple;
 
-TEST(isdlist_test, empty) {
+TEST(idlist_test, empty) {
     list_t list{};
     EXPECT_TRUE(list.empty());
 }
 
-TEST(isdlist_test, push_front1) {
+TEST(idlist_test, push_back1) {
+    list_t list{};
+    node_t a0(500, 0);
+
+    list.push_back(&a0);
+    EXPECT_EQ(&a0, &list.front());
+    EXPECT_EQ(&a0, &list.back());
+    EXPECT_FALSE(list.empty());
+}
+
+TEST(idlist_test, push_back2) {
+    list_t list{};
+    node_t a0(500, 0);
+    node_t a1(501, 1);
+
+    list.push_back(&a0);
+    list.push_back(&a1);
+
+    const node_t &first = list.front();
+    EXPECT_EQ(&a0, &first);
+
+    const node_t *second = first.right;
+    EXPECT_EQ(&a1, second);
+    EXPECT_EQ(&a1, &list.back());
+    EXPECT_FALSE(list.empty());
+}
+
+TEST(idlist_test, push_front1) {
     list_t list{};
     node_t a0(501, 0);
 
     list.push_front(&a0);
     EXPECT_EQ(&a0, &list.front());
+    EXPECT_EQ(&a0, &list.back());
     EXPECT_FALSE(list.empty());
-    EXPECT_EQ(a0.right, nullptr);
 }
 
-TEST(isdlist_test, push_front2) {
+TEST(idlist_test, push_front2) {
     list_t list{};
     node_t a0(500, 0);
     node_t a1(501, 1);
@@ -33,23 +60,37 @@ TEST(isdlist_test, push_front2) {
     list.push_front(&a0);
     list.push_front(&a1);
 
-    EXPECT_FALSE(list.empty());
-    const node_t &second_to_last = list.front();
+    const node_t &last = list.back();
+    EXPECT_EQ(&a0, &last);
+
+    const node_t *second_to_last = last.left;
+    EXPECT_EQ(&a1, second_to_last);
     EXPECT_EQ(&a1, &list.front());
-    EXPECT_EQ(&a0, list.front().right);
-    EXPECT_EQ(a0.left, &a1);
-    EXPECT_EQ(a0.right, nullptr);
+    EXPECT_FALSE(list.empty());
 }
 
-TEST(isdlist_test, remove) {
+TEST(idlist_test, clear) {
+    list_t list{};
+    node_t a0{500, 0};
+    node_t a1{501, 1};
+
+    list.push_front(&a0);
+    list.push_front(&a1);
+    EXPECT_FALSE(list.empty());
+
+    list.clear();
+    EXPECT_TRUE(list.empty());
+}
+
+TEST(idlist_test, remove) {
     list_t list{};
     node_t a0{500, 0};
     node_t a1{501, 1};
     node_t a2{502, 2};
 
-    list.push_front(&a2);
-    list.push_front(&a1);
-    list.push_front(&a0);
+    list.push_back(&a0);
+    list.push_back(&a1);
+    list.push_back(&a2);
     EXPECT_FALSE(list.empty());
 
     list.remove(&a1);
@@ -63,45 +104,44 @@ TEST(isdlist_test, remove) {
     EXPECT_EQ(list.pop_front(), nullptr);
 }
 
-TEST(isdlist_test, remove1) {
+TEST(idlist_test, remove1) {
     list_t list{};
     node_t a0{500, 0};
     node_t a1{501, 1};
     node_t a2{502, 2};
 
-    list.push_front(&a0);
-    list.push_front(&a1);
-    list.push_front(&a2);
+    list.push_back(&a0);
+    list.push_back(&a1);
+    list.push_back(&a2);
     EXPECT_FALSE(list.empty());
 
-    const node_t *moc_head = a2.left;
 
     list.remove(&a1);
-    EXPECT_EQ(&list.front(), &a2);
-    EXPECT_EQ(a2.right, &a0);
-    EXPECT_EQ(a0.left, &a2);
-
-    list.remove(&a2);
     EXPECT_EQ(&list.front(), &a0);
-    EXPECT_EQ(a0.left, moc_head);
+    EXPECT_EQ(&list.back(), &a2);
 
     list.remove(&a0);
+    EXPECT_EQ(&list.front(), &a2);
+    EXPECT_EQ(&list.back(), &a2);
+
+    list.remove(&a2);
     EXPECT_TRUE(list.empty());
 
-    list.push_front(&a2);
-    EXPECT_EQ(&list.front(), &a2);
-    EXPECT_EQ(a2.left, moc_head);
+    list.push_back(&a0);
+    EXPECT_EQ(&list.front(), &a0);
+    EXPECT_EQ(&list.back(), &a0);
 }
 
-TEST(isdlist_test, iterator) {
+TEST(idlist_test, iterator) {
     list_t list{};
     node_t a0{500, 0};
     node_t a1{501, 1};
     node_t a2{502, 2};
     node_t a3{503, 3};
 
-    list.push_front(&a3);
-    list.push_front(&a2);
+    list.push_back(&a2);
+    list.push_back(&a3);
+
     list.push_front(&a1);
     list.push_front(&a0);
 
@@ -144,48 +184,69 @@ TEST(isdlist_test, iterator) {
     }
 }
 
-TEST(isdlist_test, range_based_for) {
+TEST(idlist_test, reverse_iterator) {
     list_t list{};
     node_t a0{500, 0};
     node_t a1{501, 1};
     node_t a2{502, 2};
     node_t a3{503, 3};
 
-    list.push_front(&a3);
-    list.push_front(&a2);
-    list.push_front(&a1);
     list.push_front(&a0);
+    list.push_front(&a1);
+    list.push_front(&a2);
+    list.push_front(&a3);
 
-    uint64_t weight = 500;
-    int sn = 0;
-    for (auto &i: list) {
-        EXPECT_EQ(i.weight, weight);
-        EXPECT_EQ(i.sn, sn);
-        weight++;
-        sn++;
+
+    {
+        uint64_t weight = 500;
+        int sn = 0;
+        auto it_end = list.rend();
+        for (auto it = list.rbegin(); it != it_end; it++) {
+            EXPECT_EQ(it->weight, weight);
+            EXPECT_EQ(it->sn, sn);
+            weight++;
+            sn++;
+        }
     }
-    weight = 500;
-    sn = 0;
-    const auto &clist = list;
-    for (const auto &i: clist) {
-        EXPECT_EQ(i.weight, weight);
-        EXPECT_EQ(i.sn, sn);
-        weight++;
-        sn++;
+
+    {
+        const auto &clist = list;
+        uint64_t weight = 500;
+        int sn = 0;
+        auto it_end = clist.rend();
+        for (auto it = clist.rbegin(); it != it_end; it++) {
+            EXPECT_EQ(it->weight, weight);
+            EXPECT_EQ(it->sn, sn);
+            weight++;
+            sn++;
+        }
+    }
+
+    {
+        const auto &clist = list;
+        uint64_t weight = 500;
+        int sn = 0;
+        auto it_end = list.crend();
+        for (auto it = list.crbegin(); it != it_end; it++) {
+            EXPECT_EQ(it->weight, weight);
+            EXPECT_EQ(it->sn, sn);
+            weight++;
+            sn++;
+        }
     }
 }
 
-TEST(isdlist_test, algorithm) {
+TEST(idlist_test, algorithm) {
     list_t list{};
     node_t a0{500, 0};
     node_t a1{501, 1};
     node_t a2{502, 2};
     node_t a3{503, 3};
 
-    list.push_front(&a3);
-    list.push_front(&a2);
-    list.push_front(&a1);
-    list.push_front(&a0);
+    list.push_back(&a0);
+    list.push_back(&a1);
+    list.push_back(&a2);
+    list.push_back(&a3);
 
     uint32_t sn = 0;
     std::for_each(list.cbegin(), list.cend(), [&sn](const node_t &i) -> void {
@@ -202,12 +263,12 @@ TEST(isdlist_test, algorithm) {
     EXPECT_EQ(result->sn, 1);
 }
 
-TEST(isdlist_test, copy) {
+TEST(idlist_test, copy) {
     static_assert(!std::is_copy_constructible<list_t>::value, "");
     static_assert(!std::is_copy_assignable<list_t>::value, "");
 }
 
-TEST(isdlist_test, move_ctor) {
+TEST(idlist_test, move_ctor) {
     static_assert(std::is_move_constructible<list_t>::value, "");
     {
         list_t list{};
@@ -233,6 +294,8 @@ TEST(isdlist_test, move_ctor) {
         EXPECT_TRUE(list.empty());
         EXPECT_FALSE(list_other.empty());
         EXPECT_EQ(&list_other.front(), &a0);
+        EXPECT_EQ(&list_other.back(), &a3);
+        EXPECT_EQ(a0.left, a3.right);
 
         uint32_t sn = 0;
         for (const auto &i: list_other) {
@@ -243,7 +306,7 @@ TEST(isdlist_test, move_ctor) {
     }
 }
 
-TEST(isdlist_test, move_assign) {
+TEST(idlist_test, move_assign) {
     static_assert(std::is_move_assignable<list_t>::value, "");
     {
         list_t list{};
@@ -269,8 +332,8 @@ TEST(isdlist_test, move_assign) {
 
         // Move self.
         list = std::move(list);
-
         EXPECT_FALSE(list.empty());
+        EXPECT_EQ(a0.left, a3.right);
 
         uint32_t sn = 0;
         for (const auto &i: list) {
@@ -281,13 +344,14 @@ TEST(isdlist_test, move_assign) {
 
         // Move other.
         list_other = std::move(list);
-
         EXPECT_TRUE(list.empty());
         EXPECT_FALSE(list_other.empty());
         EXPECT_EQ(&list_other.front(), &a0);
+        EXPECT_EQ(&list_other.back(), &a3);
+        EXPECT_EQ(a0.left, a3.right);
 
         sn = 0;
-        for (const auto &i: list_other) {
+        for (const auto &i: list) {
             EXPECT_EQ(i.weight, 500 + sn);
             EXPECT_EQ(i.sn, sn);
             sn++;

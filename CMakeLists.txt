@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
+# list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
 
 option(UIT_BUILD_TESTS "Build tests" OFF)
 option(UIT_BUILD_EXAMPLES "Build examples" ON)
@@ -34,9 +34,9 @@ if(UIT_BUILD_EXAMPLES)
 endif()
 
 if(UIT_BUILD_TESTS)
-  include(GoogleTest)
+  include(cmake/module/GoogleTest.cmake)
   add_subdirectory(tests/unit)
 
-  include(GoogleBenchmark)
+  include(cmake/module/GoogleBenchmark.cmake)
   add_subdirectory(tests/bench)
 endif()

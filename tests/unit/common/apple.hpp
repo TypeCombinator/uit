@@ -20,7 +20,7 @@ struct dapple {
 };
 
 struct sapple {
-    sapple(uint64_t weight, int sn) noexcept
+    explicit sapple(uint64_t weight, int sn) noexcept
         : weight(weight)
         , sn(sn) {
     }

@@ -2,33 +2,42 @@
 //
 // SPDX-License-Identifier: BSD 3-Clause
 
-#ifndef UIT_ISDLIST_B3985B15_3941_4675_AD44_F646349A7870
-#define UIT_ISDLIST_B3985B15_3941_4675_AD44_F646349A7870
+#ifndef UIT_IDSLIST_16F6335A_28C5_45A0_8DF3_66A706C1714A
+#define UIT_IDSLIST_16F6335A_28C5_45A0_8DF3_66A706C1714A
 #include <iterator>
 #include <uit/intrusive.hpp>
 
 namespace uit {
+//
+namespace experiment {
+template <auto Right>
+class idslist;
 
-template <auto Right, auto Left>
-class isdlist;
-
-template <typename T, typename MT, MT T::* Right, MT T::* Left>
-class isdlist<Right, Left> {
+template <typename T, typename MT, MT T::*Right>
+class idslist<Right> {
    public:
-    isdlist() noexcept {
+    idslist() noexcept {
         m_right = nullptr;
+        m_left = mock_head();
     }
 
-    isdlist(const isdlist&) = delete;
+    idslist(const idslist &other) noexcept {
+        copy_from(other);
+    }
 
-    isdlist& operator=(const isdlist&) = delete;
+    idslist &operator=(const idslist &other) noexcept {
+        if (this != &other) [[likely]] {
+            copy_from(other);
+        }
+        return *this;
+    }
 
-    isdlist(isdlist&& other) noexcept {
+    idslist(idslist &&other) noexcept {
         move_from(std::move(other));
     }
 
-    isdlist& operator=(isdlist&& other) noexcept {
-        if (this != &other) {
+    idslist &operator=(idslist &&other) noexcept {
+        if (this != &other) [[likely]] {
             move_from(std::move(other));
         }
         return *this;
@@ -41,43 +50,63 @@ class isdlist<Right, Left> {
 
     void clear() noexcept {
         m_right = nullptr;
+        m_left = mock_head();
     }
 
     [[nodiscard]]
-    T& front() const noexcept {
+    T &front() const noexcept {
         return *m_right;
     }
 
-    void push_front(T* node) noexcept {
-        T* first;
-        first = m_right;
+    [[nodiscard]]
+    T &back() const noexcept {
+        return *m_left;
+    }
 
-        node->*Right = first;
-        node->*Left = mock_head();
-
+    void push_front(T *node) noexcept {
+        if (m_right == nullptr) {
+            m_left = node;
+        }
+        node->*Right = m_right;
         m_right = node;
-        if (first != nullptr) {
-            first->*Left = node;
-        }
     }
 
-    static void remove(T* node) noexcept {
-        T* right = node->*Right;
-        T* left = node->*Left;
-
-        if (right != nullptr) {
-            right->*Left = left;
-        }
-        left->*Right = right;
+    void push_back(T *node) noexcept {
+        node->*Right = nullptr;
+        m_left->*Right = node;
+        m_left = node;
     }
 
-    T* pop_front() noexcept {
-        T* right = m_right;
-        if (right == nullptr) {
+    T *pop_front() noexcept {
+        T *first = m_right;
+        if (first == nullptr) [[unlikely]] {
             return nullptr;
         }
-        remove(right);
-        return right;
+        T *first_right = first->*Right;
+        // Tail?
+        if (first_right == nullptr) [[unlikely]] {
+            m_left = mock_head();
+        }
+        m_right = first_right;
+        return first;
+    }
+
+    T *remove(T *node) noexcept {
+        T *left = mock_head();
+        for (T *right = left->*Right; right != nullptr;) {
+            if (right == node) {
+                right = right->*Right;
+                left->*Right = right;
+                // Tail?
+                if (right == nullptr) [[unlikely]] {
+                    m_left = left;
+                }
+                return node;
+            }
+            left = right;
+            right = left->*Right;
+        }
+        return nullptr;
     }
 
     template <typename T_CV>
@@ -85,8 +114,8 @@ class isdlist<Right, Left> {
         using iterator_category = std::forward_iterator_tag;
         using value_type = T_CV;
         using difference_type = std::ptrdiff_t;
-        using pointer = T_CV*;
-        using reference = T_CV&;
+        using pointer = T_CV *;
+        using reference = T_CV &;
 
         explicit iterator_t(pointer item) {
             current = item;
@@ -112,7 +141,7 @@ class isdlist<Right, Left> {
             return current;
         }
 
-        iterator_t& operator++() noexcept {
+        iterator_t &operator++() noexcept {
             current = current->*Right;
             return *this;
         }
@@ -123,13 +152,10 @@ class isdlist<Right, Left> {
             return iterator_t{old};
         }
 
-        bool operator==(const iterator_t& other) const noexcept {
+        bool operator==(const iterator_t &other) const noexcept {
             return current == other.current;
         }
 
-        bool operator!=(const iterator_t& other) const noexcept {
-            return current != other.current;
-        }
        private:
         pointer current{nullptr};
     };
@@ -162,32 +188,40 @@ class isdlist<Right, Left> {
     }
 
    private:
-    void move_from(isdlist&& other) noexcept {
+    void copy_from(const idslist &other) noexcept {
         if (other.empty()) [[unlikely]] {
             clear();
         } else {
             m_right = other.m_right;
+            m_left = other.m_left;
+        }
+    }
 
-            m_right->*Left = mock_head();
-
+    void move_from(idslist &&other) noexcept {
+        if (other.empty()) [[unlikely]] {
+            clear();
+        } else {
+            m_right = other.m_right;
+            m_left = other.m_left;
             other.clear();
         }
     }
 
     [[nodiscard]]
-    T* mock_head() noexcept {
+    T *mock_head() noexcept {
         // UB!!!
         return container_of(Right, &m_right);
     }
 
     [[nodiscard]]
-    const T* const_mock_head() const noexcept {
+    const T *const_mock_head() const noexcept {
         // UB!!!
         return const_container_of(Right, &m_right);
     }
 
-    T* m_right;
+    T *m_right;
+    T *m_left;
 };
-
+} // namespace experiment
 } // namespace uit
-#endif // isdlist.hpp
+#endif // idslist.hpp

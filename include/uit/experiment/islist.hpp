@@ -8,7 +8,8 @@
 #include <uit/intrusive.hpp>
 
 namespace uit {
-
+//
+namespace experiment {
 template <auto Right>
 class islist;
 
@@ -157,6 +158,6 @@ class islist<Right> {
    private:
     T* m_right;
 };
-
+} // namespace experiment
 } // namespace uit
 #endif // islist.hpp
