@@ -35,6 +35,7 @@ endif()
 
 if(UIT_BUILD_TESTS)
   include(cmake/module/GoogleTest.cmake)
+  include(cmake/module/Catch2.cmake)
   add_subdirectory(tests/unit)
 
   include(cmake/module/GoogleBenchmark.cmake)

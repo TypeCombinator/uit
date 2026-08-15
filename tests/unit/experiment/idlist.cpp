@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: BSD 3-Clause
 
 #include <algorithm>
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include <../common/apple.hpp>
 #include <uit/experiment/idlist.hpp>
 
