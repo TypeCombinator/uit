@@ -4,7 +4,7 @@
 
 #ifndef ISDLIST_91B4F713_47E1_4184_AAC2_D26F17F436DE
 #define ISDLIST_91B4F713_47E1_4184_AAC2_D26F17F436DE
-#include <iterator>
+#include <uit/detail/islist_iterator.hpp>
 #include <uit/intrusive.hpp>
 
 namespace uit {
@@ -35,16 +35,16 @@ class isdlist<Right, Left> {
     // }
 
     [[nodiscard]]
-    bool empty() const noexcept {
+    constexpr bool empty() const noexcept {
         return m_right == nullptr;
     }
 
-    void clear() noexcept {
+    constexpr void clear() noexcept {
         m_right = nullptr;
     }
 
     [[nodiscard]]
-    T& front() const noexcept {
+    constexpr T& front() const noexcept {
         return *m_right;
     }
 
@@ -53,7 +53,7 @@ class isdlist<Right, Left> {
         return nullptr;
     }
 
-    void push_front(T* node) noexcept {
+    constexpr void push_front(T* node) noexcept {
         T* first = m_right;
 
         node->*Right = first;
@@ -65,7 +65,7 @@ class isdlist<Right, Left> {
         }
     }
 
-    void remove(T* node) noexcept {
+    constexpr void remove(T* node) noexcept {
         T* right = node->*Right;
         T* left = node->*Left;
 
@@ -79,7 +79,7 @@ class isdlist<Right, Left> {
         }
     }
 
-    void pop_front() noexcept {
+    constexpr void pop_front() noexcept {
         if (m_right == nullptr) [[unlikely]] {
             return;
         }
@@ -90,84 +90,30 @@ class isdlist<Right, Left> {
         }
     }
 
-    template <typename T_CV>
-    struct iterator_t {
-        using iterator_category = std::forward_iterator_tag;
-        using value_type = T_CV;
-        using difference_type = std::ptrdiff_t;
-        using pointer = T_CV*;
-        using reference = T_CV&;
+    using iterator = islist_iterator<T, Right>;
+    using const_iterator = islist_iterator<const T, Right>;
 
-        explicit iterator_t(pointer item) {
-            current = item;
-        }
-
-        [[nodiscard]]
-        reference operator*() noexcept {
-            return *current;
-        }
-
-        [[nodiscard]]
-        reference operator*() const noexcept {
-            return *current;
-        }
-
-        [[nodiscard]]
-        pointer operator->() noexcept {
-            return current;
-        }
-
-        [[nodiscard]]
-        pointer operator->() const noexcept {
-            return current;
-        }
-
-        iterator_t& operator++() noexcept {
-            current = current->*Right;
-            return *this;
-        }
-
-        iterator_t operator++(int) noexcept {
-            pointer old = current;
-            current = current->*Right;
-            return iterator_t{old};
-        }
-
-        bool operator==(const iterator_t& other) const noexcept {
-            return current == other.current;
-        }
-
-        bool operator!=(const iterator_t& other) const noexcept {
-            return current != other.current;
-        }
-       private:
-        pointer current{nullptr};
-    };
-
-    using iterator = iterator_t<T>;
-    using const_iterator = iterator_t<const T>;
-
-    iterator begin() const noexcept {
+    constexpr iterator begin() const noexcept {
         return iterator{m_right};
     }
 
-    iterator begin() noexcept {
+    constexpr iterator begin() noexcept {
         return iterator{m_right};
     }
 
-    iterator end() const noexcept {
+    constexpr iterator end() const noexcept {
         return iterator{nullptr};
     }
 
-    iterator end() noexcept {
+    constexpr iterator end() noexcept {
         return iterator{nullptr};
     }
 
-    const_iterator cbegin() const noexcept {
+    constexpr const_iterator cbegin() const noexcept {
         return const_iterator{m_right};
     }
 
-    const_iterator cend() const noexcept {
+    constexpr const_iterator cend() const noexcept {
         return const_iterator{nullptr};
     }
 
