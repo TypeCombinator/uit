@@ -15,9 +15,11 @@ class isdlist;
 template <typename T, typename MT, MT T::* Right, MT T::* Left>
 class isdlist<Right, Left> {
    public:
-    isdlist() noexcept {
-        m_right = nullptr;
-    }
+    T* m_right;
+
+    // constexpr isdlist() noexcept {
+    //     m_right = nullptr;
+    // }
 
     // isdlist(const isdlist&) = delete;
 
@@ -116,9 +118,6 @@ class isdlist<Right, Left> {
     constexpr const_iterator cend() const noexcept {
         return const_iterator{nullptr};
     }
-
-   private:
-    T* m_right;
 };
 } // namespace uit
 #endif // isdlist.hpp

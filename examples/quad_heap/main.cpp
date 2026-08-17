@@ -1,5 +1,5 @@
 #include <iostream>
-#include <uit/irheap.hpp>
+#include <uit/iiqheap.hpp>
 
 class apple {
    public:
@@ -13,13 +13,12 @@ class apple {
     }
 
     uint64_t weight;
-    apple *right;
-    apple *left;
+    uint32_t index;
     int sn;
 };
 
 int main(int argc, char *argv[]) {
-    uit::irheap<&apple::right, &apple::left> q{}; // A priority queue.
+    uit::iiqheap<&apple::index> q{100}; // A priority queue.
 
     apple a0{502, 0};
     apple a1{503, 1};

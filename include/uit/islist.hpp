@@ -15,9 +15,11 @@ class islist;
 template <typename T, typename MT, MT T::* Right>
 class islist<Right> {
    public:
-    constexpr islist() noexcept {
-        m_right = nullptr;
-    }
+    T* m_right;
+
+    // constexpr islist() noexcept {
+    //     m_right = nullptr;
+    // }
 
     // islist(const islist& other) noexcept = default;
 
@@ -103,8 +105,6 @@ class islist<Right> {
     constexpr const_iterator cend() const {
         return const_iterator{nullptr};
     }
-   private:
-    T* m_right;
 };
 
 } // namespace uit

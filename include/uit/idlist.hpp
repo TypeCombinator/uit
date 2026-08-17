@@ -14,9 +14,12 @@ class idlist;
 template <typename T, typename MT, MT T::*Right, MT T::*Left>
 class idlist<Right, Left> {
    public:
-    constexpr idlist() noexcept {
-        m_left = m_right = nullptr;
-    }
+    T *m_right;
+    T *m_left;
+
+    // constexpr idlist() noexcept {
+    //     m_left = m_right = nullptr;
+    // }
 
     [[nodiscard]]
     constexpr bool empty() const noexcept {
@@ -240,9 +243,6 @@ class idlist<Right, Left> {
     constexpr const_reverse_iterator crend() const noexcept {
         return const_reverse_iterator{nullptr};
     }
-   private:
-    T *m_right;
-    T *m_left;
 };
 } // namespace uit
 #endif // idlist.hpp

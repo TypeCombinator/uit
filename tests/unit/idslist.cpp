@@ -10,13 +10,7 @@
 using list_t = uit::idslist<&sapple::right>;
 using node_t = sapple;
 
-static_assert(std::is_trivially_destructible_v<list_t>);
-static_assert(std::is_trivially_copy_constructible_v<list_t>);
-static_assert(std::is_copy_assignable_v<list_t>);
-static_assert(std::is_trivially_copy_assignable_v<list_t>);
-static_assert(std::is_trivially_move_constructible_v<list_t>);
-static_assert(std::is_move_assignable_v<list_t>);
-static_assert(std::is_trivially_move_assignable_v<list_t>);
+static_assert(std::is_trivial_v<list_t>);
 
 TEST_CASE("basic", "[idslist]") {
     constexpr std::size_t vec_size = 5;

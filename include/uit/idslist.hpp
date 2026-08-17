@@ -15,10 +15,13 @@ class idslist;
 template <typename T, typename MT, MT T::*Right>
 class idslist<Right> {
    public:
-    constexpr idslist() noexcept
-        : m_right{nullptr}
-        , m_left{nullptr} {
-    }
+    T *m_right;
+    T *m_left;
+
+    // constexpr idslist() noexcept
+    //     : m_right{nullptr}
+    //     , m_left{nullptr} {
+    // }
 
     // constexpr idslist(const idslist &other) noexcept {
     //     m_right = other.m_right;
@@ -145,9 +148,6 @@ class idslist<Right> {
         *this = other;
         other.clear();
     }
-
-    T *m_right;
-    T *m_left;
 };
 } // namespace uit
 #endif // idslist.hpp
