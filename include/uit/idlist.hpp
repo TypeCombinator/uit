@@ -1,104 +1,113 @@
-// SPDX-FileCopyrightText: 2025 TypeCombinator <typecombinator@foxmail.com>
+// SPDX-FileCopyrightText: 2026 TypeCombinator <typecombinator@foxmail.com>
 //
 // SPDX-License-Identifier: BSD 3-Clause
 
-#ifndef UIT_IDLIST_217E7022_9D7F_4924_BF85_F58D26EC0395
-#define UIT_IDLIST_217E7022_9D7F_4924_BF85_F58D26EC0395
+#ifndef IDLIST_ECA1754E_A213_45ED_BC83_5B6AD39C7669
+#define IDLIST_ECA1754E_A213_45ED_BC83_5B6AD39C7669
 #include <iterator>
 #include <uit/intrusive.hpp>
 
 namespace uit {
-
 template <auto Right, auto Left>
 class idlist;
 
 template <typename T, typename MT, MT T::*Right, MT T::*Left>
 class idlist<Right, Left> {
    public:
-    idlist() noexcept {
-        m_left = m_right = mock_head();
+    T *m_right;
+    T *m_left;
+
+    // constexpr idlist() noexcept {
+    //     m_left = m_right = nullptr;
+    // }
+
+    [[nodiscard]]
+    constexpr bool empty() const noexcept {
+        return m_right == nullptr;
     }
 
-    idlist(const idlist &) = delete;
-
-    idlist &operator=(const idlist &) = delete;
-
-    idlist(idlist &&other) noexcept {
-        move_from(std::move(other));
-    }
-
-    idlist &operator=(idlist &&other) noexcept {
-        if (this != &other) [[likely]] {
-            move_from(std::move(other));
-        }
-        return *this;
+    constexpr void clear() noexcept {
+        m_left = m_right = nullptr;
     }
 
     [[nodiscard]]
-    bool empty() const noexcept {
-        const T *mhead = const_mock_head();
-        return mhead == mhead->*Right;
-    }
-
-    void clear() noexcept {
-        m_left = m_right = mock_head();
-    }
-
-    [[nodiscard]]
-    T &front() const noexcept {
+    constexpr T &front() const noexcept {
         return *m_right;
     }
 
     [[nodiscard]]
-    T &back() const noexcept {
+    constexpr T &back() const noexcept {
         return *m_left;
     }
 
-    static void insert(T *node, T *left, T *right) noexcept {
-        node->*Right = right;
-        node->*Left = left;
-
-        left->*Right = node;
-        right->*Left = node;
+    [[nodiscard]]
+    static constexpr T *sentinel() noexcept {
+        return nullptr;
     }
 
-    static void remove(T *left, T *right) noexcept {
-        left->*Right = right;
-        right->*Left = left;
-    }
-
-    static void remove(T *node) noexcept {
-        remove(node->*Left, node->*Right);
-    }
-
-    void push_front(T *node) noexcept {
-        T *mhead = mock_head();
-        insert(node, mhead, mhead->*Right);
-    }
-
-    void push_back(T *node) noexcept {
-        T *mhead = mock_head();
-        insert(node, mhead->*Left, mhead);
-    }
-
-    T *pop_front() noexcept {
-        T *mhead = mock_head();
-        T *right = mhead->*Right;
-        if (right == mhead) [[unlikely]] {
-            return nullptr;
+    constexpr void remove(T *node) noexcept {
+        auto right = node->*Right;
+        auto left = node->*Left;
+        if (right != nullptr) [[likely]] {
+            right->*Left = left;
+        } else {
+            m_left = left;
         }
-        remove(mhead, right->*Right);
-        return right;
+        if (left != nullptr) [[likely]] {
+            left->*Right = right;
+        } else {
+            m_right = right;
+        }
     }
 
-    T *pop_back() noexcept {
-        T *mhead = mock_head();
-        T *left = mhead->*Left;
-        if (left == mhead) [[unlikely]] {
-            return nullptr;
+    constexpr void push_front(T *node) noexcept {
+        T *first = m_right;
+        node->*Right = first;
+        node->*Left = nullptr;
+        m_right = node;
+        if (first != nullptr) [[likely]] {
+            first->*Left = node;
+        } else {
+            m_left = node;
         }
-        remove(left->*Left, mhead);
-        return left;
+    }
+
+    constexpr void push_back(T *node) noexcept {
+        T *last = m_left;
+        node->*Right = nullptr;
+        node->*Left = last;
+        m_left = node;
+        if (last != nullptr) [[likely]] {
+            last->*Right = node;
+        } else {
+            m_right = node;
+        }
+    }
+
+    constexpr void pop_front() noexcept {
+        if (m_right == nullptr) [[unlikely]] {
+            return;
+        }
+        T *first_right = m_right->*Right;
+        m_right = first_right;
+        if (first_right != nullptr) [[likely]] {
+            first_right->*Left = nullptr;
+        } else {
+            m_left = nullptr;
+        }
+    }
+
+    constexpr void pop_back() noexcept {
+        if (m_left == nullptr) [[unlikely]] {
+            return;
+        }
+        T *last_left = m_left->*Left;
+        m_left = last_left;
+        if (last_left != nullptr) [[likely]] {
+            last_left->*Right = nullptr;
+        } else {
+            m_right = nullptr;
+        }
     }
 
     template <typename T_CV, bool is_reverse = false>
@@ -109,31 +118,31 @@ class idlist<Right, Left> {
         using pointer = T_CV *;
         using reference = T_CV &;
 
-        explicit iterator_t(pointer item) {
+        explicit constexpr iterator_t(pointer item) {
             current = item;
         }
 
         [[nodiscard]]
-        reference operator*() const noexcept {
+        constexpr reference operator*() const noexcept {
             return *current;
         }
 
         [[nodiscard]]
-        reference operator*() noexcept {
+        constexpr reference operator*() noexcept {
             return *current;
         }
 
         [[nodiscard]]
-        pointer operator->() const noexcept {
+        constexpr pointer operator->() const noexcept {
             return current;
         }
 
         [[nodiscard]]
-        pointer operator->() noexcept {
+        constexpr pointer operator->() noexcept {
             return current;
         }
 
-        iterator_t &operator++() noexcept {
+        constexpr iterator_t &operator++() noexcept {
             if constexpr (!is_reverse) {
                 current = current->*Right;
             } else {
@@ -142,7 +151,7 @@ class idlist<Right, Left> {
             return *this;
         }
 
-        iterator_t operator++(int) noexcept {
+        constexpr iterator_t operator++(int) noexcept {
             pointer old = current;
             if constexpr (!is_reverse) {
                 current = current->*Right;
@@ -152,7 +161,7 @@ class idlist<Right, Left> {
             return iterator_t{old};
         }
 
-        iterator_t &operator--() noexcept {
+        constexpr iterator_t &operator--() noexcept {
             if constexpr (!is_reverse) {
                 current = current->*Left;
             } else {
@@ -161,7 +170,7 @@ class idlist<Right, Left> {
             return *this;
         }
 
-        iterator_t operator--(int) noexcept {
+        constexpr iterator_t operator--(int) noexcept {
             pointer old = current;
             if constexpr (!is_reverse) {
                 current = current->*Left;
@@ -171,11 +180,11 @@ class idlist<Right, Left> {
             return iterator_t{old};
         }
 
-        bool operator==(const iterator_t &other) const noexcept {
+        constexpr bool operator==(const iterator_t &other) const noexcept {
             return current == other.current;
         }
 
-        bool operator!=(const iterator_t &other) const noexcept {
+        constexpr bool operator!=(const iterator_t &other) const noexcept {
             return current != other.current;
         }
        private:
@@ -187,84 +196,53 @@ class idlist<Right, Left> {
     using reverse_iterator = iterator_t<T, true>;
     using const_reverse_iterator = iterator_t<const T, true>;
 
-    const_iterator begin() const noexcept {
-        return const_iterator{const_mock_head()->*Right};
+    constexpr const_iterator begin() const noexcept {
+        return const_iterator{m_right};
     }
 
-    iterator begin() noexcept {
-        return iterator{mock_head()->*Right};
+    constexpr iterator begin() noexcept {
+        return iterator{m_right};
     }
 
-    const_iterator end() const noexcept {
-        return const_iterator{const_mock_head()};
+    constexpr const_iterator end() const noexcept {
+        return const_iterator{nullptr};
     }
 
-    iterator end() noexcept {
-        return iterator{mock_head()};
+    constexpr iterator end() noexcept {
+        return iterator{nullptr};
     }
 
-    const_iterator cbegin() const noexcept {
-        return const_iterator{const_mock_head()->*Right};
+    constexpr const_iterator cbegin() const noexcept {
+        return const_iterator{m_right};
     }
 
-    const_iterator cend() const noexcept {
-        return const_iterator{const_mock_head()};
+    constexpr const_iterator cend() const noexcept {
+        return const_iterator{nullptr};
     }
 
-    const_reverse_iterator rbegin() const noexcept {
-        return const_reverse_iterator{const_mock_head()->*Left};
+    constexpr const_reverse_iterator rbegin() const noexcept {
+        return const_reverse_iterator{m_left};
     }
 
-    reverse_iterator rbegin() noexcept {
-        return reverse_iterator{mock_head()->*Left};
+    constexpr reverse_iterator rbegin() noexcept {
+        return reverse_iterator{m_left};
     }
 
-    const_reverse_iterator rend() const noexcept {
-        return const_reverse_iterator{const_mock_head()};
+    constexpr const_reverse_iterator rend() const noexcept {
+        return const_reverse_iterator{nullptr};
     }
 
-    reverse_iterator rend() noexcept {
-        return reverse_iterator{mock_head()};
+    constexpr reverse_iterator rend() noexcept {
+        return reverse_iterator{nullptr};
     }
 
-    const_reverse_iterator crbegin() const noexcept {
-        return const_reverse_iterator{const_mock_head()->*Left};
+    constexpr const_reverse_iterator crbegin() const noexcept {
+        return const_reverse_iterator{m_left};
     }
 
-    const_reverse_iterator crend() const noexcept {
-        return const_reverse_iterator{const_mock_head()};
+    constexpr const_reverse_iterator crend() const noexcept {
+        return const_reverse_iterator{nullptr};
     }
-   private:
-    void move_from(idlist &&other) noexcept {
-        if (other.empty()) [[unlikely]] {
-            clear();
-        } else {
-            m_right = other.m_right;
-            m_left = other.m_left;
-
-            T *mhead = mock_head();
-            m_right->*Left = mhead;
-            m_left->*Right = mhead;
-
-            other.clear();
-        }
-    }
-
-    [[nodiscard]]
-    T *mock_head() noexcept {
-        // UB!!!
-        return container_of(Right, &m_right);
-    }
-
-    [[nodiscard]]
-    const T *const_mock_head() const noexcept {
-        // UB!!!
-        return const_container_of(Right, &m_right);
-    }
-
-    T *m_right;
-    T *m_left;
 };
-
 } // namespace uit
 #endif // idlist.hpp

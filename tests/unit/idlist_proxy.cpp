@@ -5,14 +5,14 @@
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <common/apple.hpp>
-#include <uit/idlist.hpp>
+#include <uit/idlist_proxy.hpp>
 
-using list_t = uit::idlist<&dapple::right, &dapple::left>;
+using list_t = uit::idlist_proxy<&dapple::right, &dapple::left>;
 using node_t = dapple;
 
 static_assert(std::is_trivial_v<list_t>);
 
-TEST_CASE("basic", "[idlist]") {
+TEST_CASE("basic", "[idlist_proxy]") {
     constexpr std::size_t vec_size = 5;
     std::vector<node_t> vec;
     vec.reserve(vec_size);
@@ -27,7 +27,11 @@ TEST_CASE("basic", "[idlist]") {
         e.right = &node_guard;
         e.left = &node_guard;
     }
-    list_t list{};
+
+    node_t list_sentinel{0, 0};
+    list_t list{list_sentinel};
+    list.clear();
+
     REQUIRE(list.empty());
 
     SECTION("push front") {

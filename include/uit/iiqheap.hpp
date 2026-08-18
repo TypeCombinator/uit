@@ -268,7 +268,7 @@ class iiqheap<Index, CMP, Allocator> {
                 return;
             }
         }
-        if (child_idx < size) {
+        if (child_idx < size) [[unlikely]] {
             child_ptr = begin_ptr + child_idx;
             min_ptr = child_ptr;
             // TODO: UIT_ATTR_ASSUME(size - child_idx < 4);
