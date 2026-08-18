@@ -21,17 +21,17 @@ class idlist_proxy<Right, Left> {
         return &m_sentinel == m_sentinel.*Right;
     }
 
-    void clear() noexcept {
+    constexpr void clear() noexcept {
         m_sentinel.*Left = m_sentinel.*Right = &m_sentinel;
     }
 
     [[nodiscard]]
-    T &front() const noexcept {
+    constexpr T &front() const noexcept {
         return *(m_sentinel.*Right);
     }
 
     [[nodiscard]]
-    T &back() const noexcept {
+    constexpr T &back() const noexcept {
         return *(m_sentinel.*Left);
     }
 
@@ -70,12 +70,12 @@ class idlist_proxy<Right, Left> {
         insert(node, m_sentinel.*Left, &m_sentinel);
     }
 
-    void pop_front() noexcept {
+    constexpr void pop_front() noexcept {
         T *right = m_sentinel.*Right;
         remove(&m_sentinel, right->*Right);
     }
 
-    void pop_back() noexcept {
+    constexpr void pop_back() noexcept {
         T *left = m_sentinel.*Left;
         remove(left->*Left, &m_sentinel);
     }
@@ -88,31 +88,31 @@ class idlist_proxy<Right, Left> {
         using pointer = T_CV *;
         using reference = T_CV &;
 
-        explicit iterator_t(pointer item) {
+        explicit constexpr iterator_t(pointer item) {
             current = item;
         }
 
         [[nodiscard]]
-        reference operator*() const noexcept {
+        constexpr reference operator*() const noexcept {
             return *current;
         }
 
         [[nodiscard]]
-        reference operator*() noexcept {
+        constexpr reference operator*() noexcept {
             return *current;
         }
 
         [[nodiscard]]
-        pointer operator->() const noexcept {
+        constexpr pointer operator->() const noexcept {
             return current;
         }
 
         [[nodiscard]]
-        pointer operator->() noexcept {
+        constexpr pointer operator->() noexcept {
             return current;
         }
 
-        iterator_t &operator++() noexcept {
+        constexpr iterator_t &operator++() noexcept {
             if constexpr (!is_reverse) {
                 current = current->*Right;
             } else {
@@ -121,7 +121,7 @@ class idlist_proxy<Right, Left> {
             return *this;
         }
 
-        iterator_t operator++(int) noexcept {
+        constexpr iterator_t operator++(int) noexcept {
             pointer old = current;
             if constexpr (!is_reverse) {
                 current = current->*Right;
@@ -131,7 +131,7 @@ class idlist_proxy<Right, Left> {
             return iterator_t{old};
         }
 
-        iterator_t &operator--() noexcept {
+        constexpr iterator_t &operator--() noexcept {
             if constexpr (!is_reverse) {
                 current = current->*Left;
             } else {
@@ -140,7 +140,7 @@ class idlist_proxy<Right, Left> {
             return *this;
         }
 
-        iterator_t operator--(int) noexcept {
+        constexpr iterator_t operator--(int) noexcept {
             pointer old = current;
             if constexpr (!is_reverse) {
                 current = current->*Left;
@@ -150,11 +150,11 @@ class idlist_proxy<Right, Left> {
             return iterator_t{old};
         }
 
-        bool operator==(const iterator_t &other) const noexcept {
+        constexpr bool operator==(const iterator_t &other) const noexcept {
             return current == other.current;
         }
 
-        bool operator!=(const iterator_t &other) const noexcept {
+        constexpr bool operator!=(const iterator_t &other) const noexcept {
             return current != other.current;
         }
        private:
@@ -166,51 +166,51 @@ class idlist_proxy<Right, Left> {
     using reverse_iterator = iterator_t<T, true>;
     using const_reverse_iterator = iterator_t<const T, true>;
 
-    const_iterator begin() const noexcept {
+    constexpr const_iterator begin() const noexcept {
         return const_iterator{m_sentinel.*Right};
     }
 
-    iterator begin() noexcept {
+    constexpr iterator begin() noexcept {
         return iterator{m_sentinel.*Right};
     }
 
-    const_iterator end() const noexcept {
+    constexpr const_iterator end() const noexcept {
         return const_iterator{&m_sentinel};
     }
 
-    iterator end() noexcept {
+    constexpr iterator end() noexcept {
         return iterator{&m_sentinel};
     }
 
-    const_iterator cbegin() const noexcept {
+    constexpr const_iterator cbegin() const noexcept {
         return const_iterator{m_sentinel.*Right};
     }
 
-    const_iterator cend() const noexcept {
+    constexpr const_iterator cend() const noexcept {
         return const_iterator{&m_sentinel};
     }
 
-    const_reverse_iterator rbegin() const noexcept {
+    constexpr const_reverse_iterator rbegin() const noexcept {
         return const_reverse_iterator{m_sentinel.*Left};
     }
 
-    reverse_iterator rbegin() noexcept {
+    constexpr reverse_iterator rbegin() noexcept {
         return reverse_iterator{m_sentinel.*Left};
     }
 
-    const_reverse_iterator rend() const noexcept {
+    constexpr const_reverse_iterator rend() const noexcept {
         return const_reverse_iterator{&m_sentinel};
     }
 
-    reverse_iterator rend() noexcept {
+    constexpr reverse_iterator rend() noexcept {
         return reverse_iterator{&m_sentinel};
     }
 
-    const_reverse_iterator crbegin() const noexcept {
+    constexpr const_reverse_iterator crbegin() const noexcept {
         return const_reverse_iterator{m_sentinel.*Left};
     }
 
-    const_reverse_iterator crend() const noexcept {
+    constexpr const_reverse_iterator crend() const noexcept {
         return const_reverse_iterator{&m_sentinel};
     }
 };

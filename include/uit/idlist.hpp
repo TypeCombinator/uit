@@ -5,7 +5,6 @@
 #ifndef IDLIST_ECA1754E_A213_45ED_BC83_5B6AD39C7669
 #define IDLIST_ECA1754E_A213_45ED_BC83_5B6AD39C7669
 #include <iterator>
-#include <uit/intrusive.hpp>
 
 namespace uit {
 template <auto Right, auto Left>

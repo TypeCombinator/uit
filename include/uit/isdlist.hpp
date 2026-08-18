@@ -5,7 +5,6 @@
 #ifndef ISDLIST_91B4F713_47E1_4184_AAC2_D26F17F436DE
 #define ISDLIST_91B4F713_47E1_4184_AAC2_D26F17F436DE
 #include <uit/detail/islist_iterator.hpp>
-#include <uit/intrusive.hpp>
 
 namespace uit {
 // It is better for the right member to be a pointer to a pointer, but it's not uniform.

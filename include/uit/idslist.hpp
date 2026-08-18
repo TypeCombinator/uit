@@ -5,7 +5,6 @@
 #ifndef IDSLIST_CC34206A_3577_4178_B59C_4923C34A71A6
 #define IDSLIST_CC34206A_3577_4178_B59C_4923C34A71A6
 #include <uit/detail/islist_iterator.hpp>
-#include <uit/intrusive.hpp>
 
 namespace uit {
 

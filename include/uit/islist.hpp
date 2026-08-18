@@ -5,7 +5,6 @@
 #ifndef ISLIST_6CB2236F_CA9B_42B5_85CC_C16BF43C71DF
 #define ISLIST_6CB2236F_CA9B_42B5_85CC_C16BF43C71DF
 #include <uit/detail/islist_iterator.hpp>
-#include <uit/intrusive.hpp>
 
 namespace uit {
 
