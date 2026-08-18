@@ -22,18 +22,13 @@ TEST_CASE("basic", "[idslist]") {
 
     node_t node_guard{0, 0};
     node_guard.right = &node_guard;
-    auto vec_init = [&vec, &node_guard]() {
-        for (auto &e: vec) {
-            e.right = &node_guard;
-        }
-    };
-    SECTION("empty") {
-        list_t list{};
-        REQUIRE(list.empty());
+    for (auto &e: vec) {
+        e.right = &node_guard;
     }
+    list_t list{};
+    REQUIRE(list.empty());
+
     SECTION("push back") {
-        vec_init();
-        list_t list{};
         for (auto &e: vec) {
             list.push_back(&e);
         }
@@ -45,8 +40,6 @@ TEST_CASE("basic", "[idslist]") {
         REQUIRE(vec.back().right == nullptr);
     }
     SECTION("push front") {
-        vec_init();
-        list_t list{};
         for (auto &e: vec) {
             list.push_front(&e);
         }
@@ -58,8 +51,6 @@ TEST_CASE("basic", "[idslist]") {
         REQUIRE(vec.front().right == nullptr);
     }
     SECTION("pop front") {
-        vec_init();
-        list_t list{};
         for (auto &e: vec) {
             list.push_back(&e);
         }
@@ -73,8 +64,6 @@ TEST_CASE("basic", "[idslist]") {
         REQUIRE(list.empty());
     }
     SECTION("remove") {
-        vec_init();
-        list_t list{};
         static_assert(vec_size >= 5);
         for (std::size_t i{}; i < 5; i++) {
             list.push_back(&vec[i]);
@@ -99,8 +88,6 @@ TEST_CASE("basic", "[idslist]") {
         REQUIRE(list.empty());
     }
     SECTION("iterator") {
-        vec_init();
-        list_t list{};
         for (auto &e: vec) {
             list.push_back(&e);
         }

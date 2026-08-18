@@ -142,12 +142,6 @@ class idslist<Right> {
     constexpr const_iterator cend() const noexcept {
         return const_iterator{nullptr};
     }
-
-   private:
-    constexpr void move_from(idslist &&other) noexcept {
-        *this = other;
-        other.clear();
-    }
 };
 } // namespace uit
 #endif // idslist.hpp

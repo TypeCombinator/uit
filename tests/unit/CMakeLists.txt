@@ -3,6 +3,7 @@ add_executable(uit_tests
   isdlist.cpp
   idslist.cpp
   idlist.cpp
+  idlist_proxy.cpp
 )
 target_include_directories(uit_tests PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}

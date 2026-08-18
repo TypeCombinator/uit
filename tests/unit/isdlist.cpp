@@ -22,19 +22,15 @@ TEST_CASE("basic", "[isdlist]") {
 
     node_t node_guard{0, 0};
     node_guard.right = &node_guard;
-    auto vec_init = [&vec, &node_guard]() {
-        for (auto &e: vec) {
-            e.right = &node_guard;
-            e.left = &node_guard;
-        }
-    };
-    SECTION("empty") {
-        list_t list{};
-        REQUIRE(list.empty());
+    node_guard.left = &node_guard;
+    for (auto &e: vec) {
+        e.right = &node_guard;
+        e.left = &node_guard;
     }
+    list_t list{};
+    REQUIRE(list.empty());
+
     SECTION("push front") {
-        vec_init();
-        list_t list{};
         for (std::size_t i{}; i < vec_size; i++) {
             list.push_front(&vec[(vec_size - 1) - i]);
         }
@@ -53,8 +49,6 @@ TEST_CASE("basic", "[isdlist]") {
         }
     }
     SECTION("pop front") {
-        vec_init();
-        list_t list{};
         for (auto &e: vec) {
             list.push_front(&e);
         }
@@ -65,8 +59,6 @@ TEST_CASE("basic", "[isdlist]") {
         REQUIRE(list.empty());
     }
     SECTION("remove") {
-        vec_init();
-        list_t list{};
         static_assert(vec_size >= 5);
         for (std::size_t i{}; i < 5; i++) {
             list.push_front(&vec[(5 - 1) - i]);
@@ -90,8 +82,6 @@ TEST_CASE("basic", "[isdlist]") {
         REQUIRE(list.empty());
     }
     SECTION("iterator") {
-        vec_init();
-        list_t list{};
         for (std::size_t i{}; i < vec_size; i++) {
             list.push_front(&vec[(vec_size - 1) - i]);
         }
