@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 TypeCombinator <typecombinator@foxmail.com>
+//
+// SPDX-License-Identifier: BSD 3-Clause
+
 #ifndef IDLIST_PROXY_6E544103_E9F9_4A88_BA0D_A8D7150303BF
 #define IDLIST_PROXY_6E544103_E9F9_4A88_BA0D_A8D7150303BF
 #include <iterator>

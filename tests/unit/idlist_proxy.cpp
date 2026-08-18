@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 TypeCombinator <typecombinator@foxmail.com>
+//
+// SPDX-License-Identifier: BSD 3-Clause
+
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <common/apple.hpp>

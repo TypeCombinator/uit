@@ -1,0 +1,211 @@
+## Pros and Cons of mock_head
+
+### Pros
+
+- Simple and easy-to-understand code
+- Fewer branches and better performance, e.g. there's no branch in the `uit::experiment::idslist::push_back` method
+- Pointers to pointers are no longer required, even the hlist (`uit::experiment::isdlist`) is no exception
+- For `uit::experiment::dlist` and `uit::experiment::sdlist`, nodes can be directly removed without holding the original linked list
+- Truly zero overhead
+- No macros
+
+### Cons
+
+- There are some undefined behaviors in the implementation of the **mock_head**. Regardless of the approach taken, the **mock_head** is not a complete object that actually exists, which violates lifetime rules, exceeds object boundaries, and may violate strict aliasing, among other violations not listed here.
+- Among these, `isdlist`, `idslist`, and `idlist` are self-referential types,  with `isdlist` and `idlist` being move-only.
+
+## Notice
+
+The implementations under the `uit::experiment` namespace are used for experimental exploration, I will not bear any consequences caused by the practical application of the implementations.
+
+The [main branch](https://github.com/TypeCombinator/uit) contains the prototype implementation, which is straightforward to understand. It must be said that the [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) is a better implementation under the current C++ standard definition, which utilizes class inheritance, it can **currently** (not guaranteed in the future) work on Clang and MSVC with high-level optimizations (such as O3), but for GCC, you must add an extra option `-fno-strict-aliasing`.
+
+I have a private repository named [**uit_ng**](https://github.com/TypeCombinator/uit_ng) that still uses **mock_head**, it utilizes composition instead of class inheritance, yet maintains zero-overhead abstraction. Despite this, it works correctly across **Big Three (GCC, Clang and MSVC)** at the highest optimization levels, and passes all test cases **without requiring additional compiler flags or special attributes in the source code**. So far, I haven’t been able to create a test case that it fails. If enough people express interest, I would consider making this repository public.
+
+#### Does it support arbitrarily nested member pointers?
+
+```c++
+struct nested_node {
+    int m_sn;
+    struct inner {
+        nested_node *right; // The pointer used for linking is a member of the subobject.
+    };
+    uint64_t m_weight;
+};
+```
+
+Not currently, but I've attempted this before, and it can even support more complex situations than nested member pointers. It's not complicated and only requires a few template tricks to implement. If someone has a genuine need for this feature with solid justification, I'll implement it. However, it should be noted that this would make the code less elegant, and impose higher requirements on the compiler version.
+
+#### Is the **mock_sentinel** necessary for a balance tree?
+
+No, the UB introduced by the **mock_sentinel** does not affect the correctness, so there is no immediate plan to change it to a user-passed sentinel approach, as such an interface would not be concise enough for users.
+
+## mock_head
+
+For simplicity, I will use a singly linked list as an example in C language. Firstly, we define a singly linked list node type `struct node`, and implement the `push_front`, the code is as follows:
+
+```c
+#include <stddef.h>
+
+struct node {
+    int sn;
+    struct node *next;
+};
+
+static struct node *head = NULL;
+
+void push_front(struct node *n) {
+    n->next = head;
+    head = n;
+}
+```
+
+Traditionally, when we want to remove a node from a singly linked list, we need the help of a pointer to pointer.
+
+```c
+struct node *remove_with_pointer_to_pointer(struct node *n) {
+    struct node **prev = &head;
+    for (struct node *cur = *prev; cur != NULL;) {
+        if (cur == n) {
+            *prev = cur->next;
+            return cur;
+        }
+        prev = &cur->next;
+        cur = *prev;
+    }
+    return NULL;
+}
+```
+
+Why do we need a pointer to pointer? The core reason is that the type of the head node and data node are different, and the pointer to pointer unifies them. If we define the head as `static struct node head = {0, NULL};`, the pointer to pointer will no longer be needed, but there is a problem of memory waste, the member `int sn;` is redundant in the example, we only need the member `struct node *next;`.
+
+The solution is to use head node to simulate data node through the  `container_of`, the code is as follows:
+
+```c
+#define container_of(_field_, _type_, _member_)                                                    \
+    ((_type_ *) ((size_t) (_field_) -offsetof(_type_, _member_)))
+
+#define MOCK_HEAD(_field_, _type_, _member_) container_of(_field_, _type_, _member_)
+
+struct node *remove_with_mock_head(struct node *n) {
+    struct node *prev = MOCK_HEAD(&head, struct node, next);
+    for (struct node *cur = prev->next; cur != NULL;) {
+        if (cur == n) {
+            prev->next = cur->next;
+            return cur;
+        }
+        prev = cur;
+        cur = prev->next;
+    }
+    return NULL;
+}
+```
+
+As you can see, **mock_head** is just a alias of the `contianer_of`, it unifies head node and data node, just like pointer to pointer. It should be noted that when accessing head node members, all members except for `struct node *next;` are undefined in the example.
+
+Of course, this is just an example. The implementation of container_of is slightly different in C++, please see the [header](include/uit/intrusive.hpp) in this library.
+
+### slist
+
+For an empty slist: `head.right = nullptr;`.
+
+![slist](docs/images/slist.png)
+
+### sdlist
+
+For an empty sdlist: `head.right = nullptr;`.
+
+![sdlist](docs/images/sdlist.png)
+
+### dslist
+
+![dslist_empty](docs/images/dslist_empty.png)
+
+![dslist](docs/images/dslist.png)
+
+### dlist
+
+![dlist_empty](docs/images/dlist_empty.png)
+
+![dlist](docs/images/dlist.png)
+
+## mock_sentinel
+
+![mock_sentinel](docs/images/mock_sentinel.png)
+
+## Example
+
+### For the main branch
+
+```c++
+#include <iostream>
+#include <uit/experiment/islist.hpp>
+
+class apple {
+   public:
+    apple(uint64_t weight, int sn) noexcept
+        : weight(weight)
+        , sn(sn) {
+    }
+
+    uint64_t weight;
+    apple *right;
+    int sn;
+};
+
+int main(int argc, char *argv[]) {
+    uit::experiment::islist<&apple::right> list{};
+
+    apple a0{500, 0};
+    apple a1{501, 1};
+    apple a2{502, 2};
+    apple a3{503, 3};
+
+    list.push_front(&a3);
+    list.push_front(&a2);
+    list.push_front(&a1);
+    list.push_front(&a0);
+
+    for (const auto &i: list) {
+        std::cout << "sn: " << i.sn << ", weight: " << i.weight << std::endl;
+    }
+    return 0;
+}
+```
+
+### For the v2 branch
+
+```c++
+#include <iostream>
+#include <uit/islist.hpp>
+
+class apple : public uit::isnode<apple, "0"> {
+   public:
+    apple(uint64_t weight, int sn) noexcept
+        : weight(weight)
+        , sn(sn) {
+    }
+
+    uint64_t weight;
+    int sn;
+};
+
+int main(int argc, char *argv[]) {
+    uit::islist<apple, "0"> list{};
+
+    apple a0{500, 0};
+    apple a1{501, 1};
+    apple a2{502, 2};
+    apple a3{503, 3};
+
+    list.push_front(&a3);
+    list.push_front(&a2);
+    list.push_front(&a1);
+    list.push_front(&a0);
+
+    for (const auto &i: list) {
+        std::cout << "sn: " << i.sn << ", weight: " << i.weight << std::endl;
+    }
+    return 0;
+}
+```

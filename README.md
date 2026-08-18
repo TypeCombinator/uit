@@ -2,7 +2,7 @@
 
 ## Introduction
 
-**UIT** is a Unified Intrusive Linked List library. This library brings together 4 different linked lists based on a unified abstraction, the core trick is **mock_head**. In addition, some balanced trees have been implemented, what makes it different is that they're simplified with **mock_sentinel**, which is similar to the **mock_head**.
+**UIT** is a Unified Intrusive Linked List library. This library provides a unified implementation of linear linked lists and tree-type linked lists, allowing different types of linked lists to be flexibly converted into one another.
 
 ### Linear Linked List
 
@@ -28,144 +28,9 @@
 | -------------- | ------------------------------------------------------------ |
 | `uit::iiqheap` | Intrusive Indexed Quad Heap<br />Simpler code and better performance, but not suitable for scenarios where the upper limit of timer count is undetermined and delay-sensitive, as the internal pointer array may need resizing. |
 
-## Pros and Cons of mock_head
+## Examples
 
-### Pros
-
-- Simple and easy-to-understand code
-- Fewer branches and better performance, e.g. there's no branch in the `uit::idslist::push_back` method
-- Pointers to pointers are no longer required, even the hlist (`uit::isdlist`) is no exception
-- For `uit::dlist` and `uit::sdlist`, nodes can be directly removed without holding the original linked list
-- Truly zero overhead
-- No macros
-
-### Cons
-
-- There are some undefined behaviors in the implementation of the **mock_head**. Regardless of the approach taken, the **mock_head** is not a complete object that actually exists, which violates lifetime rules, exceeds object boundaries, and may violate strict aliasing, among other violations not listed here.
-- Among these, `isdlist`, `idslist`, and `idlist` are self-referential types,  with `isdlist` and `idlist` being move-only.
-
-## Notice
-
-This project is used for experimental exploration, I will not bear any consequences caused by the practical application of this project.
-
-The [main branch](https://github.com/TypeCombinator/uit) contains the prototype implementation, which is straightforward to understand. It must be said that the [v2 branch](https://github.com/TypeCombinator/uit/tree/v2) is a better implementation under the current C++ standard definition, which utilizes class inheritance, it can **currently** (not guaranteed in the future) work on Clang and MSVC with high-level optimizations (such as O3), but for GCC, you must add an extra option `-fno-strict-aliasing`.
-
-I have a private repository named [**uit_ng**](https://github.com/TypeCombinator/uit_ng) that still uses **mock_head**, it utilizes composition instead of class inheritance, yet maintains zero-overhead abstraction. Despite this, it works correctly across **Big Three (GCC, Clang and MSVC)** at the highest optimization levels, and passes all test cases **without requiring additional compiler flags or special attributes in the source code**. So far, I haven’t been able to create a test case that it fails. If enough people express interest, I would consider making this repository public.
-
-#### Does it support arbitrarily nested member pointers?
-
-```c++
-struct nested_node {
-    int m_sn;
-    struct inner {
-        nested_node *right; // The pointer used for linking is a member of the subobject.
-    };
-    uint64_t m_weight;
-};
-```
-
-Not currently, but I've attempted this before, and it can even support more complex situations than nested member pointers. It's not complicated and only requires a few template tricks to implement. If someone has a genuine need for this feature with solid justification, I'll implement it. However, it should be noted that this would make the code less elegant, and impose higher requirements on the compiler version.
-
-#### Is the **mock_sentinel** necessary for a balance tree?
-
-No, the UB introduced by the **mock_sentinel** does not affect the correctness, so there is no immediate plan to change it to a user-passed sentinel approach, as such an interface would not be concise enough for users.
-
-## mock_head
-
-For simplicity, I will use a singly linked list as an example in C language. Firstly, we define a singly linked list node type `struct node`, and implement the `push_front`, the code is as follows:
-
-```c
-#include <stddef.h>
-
-struct node {
-    int sn;
-    struct node *next;
-};
-
-static struct node *head = NULL;
-
-void push_front(struct node *n) {
-    n->next = head;
-    head = n;
-}
-```
-
-Traditionally, when we want to remove a node from a singly linked list, we need the help of a pointer to pointer.
-
-```c
-struct node *remove_with_pointer_to_pointer(struct node *n) {
-    struct node **prev = &head;
-    for (struct node *cur = *prev; cur != NULL;) {
-        if (cur == n) {
-            *prev = cur->next;
-            return cur;
-        }
-        prev = &cur->next;
-        cur = *prev;
-    }
-    return NULL;
-}
-```
-
-Why do we need a pointer to pointer? The core reason is that the type of the head node and data node are different, and the pointer to pointer unifies them. If we define the head as `static struct node head = {0, NULL};`, the pointer to pointer will no longer be needed, but there is a problem of memory waste, the member `int sn;` is redundant in the example, we only need the member `struct node *next;`.
-
-The solution is to use head node to simulate data node through the  `container_of`, the code is as follows:
-
-```c
-#define container_of(_field_, _type_, _member_)                                                    \
-    ((_type_ *) ((size_t) (_field_) -offsetof(_type_, _member_)))
-
-#define MOCK_HEAD(_field_, _type_, _member_) container_of(_field_, _type_, _member_)
-
-struct node *remove_with_mock_head(struct node *n) {
-    struct node *prev = MOCK_HEAD(&head, struct node, next);
-    for (struct node *cur = prev->next; cur != NULL;) {
-        if (cur == n) {
-            prev->next = cur->next;
-            return cur;
-        }
-        prev = cur;
-        cur = prev->next;
-    }
-    return NULL;
-}
-```
-
-As you can see, **mock_head** is just a alias of the `contianer_of`, it unifies head node and data node, just like pointer to pointer. It should be noted that when accessing head node members, all members except for `struct node *next;` are undefined in the example.
-
-Of course, this is just an example. The implementation of container_of is slightly different in C++, please see the [header](include/uit/intrusive.hpp) in this library.
-
-### slist
-
-For an empty slist: `head.right = nullptr;`.
-
-![slist](docs/images/slist.png)
-
-### sdlist
-
-For an empty sdlist: `head.right = nullptr;`.
-
-![sdlist](docs/images/sdlist.png)
-
-### dslist
-
-![dslist_empty](docs/images/dslist_empty.png)
-
-![dslist](docs/images/dslist.png)
-
-### dlist
-
-![dlist_empty](docs/images/dlist_empty.png)
-
-![dlist](docs/images/dlist.png)
-
-## mock_sentinel
-
-![mock_sentinel](docs/images/mock_sentinel.png)
-
-## Example
-
-### For the main branch
+### `uit::islist`
 
 ```c++
 #include <iostream>
@@ -203,38 +68,45 @@ int main(int argc, char *argv[]) {
 }
 ```
 
-### For the v2 branch
+### `uit:irheap`
 
 ```c++
 #include <iostream>
-#include <uit/islist.hpp>
+#include <uit/irheap.hpp>
 
-class apple : public uit::isnode<apple, "0"> {
+class apple {
    public:
     apple(uint64_t weight, int sn) noexcept
-        : weight(weight)
-        , sn(sn) {
+        : weight{weight}
+        , sn{sn} {
+    }
+
+    bool operator<(const apple &other) const noexcept {
+        return weight < other.weight;
     }
 
     uint64_t weight;
+    apple *right;
+    apple *left;
     int sn;
 };
 
 int main(int argc, char *argv[]) {
-    uit::islist<apple, "0"> list{};
+    uit::irheap<&apple::right, &apple::left> q{}; // A priority queue.
 
-    apple a0{500, 0};
-    apple a1{501, 1};
-    apple a2{502, 2};
-    apple a3{503, 3};
+    apple a0{502, 0};
+    apple a1{503, 1};
+    apple a2{501, 2};
+    apple a3{500, 3};
 
-    list.push_front(&a3);
-    list.push_front(&a2);
-    list.push_front(&a1);
-    list.push_front(&a0);
+    q.push(&a0);
+    q.push(&a1);
+    q.push(&a2);
+    q.push(&a3);
 
-    for (const auto &i: list) {
-        std::cout << "sn: " << i.sn << ", weight: " << i.weight << std::endl;
+    for (; !q.empty(); q.pop()) {
+        const apple &node = q.top();
+        std::cout << "sn: " << node.sn << ", weight: " << node.weight << std::endl;
     }
     return 0;
 }
@@ -242,13 +114,10 @@ int main(int argc, char *argv[]) {
 
 ### More
 
-Please refer to the **examples** and **tests** folder.
+Please refer to the **[examples](examples/)** and **[tests](tests/unit/)** folder.
 
-## TODO
+## Radicalism
 
-- Need more tests.
+The C++ object model has many limitations, which cause some inconveniences in both the design and usage of this library. For example, the remove method of `uit::idlist` cannot be implemented as a static method, which is far less elegant than the Linux kernel linked list implementation. If we do not care about the constraints of the C++ object model, pursue symmetric and beautiful code, and allow some undefined behavior, we can refer to the implementation under the `uit::experiment` namespace.
 
-## Acknowledgements
-
-[**ykiko**](https://github.com/16bit-ykiko) helped me answer the key questions I encountered in this project, and thank you all for your attention to this project.
-
+This implementation uses the **mock_head** trick to simulate a sentinel node, which greatly simplifies the implementation of linear linked lists. See the [Experiment.md](Experiment.md) document for details.
