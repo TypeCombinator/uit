@@ -1,4 +1,5 @@
 add_executable(uit_tests
+  intrusive.cpp
   islist.cpp
   isdlist.cpp
   idslist.cpp

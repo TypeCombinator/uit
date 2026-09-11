@@ -38,7 +38,7 @@ template <auto M>
 using member_t = detail::member_access<M>::member_type;
 
 template <typename M, typename T>
-constexpr size_t fast_offset_of(M T::*field) noexcept {
+size_t fast_offset_of(M T::*field) noexcept {
     return reinterpret_cast<size_t>(&(static_cast<T *>(nullptr)->*field));
 }
 
@@ -57,12 +57,13 @@ constexpr std::size_t offset_of(M T::*field) noexcept {
 
     std::size_t start = 0;
     std::size_t end = sizeof(T);
+    const void *target = std::addressof(u.t.*field);
     while (start < end) {
         std::size_t m = (start + end) >> 1;
-        if (u.buffer + m == static_cast<void *>(std::addressof(u.t.*field))) {
+        if (u.buffer + m == target) {
             return m;
         }
-        if (u.buffer + m < static_cast<void *>(std::addressof(u.t.*field))) {
+        if (u.buffer + m < target) {
             start = m + 1;
         } else {
             end = m;
