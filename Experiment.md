@@ -12,7 +12,7 @@
 ### Cons
 
 - There are some undefined behaviors in the implementation of the **mock_head**. Regardless of the approach taken, the **mock_head** is not a complete object that actually exists, which violates lifetime rules, exceeds object boundaries, and may violate strict aliasing, among other violations not listed here.
-- Among these, `isdlist`, `idslist`, and `idlist` are self-referential types,  with `isdlist` and `idlist` being move-only.
+- Among these, `isdlist`, `idslist`, and `idlist` are self-referential types, with `isdlist` and `idlist` being move-only.
 
 ## Notice
 
@@ -79,7 +79,7 @@ struct node *remove_with_pointer_to_pointer(struct node *n) {
 
 Why do we need a pointer to pointer? The core reason is that the type of the head node and data node are different, and the pointer to pointer unifies them. If we define the head as `static struct node head = {0, NULL};`, the pointer to pointer will no longer be needed, but there is a problem of memory waste, the member `int sn;` is redundant in the example, we only need the member `struct node *next;`.
 
-The solution is to use head node to simulate data node through the  `container_of`, the code is as follows:
+The solution is to use head node to simulate data node through the `container_of`, the code is as follows:
 
 ```c
 #define container_of(_field_, _type_, _member_)                                                    \

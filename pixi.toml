@@ -16,13 +16,13 @@ remove = { cmd = "python scripts/build.py remove" }
 [feature.format.tasks]
 format = { cmd = "python scripts/format.py" }
 
-[dependencies]
-python = "==3.15.1"
-
 [feature.format.dependencies]
 prettier = ">=3.9.6,<4"
 ruff = ">=0.17.3,<0.18"
 tombi = ">=1.9.8,<2"
+
+[dependencies]
+python = "==3.15.1"
 
 [environments]
 format = ["format"]

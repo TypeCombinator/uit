@@ -6,26 +6,26 @@
 
 ### Linear Linked List
 
-| types          | number of head  node pointers | number of data node pointers | order        | comments                                                     |
-| -------------- | ----------------------------- | ---------------------------- | ------------ | ------------------------------------------------------------ |
-| `uit::islist`  | single                        | single                       | LIFO         | Singly Linked List.                                          |
-| `uit::isdlist` | single                        | double                       | LIFO         | It's equivalent to the hlist in linux, and mainly used to implement hash tables. |
-| `uit::idslist` | double                        | single                       | LIFO or FIFO | Data nodes have a smaller footprint.                         |
-| `uit::idlist`  | double                        | double                       | LIFO or FIFO | Doubly Linked List.                                          |
+| types          | number of head node pointers | number of data node pointers | order        | comments                                                                         |
+| -------------- | ---------------------------- | ---------------------------- | ------------ | -------------------------------------------------------------------------------- |
+| `uit::islist`  | single                       | single                       | LIFO         | Singly Linked List.                                                              |
+| `uit::isdlist` | single                       | double                       | LIFO         | It's equivalent to the hlist in linux, and mainly used to implement hash tables. |
+| `uit::idslist` | double                       | single                       | LIFO or FIFO | Data nodes have a smaller footprint.                                             |
+| `uit::idlist`  | double                       | double                       | LIFO or FIFO | Doubly Linked List.                                                              |
 
 ### Tree-Type Linked List
 
-| types         | was mock_sentinel used?            | comments                                                     |
-| ------------- | ---------------------------------- | ------------------------------------------------------------ |
-| `uit::irsbt`  | Yes (but the code works correctly) | Intrusive Recursive Size-Balanced Tree                       |
-| `uit::irwbt`  | Yes (but the code works correctly) | Intrusive Recursive Weight-Balanced Tree<br />It's is a top-down implementation that avoids recursion. |
-| `uit::irheap` | **No**                             | Intrusive Recursive Heap<br />Actually, recursion is not used, it's fully implemented with iteration. |
+| types         | was mock_sentinel used?            | comments                                                                                                                     |
+| ------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `uit::irsbt`  | Yes (but the code works correctly) | Intrusive Recursive Size-Balanced Tree                                                                                       |
+| `uit::irwbt`  | Yes (but the code works correctly) | Intrusive Recursive Weight-Balanced Tree<br />It's is a top-down implementation that avoids recursion.                       |
+| `uit::irheap` | **No**                             | Intrusive Recursive Heap<br />Actually, recursion is not used, it's fully implemented with iteration.                        |
 | `uit::iheap`  | **No**                             | Intrusive Heap<br />The code isn't in this repository, see the [PR](https://github.com/NVIDIA/stdexec/pull/1674) to stdexec. |
 
 ### Others
 
-| types          | comments                                                     |
-| -------------- | ------------------------------------------------------------ |
+| types          | comments                                                                                                                                                                                                                        |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `uit::iiqheap` | Intrusive Indexed Quad Heap<br />Simpler code and better performance, but not suitable for scenarios where the upper limit of timer count is undetermined and delay-sensitive, as the internal pointer array may need resizing. |
 
 ## Examples
