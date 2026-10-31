@@ -1,0 +1,37 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: ${{ matrix.os }} | ${{ matrix.toolchain }} | ${{ matrix.build_mode }}
+    runs-on: ${{ matrix.image }}
+    strategy:
+      # All jobs run to completion, even if some fail.
+      fail-fast: false
+      matrix:
+        include:
+          # Reference: https://github.com/actions/runner-images
+          - { image: ubuntu-24.04, os: linux, toolchain: gcc, build_mode: asan }
+          - { image: ubuntu-24.04, os: linux, toolchain: clang, build_mode: asan }
+          - { image: windows-2025-vs2026, os: windows, toolchain: cl, build_mode: asan }
+          - { image: windows-2025-vs2026, os: windows, toolchain: clang-cl, build_mode: asan }
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.11.2
+      - name: Start developer powershell
+        if: matrix.os == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Configure
+        run: |
+          pixi run toolchain ${{ matrix.toolchain }} ${{ matrix.build_mode }}
+          pixi run config ${{ matrix.build_mode }}
+      - name: Build
+        run: pixi run build ${{ matrix.build_mode }}
+      - name: Test
+        run: pixi run test ${{ matrix.build_mode }}

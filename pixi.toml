@@ -21,6 +21,8 @@ python = "==3.15.1"
 
 [feature.format.dependencies]
 prettier = ">=3.9.6,<4"
+ruff = ">=0.17.3,<0.18"
+tombi = ">=1.9.8,<2"
 
 [environments]
 format = ["format"]

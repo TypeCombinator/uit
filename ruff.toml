@@ -1,0 +1,5 @@
+[lint]
+extend-select = ["W505"]
+
+[lint.pycodestyle]
+max-doc-length = 120

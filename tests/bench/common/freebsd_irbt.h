@@ -26,6 +26,7 @@
  */
 #ifndef _FREEBSD_IRBT_H
 #define _FREEBSD_IRBT_H
+// clang-format off
 
 #include <stddef.h>
 // Copy from freebsd, files are as follows:

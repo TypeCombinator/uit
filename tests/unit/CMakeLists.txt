@@ -22,6 +22,11 @@ enable_testing()
 include(CTest)
 include(Catch)
 
-catch_discover_tests(uit_tests)
+catch_discover_tests(uit_tests
+  DL_PATHS
+    # Set by cmake/module/asan.cmake， it's non-empty only when building
+    # with clang-cl and using ASan.
+    "${UIT_CLANG_CL_RT_DIR}"
+)
 
 # ctest --test-dir build/release/tests/unit --output-on-failure

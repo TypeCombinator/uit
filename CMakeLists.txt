@@ -21,12 +21,20 @@ if(UIT_IS_TOP_LEVEL_PROJECT)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(CMAKE_CXX_EXTENSIONS OFF)
 
+  # Drop head and tail double quotes from the extra compiler flags.
+  string(REGEX REPLACE "^\"" "" UIT_EXTRA_COMPILER_FLAGS "${UIT_EXTRA_COMPILER_FLAGS}")
+  string(REGEX REPLACE "\"$" "" UIT_EXTRA_COMPILER_FLAGS "${UIT_EXTRA_COMPILER_FLAGS}")
   # Add extra c/c++ flags.
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_COMPILER_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_COMPILER_FLAGS}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${UIT_EXTRA_COMPILER_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${UIT_EXTRA_COMPILER_FLAGS}")
+
+  set(UIT_SANITIZER_COMPILE_OPTIONS "" CACHE STRING "Address sanitizer compile options")
+  set(UIT_SANITIZER_LINK_OPTIONS "" CACHE STRING "Address sanitizer link options")
 
   if(UIT_CMAKE_BUILD_MODE STREQUAL "asan")
-    # Do somthing 
+    include(cmake/module/asan.cmake)
+    add_compile_options(${UIT_SANITIZER_COMPILE_OPTIONS})
+    add_link_options(${UIT_SANITIZER_LINK_OPTIONS})
   endif()
 endif()
 

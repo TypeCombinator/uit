@@ -1,0 +1,46 @@
+name: format
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    # Formatting is platform independent, so a single Linux job is enough.
+    name: linux | format
+    runs-on: ubuntu-26.04
+
+    steps:
+      - uses: actions/checkout@v7
+      - name: Configure
+        run: |
+          set -euo pipefail
+          major="$(clang -dumpversion | cut -d. -f1)"
+          bindir="/usr/lib/llvm-${major}/bin"
+          echo "${bindir}" >> "$GITHUB_PATH"
+          "${bindir}/clang-format" --version
+      # Installs the `format` environment and exports it to $GITHUB_ENV and
+      # $GITHUB_PATH, so ruff/tombi/prettier are on PATH for the steps below.
+      - uses: prefix-dev/setup-pixi@v0.11.2
+        with:
+          environments: format
+          activate-environment: format
+      # `scripts/format.py <language>` writes in place, so a clean tree
+      # afterwards means the repository was already formatted.
+      - name: Format
+        run: |
+          set -euo pipefail
+          for language in cpp python toml yaml markdown; do
+            python scripts/format.py "${language}"
+          done
+      - name: Check for formatting changes
+        run: |
+          if ! git diff --exit-code; then
+            echo "::error::Formatting changed files; run 'pixi run format <language>' locally."
+            exit 1
+          fi
