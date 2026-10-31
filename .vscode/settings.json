@@ -1,0 +1,75 @@
+{
+    "terminal.integrated.profiles.windows": {
+        "MSVC64 Command": {
+            "path": "${env:comspec}",
+            "args": [
+                "/k",
+                "${workspaceFolder}\\terminal\\windows\\msvc64.bat"
+            ]
+        },
+        "MSVC32 Command": {
+            "path": "${env:comspec}",
+            "args": [
+                "/k",
+                "${workspaceFolder}\\terminal\\windows\\msvc32.bat"
+            ]
+        },
+        "MSVC32 PowerShell": {
+            "path": "${env:SystemRoot}\\syswow64\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "args": [
+                "-NoExit",
+                "-File",
+                "${workspaceFolder}/terminal/windows/msvc32.ps1"
+            ]
+        },
+        "MSVC64 PowerShell": {
+            "path": "${env:SystemRoot}\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "args": [
+                "-NoExit",
+                "-File",
+                "${workspaceFolder}/terminal/windows/msvc64.ps1"
+            ]
+        },
+    },
+    "terminal.integrated.defaultProfile.windows": "MSVC64 PowerShell",
+    "terminal.integrated.profiles.linux": {
+        "Linux Bash": {
+            "path": "/usr/bin/bash",
+            "args": [
+                "--rcfile",
+                "${workspaceFolder}/terminal/linux/env.sh"
+            ],
+            "env": {
+                "ENV_ENTRY": "vscode",
+            }
+        }
+    },
+    "terminal.integrated.defaultProfile.linux": "Linux Bash",
+    "files.exclude": {
+        "build": true,
+        "**/__pycache__": true,
+    },
+    "files.watcherExclude": {
+        "build": true,
+        "**/__pycache__": true,
+    },
+    "search.exclude": {
+        "build": true,
+        "**/__pycache__": true,
+    },
+    "explorer.fileNesting.patterns": {
+        "*.c": "$(capture).h",
+        "*.cpp": "$(capture).hpp"
+    },
+    "clangd.arguments": [
+        "--compile-commands-dir=build/release",
+        "--background-index",
+        "-j=2",
+        "--header-insertion=never"
+    ],
+    // "python.defaultInterpreterPath": "${workspaceFolder}/.pixi/envs/default/bin/python",
+    "python.analysis.extraPaths": [
+        "scritps"
+    ],
+    "editor.formatOnSave": true
+}
