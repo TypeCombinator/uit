@@ -49,7 +49,9 @@ if(UIT_BUILD_TESTS)
   include(cmake/module/GoogleTest.cmake)
   include(cmake/module/Catch2.cmake)
   add_subdirectory(tests/unit)
-
-  include(cmake/module/GoogleBenchmark.cmake)
-  add_subdirectory(tests/bench)
+  
+  if(NOT WIN32)
+    include(cmake/module/GoogleBenchmark.cmake)
+    add_subdirectory(tests/bench)
+  endif()
 endif()

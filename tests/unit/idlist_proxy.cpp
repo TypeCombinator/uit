@@ -10,14 +10,14 @@
 using list_t = uit::idlist_proxy<&dapple::right, &dapple::left>;
 using node_t = dapple;
 
-static_assert(std::is_trivial_v<list_t>);
+static_assert(!std::is_trivial_v<list_t>);
 
 TEST_CASE("idlist_proxy basic", "[idlist_proxy]") {
     constexpr std::size_t vec_size = 5;
     std::vector<node_t> vec;
     vec.reserve(vec_size);
     for (std::size_t i{}; i < vec_size; i++) {
-        vec.emplace_back(500 + i, i);
+        vec.emplace_back(500 + i, static_cast<int>(i));
     }
 
     node_t node_guard{0, 0};

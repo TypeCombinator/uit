@@ -16,7 +16,7 @@ TEST_CASE("islist basic", "[ilist]") {
     std::vector<node_t> vec;
     vec.reserve(vec_size);
     for (std::size_t i{}; i < vec_size; i++) {
-        vec.emplace_back(500 + i, i);
+        vec.emplace_back(500 + i, static_cast<int>(i));
     }
 
     node_t node_guard{0, 0};
