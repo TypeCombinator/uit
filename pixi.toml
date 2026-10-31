@@ -1,0 +1,26 @@
+[workspace]
+authors = ["TypeCombinator <typecombinator@foxmail.com>"]
+channels = ["conda-forge"]
+name = "feature-build"
+platforms = ["linux-64", "win-64"]
+version = "0.1.0"
+
+[tasks]
+toolchain = { cmd = "python scripts/toolchain.py" }
+config = { cmd = "python scripts/build.py config" }
+build = { cmd = "python scripts/build.py build" }
+test = { cmd = "python scripts/build.py test" }
+clean = { cmd = "python scripts/build.py clean" }
+remove = { cmd = "python scripts/build.py remove" }
+
+[feature.format.tasks]
+format = { cmd = "python scripts/format.py" }
+
+[dependencies]
+python = "==3.15.1"
+
+[feature.format.dependencies]
+prettier = ">=3.9.6,<4"
+
+[environments]
+format = ["format"]

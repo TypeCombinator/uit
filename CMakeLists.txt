@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 # list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
 
 option(UIT_BUILD_TESTS "Build tests" OFF)
-option(UIT_BUILD_EXAMPLES "Build examples" ON)
+option(UIT_BUILD_EXAMPLES "Build examples" OFF)
 
 project(project_uit LANGUAGES C CXX)
 
@@ -24,13 +24,17 @@ if(UIT_IS_TOP_LEVEL_PROJECT)
   # Add extra c/c++ flags.
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_COMPILER_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_COMPILER_FLAGS}")
+
+  if(UIT_CMAKE_BUILD_MODE STREQUAL "asan")
+    # Do somthing 
+  endif()
 endif()
 
 add_library(uit INTERFACE)
 target_include_directories(uit INTERFACE include)
 
 if(UIT_BUILD_EXAMPLES)
-  add_subdirectory(examples)
+  # add_subdirectory(examples)
 endif()
 
 if(UIT_BUILD_TESTS)

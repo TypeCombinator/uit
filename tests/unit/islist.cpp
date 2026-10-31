@@ -11,7 +11,7 @@ using node_t = sapple;
 
 static_assert(std::is_trivial_v<list_t>);
 
-TEST_CASE("basic", "[ilist]") {
+TEST_CASE("islist basic", "[ilist]") {
     constexpr std::size_t vec_size = 5;
     std::vector<node_t> vec;
     vec.reserve(vec_size);
