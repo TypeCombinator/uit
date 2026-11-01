@@ -1,3 +1,10 @@
+[![Language](https://img.shields.io/badge/language-C++-blue.svg)](https://isocpp.org/)
+[![C++](https://img.shields.io/badge/C%2B%2B-20%2B-blue.svg)](https://en.cppreference.com/w/cpp/compiler_support)
+[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-lightblue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
+[![format](https://github.com/TypeCombinator/uit/actions/workflows/format.yml/badge.svg)](https://github.com/TypeCombinator/uit/actions/workflows/format.yml)
+[![build](https://github.com/TypeCombinator/uit/actions/workflows/build.yml/badge.svg)](https://github.com/TypeCombinator/uit/actions/workflows/build.yml)
+
 # UIT
 
 ## Introduction
