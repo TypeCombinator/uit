@@ -1,6 +1,9 @@
-// SPDX-FileCopyrightText: 2025 TypeCombinator <typecombinator@foxmail.com>
+// SPDX-FileCopyrightText: 2026 TypeCombinator <typecombinator@foxmail.com>
+// SPDX-License-Identifier: MPL-2.0
 //
-// SPDX-License-Identifier: BSD 3-Clause
+// This project is licensed under the Mozilla Public License 2.0.
+// Please see the accompanying LICENSE file in this project root
+// or https://spdx.org/licenses/MPL-2.0.html for details.
 
 #ifndef UNIT_COMMON_APPLE_4D7E9564_ED2C_460C_A0EC_2F4E25AB186A
 #define UNIT_COMMON_APPLE_4D7E9564_ED2C_460C_A0EC_2F4E25AB186A

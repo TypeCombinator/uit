@@ -9,7 +9,7 @@ SPDX_LICENSE = "MPL-2.0"
 TEMPLATE = "uit"
 
 # Directories to annotate with `license.py add`; extend this list to cover more.
-ADD_TARGETS = ("examples",)
+ADD_TARGETS = ("examples", "include", "tests/unit")
 
 
 class License:

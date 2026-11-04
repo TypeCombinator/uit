@@ -1,6 +1,9 @@
-// SPDX-FileCopyrightText: 2025 TypeCombinator <typecombinator@foxmail.com>
+// SPDX-FileCopyrightText: 2026 TypeCombinator <typecombinator@foxmail.com>
+// SPDX-License-Identifier: MPL-2.0
 //
-// SPDX-License-Identifier: BSD 3-Clause
+// This project is licensed under the Mozilla Public License 2.0.
+// Please see the accompanying LICENSE file in this project root
+// or https://spdx.org/licenses/MPL-2.0.html for details.
 
 #ifndef UIT_INTRUSIVE_F553190D_A9E1_4D56_9310_9CE4208E5ADD
 #define UIT_INTRUSIVE_F553190D_A9E1_4D56_9310_9CE4208E5ADD
