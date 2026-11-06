@@ -21,8 +21,15 @@ prettier = ">=3.9.6,<4"
 ruff = ">=0.17.3,<0.18"
 tombi = ">=1.9.8,<2"
 
+[feature.license.tasks]
+license = { cmd = "python scripts/license.py" }
+
+[feature.license.dependencies]
+reuse = ">=6.3.0,<7"
+
 [dependencies]
 python = "==3.15.1"
 
 [environments]
 format = ["format"]
+license = ["license"]

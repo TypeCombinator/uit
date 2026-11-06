@@ -1,6 +1,9 @@
-// SPDX-FileCopyrightText: 2025 TypeCombinator <typecombinator@foxmail.com>
+// SPDX-FileCopyrightText: 2026 TypeCombinator <typecombinator@foxmail.com>
+// SPDX-License-Identifier: MPL-2.0
 //
-// SPDX-License-Identifier: BSD 3-Clause
+// This project is licensed under the Mozilla Public License 2.0.
+// Please see the accompanying LICENSE file in this project root
+// or https://spdx.org/licenses/MPL-2.0.html for details.
 
 #ifndef UIT_ISLIST_1838F0F2_B823_46A0_B1F1_2796453C214C
 #define UIT_ISLIST_1838F0F2_B823_46A0_B1F1_2796453C214C

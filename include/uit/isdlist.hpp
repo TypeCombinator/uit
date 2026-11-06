@@ -1,6 +1,9 @@
 // SPDX-FileCopyrightText: 2026 TypeCombinator <typecombinator@foxmail.com>
+// SPDX-License-Identifier: MPL-2.0
 //
-// SPDX-License-Identifier: BSD 3-Clause
+// This project is licensed under the Mozilla Public License 2.0.
+// Please see the accompanying LICENSE file in this project root
+// or https://spdx.org/licenses/MPL-2.0.html for details.
 
 #ifndef ISDLIST_91B4F713_47E1_4184_AAC2_D26F17F436DE
 #define ISDLIST_91B4F713_47E1_4184_AAC2_D26F17F436DE
