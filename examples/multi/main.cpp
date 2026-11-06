@@ -9,6 +9,7 @@
 #include <iostream>
 #include <uit/islist.hpp>
 
+namespace {
 class apple {
    public:
     apple(uint64_t weight, int sn) noexcept
@@ -17,12 +18,13 @@ class apple {
     }
 
     uint64_t weight;
-    apple *right;
-    apple *right1;
+    apple *right{};
+    apple *right1{};
     int sn;
 };
+} // namespace
 
-int main(int argc, char *argv[]) {
+int main(/* int argc, char *argv[] */) {
     uit::islist<&apple::right> list{};
     uit::islist<&apple::right1> list1{};
 

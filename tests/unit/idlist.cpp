@@ -5,10 +5,10 @@
 // Please see the accompanying LICENSE file in this project root
 // or https://spdx.org/licenses/MPL-2.0.html for details.
 
-#include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <common/apple.hpp>
 #include <uit/idlist.hpp>
+#include <vector>
 
 using list_t = uit::idlist<&dapple::right, &dapple::left>;
 using node_t = dapple;
@@ -125,14 +125,13 @@ TEST_CASE("idlist basic", "[idlist]") {
             list.push_back(&e);
         }
         const auto &clist = list;
-        std::size_t i;
-        i = {}; // Range-based for loop
+        std::size_t i{}; // Range-based for loop
         for (auto &e: list) {
             REQUIRE(&e == &vec[i]);
             i++;
         }
         i = {};
-        for (auto &e: clist) {
+        for (const auto &e: clist) {
             REQUIRE(&e == &vec[i]);
             i++;
         }
@@ -152,8 +151,7 @@ TEST_CASE("idlist basic", "[idlist]") {
             list.push_front(&e);
         }
         const auto &clist = list;
-        std::size_t i;
-        i = {};
+        std::size_t i{};
         for (auto it = list.rbegin(); it != list.rend(); it++) {
             REQUIRE(&(*it) == &vec[i]);
             i++;

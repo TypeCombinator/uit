@@ -7,10 +7,11 @@
 
 #ifndef UIT_IRWBT_E773160D_0F94_4DD2_8A57_6FB1F0D3A109
 #define UIT_IRWBT_E773160D_0F94_4DD2_8A57_6FB1F0D3A109
-#include <uit/intrusive.hpp>
-#include <uit/detail/top_down_queue.hpp>
 #include <cstdint>
 #include <functional>
+#include <uit/detail/top_down_queue.hpp>
+#include <uit/intrusive.hpp>
+#include <uit/xt/attributes.hpp>
 
 // References:
 // [0] Yoichi Hirai and Kazuhiko Yamamoto. Balancing weight-balanced trees. 2011.
@@ -520,8 +521,7 @@ struct irwbt<Right, Left, Size, CMP> {
         return &sentinel.storage;
     }
 
-    // TODO: need a macro for the msvc.
-    [[no_unique_address]]
+    UIT_ATTR_NO_UNIQUE_ADDRESS
     CMP cmp;
     T *head;
 };

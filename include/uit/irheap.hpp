@@ -38,10 +38,7 @@ class irheap<Right, Left, CMP> {
         return ((n << 1) | 1u) << uit::countl_zero<m_size_t, true>(n);
     }
 
-    irheap() noexcept
-        : m_head{nullptr}
-        , m_size{0} {
-    }
+    irheap() noexcept = default;
 
     void push(np_t node) noexcept {
         m_size++;
@@ -54,7 +51,7 @@ class irheap<Right, Left, CMP> {
             if (CMP{}(*node, *cur)) {
                 *cur_ptr = node;
                 do { // Replace one by one until reaching the bottom.
-                    if (path & path_bit_mask) {
+                    if ((path & path_bit_mask) != 0) {
                         node->*Right = cur;
                         node->*Left = cur->*Left;
                         node = cur;
@@ -73,7 +70,7 @@ class irheap<Right, Left, CMP> {
                 node->*Left = nullptr;
                 return;
             }
-            if (path & path_bit_mask) {
+            if ((path & path_bit_mask) != 0) {
                 cur_ptr = &(cur->*Right);
             } else {
                 cur_ptr = &(cur->*Left);
@@ -122,7 +119,7 @@ class irheap<Right, Left, CMP> {
         *this = {};
     }
    private:
-    static inline void swap_with_right_child(np_t cur, np_t child) noexcept {
+    static void swap_with_right_child(np_t cur, np_t child) noexcept {
         cur->*Right = child->*Right;
         child->*Right = cur;
 
@@ -131,7 +128,7 @@ class irheap<Right, Left, CMP> {
         child->*Left = t;
     }
 
-    static inline void swap_with_left_child(np_t cur, np_t child) noexcept {
+    static void swap_with_left_child(np_t cur, np_t child) noexcept {
         np_t t = cur->*Right;
         cur->*Right = child->*Right;
         child->*Right = t;
@@ -140,11 +137,11 @@ class irheap<Right, Left, CMP> {
         child->*Left = cur;
     }
 
-    static inline np_t remove_last_leaf(np_t *cur_ptr, m_size_t path) noexcept {
+    static np_t remove_last_leaf(np_t *cur_ptr, m_size_t path) noexcept {
         np_t cur = *cur_ptr;
         path = path_bits(path);
         while (path != path_bit_mask) {
-            if (path & path_bit_mask) {
+            if ((path & path_bit_mask) != 0) {
                 cur_ptr = &(cur->*Right);
             } else {
                 cur_ptr = &(cur->*Left);
@@ -156,7 +153,7 @@ class irheap<Right, Left, CMP> {
         return cur;
     }
 
-    static inline void sift_down(np_t cur, np_t *cur_ptr) noexcept {
+    static void sift_down(np_t cur, np_t *cur_ptr) noexcept {
         np_t left = cur->*Left;
         while (left != nullptr) {
             np_t right = cur->*Right;
@@ -181,8 +178,8 @@ class irheap<Right, Left, CMP> {
         }
     }
 
-    T *m_head; // A root pointer.
-    m_size_t m_size;
+    T *m_head = nullptr; // A root pointer.
+    m_size_t m_size = 0;
 };
 
 } // namespace uit

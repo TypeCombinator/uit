@@ -11,7 +11,8 @@
 #include <uit/intrusive.hpp>
 
 struct dapple {
-    dapple(uint64_t weight, int sn) noexcept
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
+    explicit dapple(uint64_t weight, int sn) noexcept
         : weight(weight)
         , sn(sn) {
     }
@@ -23,6 +24,7 @@ struct dapple {
 };
 
 struct sapple {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
     explicit sapple(uint64_t weight, int sn) noexcept
         : weight(weight)
         , sn(sn) {
@@ -34,6 +36,7 @@ struct sapple {
 };
 
 struct rsbt_apple {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
     explicit rsbt_apple(uint64_t weight, int sn) noexcept
         : weight(weight)
         , sn(sn) {

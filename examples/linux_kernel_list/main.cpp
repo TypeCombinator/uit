@@ -9,6 +9,7 @@
 #include <uit/idlist_proxy.hpp>
 #include <uit/intrusive.hpp>
 
+namespace {
 struct list_head {
     struct list_head *next, *prev;
 };
@@ -21,12 +22,13 @@ class apple {
     }
 
     uint64_t weight;
-    struct list_head node;
+    struct list_head node{};
     int sn;
 };
+} // namespace
 
-int main(int argc, char *argv[]) {
-    struct list_head head;
+int main(/* int argc, char *argv[] */) {
+    struct list_head head{};
     uit::idlist_proxy<&list_head::next, &list_head::prev> list{head};
     list.clear();
 

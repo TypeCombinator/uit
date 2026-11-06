@@ -7,8 +7,9 @@
 
 #ifndef UIT_IRSBT_863421E6_3490_4C93_AD0F_0645A51AA38F
 #define UIT_IRSBT_863421E6_3490_4C93_AD0F_0645A51AA38F
-#include <uit/intrusive.hpp>
 #include <functional>
+#include <uit/intrusive.hpp>
+#include <uit/xt/attributes.hpp>
 
 // References:
 // [0] Chen Qifeng. Size Balanced Tree. 2006.
@@ -432,8 +433,7 @@ struct irsbt<Right, Left, Size, CMP> {
         return &sentinel.storage;
     }
 
-    // TODO: need a macro for the msvc.
-    [[no_unique_address]]
+    UIT_ATTR_NO_UNIQUE_ADDRESS
     CMP cmp;
     T *head;
 };

@@ -68,14 +68,13 @@ TEST_CASE("islist basic", "[ilist]") {
             list.push_front(&vec[(vec_size - 1) - i]);
         }
         const auto &clist = list;
-        std::size_t i;
-        i = {}; // Range-based for loop
+        std::size_t i{}; // Range-based for loop
         for (auto &e: list) {
             REQUIRE(&e == &vec[i]);
             i++;
         }
         i = {};
-        for (auto &e: clist) {
+        for (const auto &e: clist) {
             REQUIRE(&e == &vec[i]);
             i++;
         }

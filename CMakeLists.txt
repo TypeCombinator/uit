@@ -42,7 +42,7 @@ add_library(uit INTERFACE)
 target_include_directories(uit INTERFACE include)
 
 if(UIT_BUILD_EXAMPLES)
-  # add_subdirectory(examples)
+  add_subdirectory(examples)
 endif()
 
 if(UIT_BUILD_TESTS)

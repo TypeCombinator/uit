@@ -1,7 +1,9 @@
+
+
 #include <benchmark/benchmark.h>
-#include <vector>
-#include <random>
 #include "common/freebsd_irbt.h"
+#include <random>
+#include <vector>
 
 #define FREEBSD_RBT_APPLE_BITS(_ptr_) (_RB_BITSUP(_ptr_, node) & _RB_LR)
 

@@ -5,15 +5,15 @@
 // Please see the accompanying LICENSE file in this project root
 // or https://spdx.org/licenses/MPL-2.0.html for details.
 
-#include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <common/apple.hpp>
 #include <uit/idlist_proxy.hpp>
+#include <vector>
 
 using list_t = uit::idlist_proxy<&dapple::right, &dapple::left>;
 using node_t = dapple;
 
-// Reference-member triviality is a gray area; result varies by compiler.
+// Reference-member triviality is a gray area, result varies by compiler.
 // static_assert(!std::is_trivial_v<list_t>);
 
 TEST_CASE("idlist_proxy basic", "[idlist_proxy]") {
@@ -130,14 +130,13 @@ TEST_CASE("idlist_proxy basic", "[idlist_proxy]") {
             list.push_back(&e);
         }
         const auto &clist = list;
-        std::size_t i;
-        i = {}; // Range-based for loop
+        std::size_t i{}; // Range-based for loop
         for (auto &e: list) {
             REQUIRE(&e == &vec[i]);
             i++;
         }
         i = {};
-        for (auto &e: clist) {
+        for (const auto &e: clist) {
             REQUIRE(&e == &vec[i]);
             i++;
         }
@@ -157,8 +156,7 @@ TEST_CASE("idlist_proxy basic", "[idlist_proxy]") {
             list.push_front(&e);
         }
         const auto &clist = list;
-        std::size_t i;
-        i = {};
+        std::size_t i{};
         for (auto it = list.rbegin(); it != list.rend(); it++) {
             REQUIRE(&(*it) == &vec[i]);
             i++;

@@ -19,27 +19,6 @@ class islist<Right> {
    public:
     T* m_right;
 
-    // constexpr islist() noexcept {
-    //     m_right = nullptr;
-    // }
-
-    // islist(const islist& other) noexcept = default;
-
-    // islist& operator=(const islist& other) noexcept = default;
-
-    // islist(islist&& other) noexcept {
-    //     m_right = other.m_right;
-    //     other.clear();
-    // }
-
-    // islist& operator=(islist&& other) noexcept {
-    //     if (this != &other) {
-    //         m_right = other.m_right;
-    //         other.clear();
-    //     }
-    //     return *this;
-    // }
-
     [[nodiscard]]
     constexpr bool empty() const noexcept {
         return m_right == nullptr;
@@ -84,26 +63,32 @@ class islist<Right> {
     using iterator = islist_iterator<T, Right>;
     using const_iterator = islist_iterator<const T, Right>;
 
+    [[nodiscard]]
     constexpr const_iterator begin() const {
         return const_iterator{m_right};
     }
 
+    [[nodiscard]]
     constexpr iterator begin() {
         return iterator{m_right};
     }
 
+    [[nodiscard]]
     constexpr const_iterator end() const {
         return const_iterator{nullptr};
     }
 
+    [[nodiscard]]
     constexpr iterator end() {
         return iterator{nullptr};
     }
 
+    [[nodiscard]]
     constexpr const_iterator cbegin() const {
         return const_iterator{m_right};
     }
 
+    [[nodiscard]]
     constexpr const_iterator cend() const {
         return const_iterator{nullptr};
     }

@@ -18,8 +18,8 @@ struct islist_iterator {
     using pointer = T *;
     using reference = T &;
 
-    explicit constexpr islist_iterator(pointer item) {
-        current = item;
+    explicit constexpr islist_iterator(pointer item)
+        : current{item} {
     }
 
     [[nodiscard]]

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <uit/iiqheap.hpp>
 
+namespace {
 class apple {
    public:
     apple(uint64_t weight, int sn) noexcept
@@ -20,11 +21,12 @@ class apple {
     }
 
     uint64_t weight;
-    uint32_t index;
+    uint32_t index{};
     int sn;
 };
+} // namespace
 
-int main(int argc, char *argv[]) {
+int main(/* int argc, char *argv[] */) {
     uit::iiqheap<&apple::index> q{100}; // A priority queue.
 
     apple a0{502, 0};

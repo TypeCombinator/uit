@@ -20,33 +20,6 @@ class idslist<Right> {
     T *m_right;
     T *m_left;
 
-    // constexpr idslist() noexcept
-    //     : m_right{nullptr}
-    //     , m_left{nullptr} {
-    // }
-
-    // constexpr idslist(const idslist &other) noexcept {
-    //     m_right = other.m_right;
-    //     m_left = other.m_left;
-    // }
-
-    // constexpr idslist &operator=(const idslist &other) noexcept {
-    //     m_right = other.m_right;
-    //     m_left = other.m_left;
-    //     return *this;
-    // }
-
-    // constexpr idslist(idslist &&other) noexcept {
-    //     move_from(std::move(other));
-    // }
-
-    // constexpr idslist &operator=(idslist &&other) noexcept {
-    //     if (this != &other) [[likely]] {
-    //         move_from(std::move(other));
-    //     }
-    //     return *this;
-    // }
-
     [[nodiscard]]
     constexpr bool empty() const noexcept {
         return m_right == nullptr;
@@ -91,7 +64,7 @@ class idslist<Right> {
     }
 
     void pop_front() noexcept {
-        T *first = m_right;
+        const T *first = m_right;
         m_right = first->*Right;
         if (first == m_left) [[unlikely]] {
             m_left = nullptr;
@@ -121,26 +94,32 @@ class idslist<Right> {
     using iterator = islist_iterator<T, Right>;
     using const_iterator = islist_iterator<const T, Right>;
 
+    [[nodiscard]]
     constexpr iterator begin() const noexcept {
         return iterator{m_right};
     }
 
+    [[nodiscard]]
     constexpr iterator begin() noexcept {
         return iterator{m_right};
     }
 
+    [[nodiscard]]
     constexpr iterator end() const noexcept {
         return iterator{nullptr};
     }
 
+    [[nodiscard]]
     constexpr iterator end() noexcept {
         return iterator{nullptr};
     }
 
+    [[nodiscard]]
     constexpr const_iterator cbegin() const noexcept {
         return const_iterator{m_right};
     }
 
+    [[nodiscard]]
     constexpr const_iterator cend() const noexcept {
         return const_iterator{nullptr};
     }

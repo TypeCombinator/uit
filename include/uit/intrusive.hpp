@@ -51,18 +51,24 @@ constexpr std::size_t offset_of(M T::*field) noexcept {
         unsigned char buffer[sizeof(T)];
         T t;
 
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
         constexpr U() noexcept {
         }
 
         constexpr ~U() noexcept {
         }
+
+        U(const U &) = delete;
+        U &operator=(const U &) = delete;
+        U(U &&) = delete;
+        U &operator=(U &&) = delete;
     } u{};
 
     std::size_t start = 0;
     std::size_t end = sizeof(T);
     const void *target = std::addressof(u.t.*field);
     while (start < end) {
-        std::size_t m = (start + end) >> 1;
+        const std::size_t m = (start + end) >> 1;
         if (u.buffer + m == target) {
             return m;
         }

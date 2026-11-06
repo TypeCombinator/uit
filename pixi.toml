@@ -12,6 +12,7 @@ build = { cmd = "python scripts/build.py build" }
 test = { cmd = "python scripts/build.py test" }
 clean = { cmd = "python scripts/build.py clean" }
 remove = { cmd = "python scripts/build.py remove" }
+tidy = { cmd = "python scripts/clang_tidy.py" }
 
 [feature.format.tasks]
 format = { cmd = "python scripts/format.py" }

@@ -7,9 +7,10 @@
 
 #ifndef UIT_IIQHEAP_6B2407E1_D0A5_4D0A_8D6F_6DDC5A03F2E7
 #define UIT_IIQHEAP_6B2407E1_D0A5_4D0A_8D6F_6DDC5A03F2E7
-#include <uit/intrusive.hpp>
-#include <functional>
 #include <cstring>
+#include <functional>
+#include <uit/intrusive.hpp>
+#include <uit/xt/attributes.hpp>
 
 namespace uit {
 // Extra attribute that can be added to the allocator.
@@ -59,27 +60,24 @@ class iiqheap<Index, CMP, Allocator> {
     }
    public:
     explicit iiqheap(index_t reserve)
-        : m_storage{}
-        , m_allocator{} {
-        m_storage = allocator_traits::allocate(m_allocator, reserve);
-        m_capacity = reserve;
-        m_size = 0;
+        : m_allocator{}
+        , m_storage(allocator_traits::allocate(m_allocator, reserve))
+        , m_size{0}
+        , m_capacity(reserve) {
     }
 
     explicit iiqheap(index_t reserve, const allocator_type& alloc)
-        : m_storage{}
-        , m_allocator{alloc} {
-        m_storage = allocator_traits::allocate(m_allocator, reserve);
-        m_capacity = reserve;
-        m_size = 0;
+        : m_allocator{alloc}
+        , m_storage(allocator_traits::allocate(m_allocator, reserve))
+        , m_size{0}
+        , m_capacity(reserve) {
     }
 
     iiqheap(iiqheap&& other) noexcept(std::is_nothrow_move_constructible_v<allocator_type>)
-        : m_allocator(std::move(other.m_allocator)) {
-        m_storage = other.m_storage;
-        m_size = other.m_size;
-        m_capacity = other.m_capacity;
-
+        : m_allocator(std::move(other.m_allocator))
+        , m_storage(other.m_storage)
+        , m_size(other.m_size)
+        , m_capacity(other.m_capacity) {
         other.m_storage = nullptr;
         // other.m_size = 0;
     }
@@ -105,10 +103,13 @@ class iiqheap<Index, CMP, Allocator> {
             if (m_allocator != other.m_allocator) {
                 if (allocator_no_expanding || (m_capacity >= other.m_size)) {
                     // If the capacity is insufficient and expansion is prohibited, it is UB.
+                    // The pointer array is trivially copyable; memcpy is intentional.
+                    // NOLINTNEXTLINE(bugprone-bitwise-pointer-cast)
                     std::memcpy(m_storage, other.m_storage, sizeof(np_t) * other.m_size);
                     m_size = other.m_size;
                 } else {
                     np_t* new_storage = allocator_traits::allocate(m_allocator, other.m_capacity);
+                    // NOLINTNEXTLINE(bugprone-bitwise-pointer-cast)
                     std::memcpy(new_storage, other.m_storage, sizeof(np_t) * other.m_size);
                     allocator_traits::deallocate(m_allocator, m_storage, m_capacity);
                     m_storage = new_storage;
@@ -214,16 +215,16 @@ class iiqheap<Index, CMP, Allocator> {
    private:
     void expand_capacity(index_t grater_capacity) {
         np_t* new_storage = allocator_traits::allocate(m_allocator, grater_capacity);
-
+        // NOLINTNEXTLINE(bugprone-bitwise-pointer-cast, bugprone-multi-level-implicit-pointer-conversion)
         std::memcpy(new_storage, m_storage, sizeof(np_t) * m_capacity);
         allocator_traits::deallocate(m_allocator, m_storage, m_capacity);
         m_storage = new_storage;
         m_capacity = grater_capacity;
     }
 
-    static inline void sift_up(np_t* begin_ptr, np_t cur, index_t cur_idx) noexcept {
+    static void sift_up(np_t* begin_ptr, np_t cur, index_t cur_idx) noexcept {
         index_t parent_idx;
-        np_t parent;
+        np_t parent; // NOLINT(cppcoreguidelines-init-variables): assigned before use in the loop
         while (cur_idx > 0) {
             parent_idx = parent_index(cur_idx);
             parent = begin_ptr[parent_idx];
@@ -238,11 +239,10 @@ class iiqheap<Index, CMP, Allocator> {
         cur->*Index = cur_idx;
     }
 
-    static inline void
-        sift_down(np_t* begin_ptr, index_t size, np_t cur, index_t cur_idx) noexcept {
+    static void sift_down(np_t* begin_ptr, index_t size, np_t cur, index_t cur_idx) noexcept {
         auto child_idx = child0_index(cur_idx);
-        np_t* min_ptr;
-        np_t* child_ptr;
+        np_t* min_ptr; // NOLINT(cppcoreguidelines-init-variables): assigned before use in the loop
+        np_t* child_ptr; // NOLINT(cppcoreguidelines-init-variables): assigned before use in the loop
         while ((child_idx + 3u) < size) {
             min_ptr = begin_ptr + child_idx;
             child_ptr = min_ptr + 1;
@@ -300,13 +300,11 @@ class iiqheap<Index, CMP, Allocator> {
         cur->*Index = cur_idx;
     }
 
-    // std::vector might be a better choice.
+    UIT_ATTR_NO_UNIQUE_ADDRESS
+    allocator_type m_allocator;
     np_t* m_storage;
     index_t m_size;
     index_t m_capacity;
-    // TODO: Need a macro for msvc.
-    [[no_unique_address]]
-    allocator_type m_allocator;
 };
 
 namespace pmr {

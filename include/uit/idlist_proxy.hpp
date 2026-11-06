@@ -74,25 +74,25 @@ class idlist_proxy<Right, Left> {
     }
 
     constexpr void pop_front() noexcept {
-        T *right = m_sentinel.*Right;
+        const T *right = m_sentinel.*Right;
         remove(&m_sentinel, right->*Right);
     }
 
     constexpr void pop_back() noexcept {
-        T *left = m_sentinel.*Left;
+        const T *left = m_sentinel.*Left;
         remove(left->*Left, &m_sentinel);
     }
 
-    template <typename T_CV, bool is_reverse = false>
+    template <typename TCV, bool IsReverse = false>
     struct iterator_t {
         using iterator_category = std::bidirectional_iterator_tag;
-        using value_type = T_CV;
+        using value_type = TCV;
         using difference_type = std::ptrdiff_t;
-        using pointer = T_CV *;
-        using reference = T_CV &;
+        using pointer = TCV *;
+        using reference = TCV &;
 
-        explicit constexpr iterator_t(pointer item) {
-            current = item;
+        explicit constexpr iterator_t(pointer item) noexcept
+            : current{item} {
         }
 
         [[nodiscard]]
@@ -116,7 +116,7 @@ class idlist_proxy<Right, Left> {
         }
 
         constexpr iterator_t &operator++() noexcept {
-            if constexpr (!is_reverse) {
+            if constexpr (!IsReverse) {
                 current = current->*Right;
             } else {
                 current = current->*Left;
@@ -126,7 +126,7 @@ class idlist_proxy<Right, Left> {
 
         constexpr iterator_t operator++(int) noexcept {
             pointer old = current;
-            if constexpr (!is_reverse) {
+            if constexpr (!IsReverse) {
                 current = current->*Right;
             } else {
                 current = current->*Left;
@@ -135,7 +135,7 @@ class idlist_proxy<Right, Left> {
         }
 
         constexpr iterator_t &operator--() noexcept {
-            if constexpr (!is_reverse) {
+            if constexpr (!IsReverse) {
                 current = current->*Left;
             } else {
                 current = current->*Right;
@@ -145,7 +145,7 @@ class idlist_proxy<Right, Left> {
 
         constexpr iterator_t operator--(int) noexcept {
             pointer old = current;
-            if constexpr (!is_reverse) {
+            if constexpr (!IsReverse) {
                 current = current->*Left;
             } else {
                 current = current->*Right;
@@ -169,50 +169,62 @@ class idlist_proxy<Right, Left> {
     using reverse_iterator = iterator_t<T, true>;
     using const_reverse_iterator = iterator_t<const T, true>;
 
+    [[nodiscard]]
     constexpr const_iterator begin() const noexcept {
         return const_iterator{m_sentinel.*Right};
     }
 
+    [[nodiscard]]
     constexpr iterator begin() noexcept {
         return iterator{m_sentinel.*Right};
     }
 
+    [[nodiscard]]
     constexpr const_iterator end() const noexcept {
         return const_iterator{&m_sentinel};
     }
 
+    [[nodiscard]]
     constexpr iterator end() noexcept {
         return iterator{&m_sentinel};
     }
 
+    [[nodiscard]]
     constexpr const_iterator cbegin() const noexcept {
         return const_iterator{m_sentinel.*Right};
     }
 
+    [[nodiscard]]
     constexpr const_iterator cend() const noexcept {
         return const_iterator{&m_sentinel};
     }
 
+    [[nodiscard]]
     constexpr const_reverse_iterator rbegin() const noexcept {
         return const_reverse_iterator{m_sentinel.*Left};
     }
 
+    [[nodiscard]]
     constexpr reverse_iterator rbegin() noexcept {
         return reverse_iterator{m_sentinel.*Left};
     }
 
+    [[nodiscard]]
     constexpr const_reverse_iterator rend() const noexcept {
         return const_reverse_iterator{&m_sentinel};
     }
 
+    [[nodiscard]]
     constexpr reverse_iterator rend() noexcept {
         return reverse_iterator{&m_sentinel};
     }
 
+    [[nodiscard]]
     constexpr const_reverse_iterator crbegin() const noexcept {
         return const_reverse_iterator{m_sentinel.*Left};
     }
 
+    [[nodiscard]]
     constexpr const_reverse_iterator crend() const noexcept {
         return const_reverse_iterator{&m_sentinel};
     }

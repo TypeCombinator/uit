@@ -9,6 +9,7 @@
 #include <iostream>
 #include <uit/irheap.hpp>
 
+namespace {
 class apple {
    public:
     apple(uint64_t weight, int sn) noexcept
@@ -21,12 +22,13 @@ class apple {
     }
 
     uint64_t weight;
-    apple *right;
-    apple *left;
+    apple *right{};
+    apple *left{};
     int sn;
 };
+} // namespace
 
-int main(int argc, char *argv[]) {
+int main(/* int argc, char *argv[] */) {
     uit::irheap<&apple::right, &apple::left> q{}; // A priority queue.
 
     apple a0{502, 0};

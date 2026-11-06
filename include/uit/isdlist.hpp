@@ -19,25 +19,6 @@ class isdlist<Right, Left> {
    public:
     T* m_right;
 
-    // constexpr isdlist() noexcept {
-    //     m_right = nullptr;
-    // }
-
-    // isdlist(const isdlist&) = delete;
-
-    // isdlist& operator=(const isdlist&) = delete;
-
-    // isdlist(isdlist&& other) noexcept {
-    //     move_from(std::move(other));
-    // }
-
-    // isdlist& operator=(isdlist&& other) noexcept {
-    //     if (this != &other) {
-    //         move_from(std::move(other));
-    //     }
-    //     return *this;
-    // }
-
     [[nodiscard]]
     constexpr bool empty() const noexcept {
         return m_right == nullptr;
@@ -97,26 +78,32 @@ class isdlist<Right, Left> {
     using iterator = islist_iterator<T, Right>;
     using const_iterator = islist_iterator<const T, Right>;
 
+    [[nodiscard]]
     constexpr iterator begin() const noexcept {
         return iterator{m_right};
     }
 
+    [[nodiscard]]
     constexpr iterator begin() noexcept {
         return iterator{m_right};
     }
 
+    [[nodiscard]]
     constexpr iterator end() const noexcept {
         return iterator{nullptr};
     }
 
+    [[nodiscard]]
     constexpr iterator end() noexcept {
         return iterator{nullptr};
     }
 
+    [[nodiscard]]
     constexpr const_iterator cbegin() const noexcept {
         return const_iterator{m_right};
     }
 
+    [[nodiscard]]
     constexpr const_iterator cend() const noexcept {
         return const_iterator{nullptr};
     }

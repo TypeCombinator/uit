@@ -5,10 +5,10 @@
 // Please see the accompanying LICENSE file in this project root
 // or https://spdx.org/licenses/MPL-2.0.html for details.
 
-#include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <common/apple.hpp>
 #include <uit/idslist.hpp>
+#include <vector>
 
 using list_t = uit::idslist<&sapple::right>;
 using node_t = sapple;
@@ -95,8 +95,7 @@ TEST_CASE("idslist basic", "[idslist]") {
             list.push_back(&e);
         }
         const auto &clist = list;
-        std::size_t i;
-        i = {}; // Range-based for loop
+        std::size_t i{}; // Range-based for loop
         for (auto &e: list) {
             REQUIRE(&e == &vec[i]);
             i++;
@@ -125,12 +124,12 @@ TEST_CASE("idslist basic", "[idslist]") {
             list_org.push_back(&e);
         }
         list_t list_copy{list_org};
-        std::size_t i;
-        i = {};
+        std::size_t i{};
         for (auto &e: list_copy) {
             REQUIRE(&e == &vec[i]);
             i++;
         }
+        // NOLINTNEXTLINE(performance-move-const-arg)
         list_t list_move{std::move(list_org)};
         i = {};
         for (auto &e: list_move) {
@@ -145,13 +144,13 @@ TEST_CASE("idslist basic", "[idslist]") {
         }
         list_t list_copy{};
         list_copy = list_org;
-        std::size_t i;
-        i = {};
+        std::size_t i{};
         for (auto &e: list_copy) {
             REQUIRE(&e == &vec[i]);
             i++;
         }
         list_t list_move{};
+        // NOLINTNEXTLINE(performance-move-const-arg)
         list_move = std::move(list_org);
         i = {};
         for (auto &e: list_move) {

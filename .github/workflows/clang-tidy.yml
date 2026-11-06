@@ -1,0 +1,39 @@
+name: clang-tidy
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+
+permissions:
+  contents: read
+
+jobs:
+  clang-tidy:
+    # clang-tidy and run-clang-tidy ship with the same LLVM installation as the
+    # compiler, so this only runs on Linux like the other static analysis jobs.
+    name: linux | clang | clang-tidy
+    runs-on: ubuntu-26.04
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.11.2
+      - name: Configure
+        run: |
+          set -euo pipefail
+          major="$(clang -dumpversion | cut -d. -f1)"
+          bindir="/usr/lib/llvm-${major}/bin"
+          echo "${bindir}" >> "$GITHUB_PATH"
+          pixi run toolchain clang debug
+          pixi run config debug
+      # `WarningsAsErrors: '*'` in .clang-tidy turns every diagnostic into a
+      # non-zero exit, so no extra failure flag is needed here.
+      - name: Check
+        run: pixi run tidy debug
